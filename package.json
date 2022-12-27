@@ -1,0 +1,8 @@
+{
+  "name": "NTU-Cooler",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "git@github.com:Hsiao-Chien-Ti/NTU-Cooler.git",
+  "author": "Hsiao-Chien-Ti <0410adi@gmail.com>",
+  "license": "MIT"
+}
