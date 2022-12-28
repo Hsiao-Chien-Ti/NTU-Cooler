@@ -1,8 +1,20 @@
 import Title from "../components/Title";
 import LogIn from "../components/Login";
 import {useAll} from "./hooks/useAll";
+import styled from 'styled-components';
+import { useNavigate } from 'react-router-dom';
+import { useEffect } from "react";
+const Wrapper = styled.div`
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    width: 500px;
+    margin: auto;`
 const SignIn = () => {
-    const { me, setMe, setSignedIn, displayStatus, signIn } = useAll();
+    const { me, setMe, setSignedIn, displayStatus, signIn,loginData } = useAll();
+    const navigate = useNavigate();
     const handleLogin = async(s) => {
         console.log(s)
         const{studentID,passwd}=s
@@ -25,11 +37,29 @@ const SignIn = () => {
             await signIn({ variables: { studentID:studentID,passwd:passwd } })
         }
     }
+    useEffect(()=>{
+        if(loginData!=undefined)
+        {
+            setSignedIn(loginData.login)
+            if(!loginData.login)
+            {
+                displayStatus({
+                    type: "error",
+                    msg: "Invalid student ID or password",
+                    duration:1
+                });   
+            }
+            else
+            {
+                navigate('/homepage')
+            }
+        }
+    },[loginData])
     return (
-        <>
+        <Wrapper>
             <Title />
             <LogIn onLogin={handleLogin} />
-        </>
+        </Wrapper>
     );
 }
 export default SignIn

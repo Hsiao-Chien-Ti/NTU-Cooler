@@ -3,6 +3,7 @@ import { createContext, useContext } from "react";
 import { useLazyQuery, useMutation } from '@apollo/react-hooks';
 import { LOGIN_MUTATION } from "../../graphql";
 import { message } from "antd";
+import { useNavigate } from 'react-router-dom';
 const LOCALSTORAGE_KEY = "save-me";
 const savedMe = localStorage.getItem(LOCALSTORAGE_KEY);
 
@@ -11,26 +12,32 @@ const AllContext = createContext({
     signedIn: false,
     signIn:[],
     status:{},
-    displayStatus:()=>{}
+    displayStatus:()=>{},
+    loginData:{}
 });
 const AllProvider = (props) => {
     const [me, setMe] = useState(savedMe || "");
     const [signedIn, setSignedIn] = useState(false);
     const [signIn,{data:loginData}] = useMutation(LOGIN_MUTATION);
-    useEffect(()=>{
-        if(loginData!=undefined)
-        {
-            setSignedIn(loginData.login)
-            if(!loginData.login)
-            {
-                displayStatus({
-                    type: "error",
-                    msg: "Invalid student ID or password",
-                    duration:1
-                });   
-            }            
-        }
-    },[loginData])
+
+    // useEffect(()=>{
+    //     if(loginData!=undefined)
+    //     {
+    //         setSignedIn(loginData.login)
+    //         if(!loginData.login)
+    //         {
+    //             displayStatus({
+    //                 type: "error",
+    //                 msg: "Invalid student ID or password",
+    //                 duration:1
+    //             });   
+    //         }
+    //         else
+    //         {
+    //             navigate('/homepage')
+    //         }
+    //     }
+    // },[loginData])
     useEffect(() => {
         if (signedIn) {
             localStorage.setItem(LOCALSTORAGE_KEY, me);
@@ -60,7 +67,7 @@ const AllProvider = (props) => {
     return (
         <AllContext.Provider
             value={{
-                me, signedIn,setSignedIn,signIn,status,displayStatus
+                me, signedIn,setSignedIn,signIn,status,displayStatus,loginData
             }}
             {...props}
         />

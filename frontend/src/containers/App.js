@@ -1,23 +1,30 @@
-import '../App.css'
-import {useAll} from './hooks/useAll'
+import { useAll } from './hooks/useAll'
 import styled from 'styled-components';
 import SignIn from './SignIn'
-import TMP from '../tmp'
-const Wrapper = styled.div`
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    height: 100vh;
-    width: 500px;
-    margin: auto;`
+import Homepage from './Homepage';
+import Syllabus from './Syllabus';
+import Grade from './Grade';
+import Files from './Files';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import Announcement from './Announcement';
 
 const App = () => {
-    const {signedIn} = useAll()
+    const { signedIn } = useAll()
     return (
-        <Wrapper>
-            {signedIn ? <TMP /> : <SignIn />}
-        </Wrapper>
+        // <>
+        // {signedIn ? <Homepage /> : <SignIn />}
+        // </>
+        <Router>
+            <Routes>
+                <Route path="/" element={<SignIn />} />
+                <Route path="/homepage" element={<Homepage />} />
+                <Route path="/syllabus" element={<Syllabus />} />
+                <Route path="/announcement" element={<Announcement />} />
+                <Route path="/grade" element={<Grade />} />
+                <Route path="/files" element={<Files />} />
+            </Routes>
+
+        </Router>
     )
 }
 
