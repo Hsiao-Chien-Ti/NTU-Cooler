@@ -4,7 +4,7 @@ const UserSchema = new Schema({
     name: { type: String},
     studentID:{type:String},
     passwd:{type:String},
-    groupnum:{type:Number},
+    groupNum:{type:Number},
 });
 const UserModel = mongoose.model('User', UserSchema);
 

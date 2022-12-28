@@ -1,0 +1,14 @@
+type Query {
+  user(name: String!, studentID: String!, passwd: String!, groupNum: Int): User!
+}
+type User {
+  name: String!
+  studentID: String!
+  passwd: String!
+  groupNum: Int
+}
+type Mutation {
+  createUser(name: String!, studentID: String!, passwd: String!, groupNum: Int): User!
+  login(studentID: String!, passwd: String!): Boolean
+}
+
