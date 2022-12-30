@@ -46,7 +46,6 @@ const AllProvider = (props) => {
         displayStatus(status)
     }, [status])
     const { data:syllabusData,loading: syllabusLoading} = useQuery(SYLLABUS_QUERY);
-    console.log(syllabusData)
     // useEffect(() => {
     //     try {
     //       subscribeToMore({

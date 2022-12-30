@@ -2,7 +2,6 @@ import React from "react";
 import { Card} from 'antd';
 import {LinkOutlined} from '@ant-design/icons'
 const HomepageContent=({weekNum,outline,file})=>{
-    console.log((1/(file.length+1)).toString())
     const gridStyle = {
         height: (1/(file.length+1)).toString(),
         width:"100%",

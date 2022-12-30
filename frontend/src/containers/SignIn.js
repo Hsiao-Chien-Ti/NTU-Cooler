@@ -16,7 +16,6 @@ const SignIn = () => {
     const { user,setUser, displayStatus, signIn,loginData } = useAll();
     const navigate = useNavigate();
     const handleLogin = async(s) => {
-        console.log(s)
         const{studentID,passwd}=s
         if (!studentID)
         {
@@ -40,7 +39,6 @@ const SignIn = () => {
     useEffect(()=>{
         if(loginData!=undefined)
         {
-            console.log(loginData)
             setUser(loginData.login)
             if(!loginData.login.login)
             {

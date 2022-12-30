@@ -1,16 +1,18 @@
 import {
     MenuFoldOutlined,
     MenuUnfoldOutlined,
-    UploadOutlined,
-    UserOutlined,
-    VideoCameraOutlined,
+    HomeOutlined,
+    FileOutlined,
+    ScheduleOutlined,
+    NotificationOutlined,
+    SolutionOutlined
 } from '@ant-design/icons';
 import { Layout, Menu, theme } from 'antd';
 import { BrowserRouter as Router, Route, Link } from "react-router-dom";
 import React, { useEffect } from 'react';
 import { useState } from 'react';
 import { useAll } from './hooks/useAll';
-import HomepageContent from '../components/homepageContent';
+import HomepageContent from '../components/HomepageContent';
 
 const { Header, Sider, Content } = Layout;
 const Homepage = () => {
@@ -19,9 +21,6 @@ const Homepage = () => {
         token: { colorBgContainer },
     } = theme.useToken();
     const { syllabusLoading, syllabusData } = useAll()
-    // useEffect(()=>{
-    //     console.log(syllabusData.syllabus)
-    // },[syllabusData])
     return (
         <Layout>
             <Sider trigger={null} collapsible collapsed={collapsed}>
@@ -32,22 +31,27 @@ const Homepage = () => {
                     defaultSelectedKeys={['1']}
                 >
                     <Menu.Item key="1">
-                        <UserOutlined />
+                        <HomeOutlined />
+                        <span>Homepage</span>
+                        <Link to="/homepage" />
+                    </Menu.Item>
+                    <Menu.Item key="2">
+                        <ScheduleOutlined />
                         <span>Syllabus</span>
                         <Link to="/syllabus" />
                     </Menu.Item>
-                    <Menu.Item key="2">
-                        <UserOutlined />
+                    <Menu.Item key="3">
+                        <NotificationOutlined />
                         <span>Announcement</span>
                         <Link to="/announcement" />
                     </Menu.Item>
-                    <Menu.Item key="3">
-                        <UserOutlined />
+                    <Menu.Item key="4">
+                        <SolutionOutlined />
                         <span>Grade</span>
                         <Link to="/grade" />
                     </Menu.Item>
-                    <Menu.Item key="4">
-                        <UserOutlined />
+                    <Menu.Item key="5">
+                        <FileOutlined />
                         <span>Files</span>
                         <Link to="/files" />
                     </Menu.Item>
