@@ -1,8 +1,9 @@
 import mongoose from "mongoose";
 import { Schema } from "mongoose";
 const FileSchema = new Schema({
-    info: { type:String },
-    file:{type:String},
+    type:{type:String},
+    info:{type:String},
+    fileLink:{type:String},
     fileName:{type:String}
 });
 const FileModel = mongoose.model('File', FileSchema);

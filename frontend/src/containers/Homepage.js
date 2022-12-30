@@ -5,10 +5,12 @@ import {
     UserOutlined,
     VideoCameraOutlined,
 } from '@ant-design/icons';
-import { Layout, Menu, theme} from 'antd';
+import { Layout, Menu, theme } from 'antd';
 import { BrowserRouter as Router, Route, Link } from "react-router-dom";
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useState } from 'react';
+import { useAll } from './hooks/useAll';
+import HomepageContent from '../components/homepageContent';
 
 const { Header, Sider, Content } = Layout;
 const Homepage = () => {
@@ -16,6 +18,10 @@ const Homepage = () => {
     const {
         token: { colorBgContainer },
     } = theme.useToken();
+    const { syllabusLoading, syllabusData } = useAll()
+    // useEffect(()=>{
+    //     console.log(syllabusData.syllabus)
+    // },[syllabusData])
     return (
         <Layout>
             <Sider trigger={null} collapsible collapsed={collapsed}>
@@ -46,28 +52,9 @@ const Homepage = () => {
                         <Link to="/files" />
                     </Menu.Item>
                 </Menu>
-                {/* items={[
-                    {
-                        key: '1',
-                        icon: <UserOutlined />,
-                        label: 'nav 1',
-
-                    },
-                    {
-                        key: '2',
-                        icon: <VideoCameraOutlined />,
-                        label: 'nav 2',
-                    },
-                    {
-                        key: '3',
-                        icon: <UploadOutlined />,
-                        label: 'nav 3',
-                    },
-                ]}
-            /> */}
             </Sider>
             <Layout className="site-layout">
-                <Header style={{ padding: 0, background: colorBgContainer }}>
+                <Header style={{ padding: 5, background: colorBgContainer }}>
                     {React.createElement(collapsed ? MenuUnfoldOutlined : MenuFoldOutlined, {
                         className: 'trigger',
                         onClick: () => setCollapsed(!collapsed),
@@ -81,7 +68,8 @@ const Homepage = () => {
                         background: colorBgContainer,
                     }}
                 >
-                    Content
+                    {!syllabusLoading ? syllabusData.syllabus.map(({weekNum,outline,file}) =>(<HomepageContent weekNum={weekNum} outline={outline} file={file}></HomepageContent> )
+                    ) : <p>loading</p>}
                 </Content>
             </Layout>
         </Layout>

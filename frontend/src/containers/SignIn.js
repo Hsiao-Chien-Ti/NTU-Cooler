@@ -13,7 +13,7 @@ const Wrapper = styled.div`
     width: 500px;
     margin: auto;`
 const SignIn = () => {
-    const { me, setMe, setSignedIn, displayStatus, signIn,loginData } = useAll();
+    const { user,setUser, displayStatus, signIn,loginData } = useAll();
     const navigate = useNavigate();
     const handleLogin = async(s) => {
         console.log(s)
@@ -40,8 +40,9 @@ const SignIn = () => {
     useEffect(()=>{
         if(loginData!=undefined)
         {
-            setSignedIn(loginData.login)
-            if(!loginData.login)
+            console.log(loginData)
+            setUser(loginData.login)
+            if(!loginData.login.login)
             {
                 displayStatus({
                     type: "error",

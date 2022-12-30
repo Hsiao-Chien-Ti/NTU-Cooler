@@ -1,48 +1,29 @@
 import { useState, useEffect } from "react";
 import { createContext, useContext } from "react";
-import { useLazyQuery, useMutation } from '@apollo/react-hooks';
-import { LOGIN_MUTATION } from "../../graphql";
+import { useQuery, useMutation } from '@apollo/react-hooks';
+import { LOGIN_MUTATION,SYLLABUS_QUERY,SYLLABUS_SUBSCRIPTION } from "../../graphql";
 import { message } from "antd";
 import { useNavigate } from 'react-router-dom';
 const LOCALSTORAGE_KEY = "save-me";
 const savedMe = localStorage.getItem(LOCALSTORAGE_KEY);
 
 const AllContext = createContext({
-    me: "",
-    signedIn: false,
+    user: {login:false},
     signIn:[],
     status:{},
     displayStatus:()=>{},
-    loginData:{}
+    loginData:{},
+    syllabusData:[],
+    syllabusLoading:false
 });
 const AllProvider = (props) => {
-    const [me, setMe] = useState(savedMe || "");
-    const [signedIn, setSignedIn] = useState(false);
+    const [user, setUser] = useState(savedMe || {login:false});
     const [signIn,{data:loginData}] = useMutation(LOGIN_MUTATION);
-
-    // useEffect(()=>{
-    //     if(loginData!=undefined)
-    //     {
-    //         setSignedIn(loginData.login)
-    //         if(!loginData.login)
-    //         {
-    //             displayStatus({
-    //                 type: "error",
-    //                 msg: "Invalid student ID or password",
-    //                 duration:1
-    //             });   
-    //         }
-    //         else
-    //         {
-    //             navigate('/homepage')
-    //         }
-    //     }
-    // },[loginData])
     useEffect(() => {
-        if (signedIn) {
-            localStorage.setItem(LOCALSTORAGE_KEY, me);
+        if (user.login) {
+            localStorage.setItem(LOCALSTORAGE_KEY, user);
         }
-    }, [me, signedIn]);
+    }, [user]);
     const [status, setStatus] = useState({});
     const displayStatus = (s) => {
         if (s.msg) {
@@ -64,10 +45,28 @@ const AllProvider = (props) => {
     useEffect(() => {
         displayStatus(status)
     }, [status])
+    const { data:syllabusData,loading: syllabusLoading} = useQuery(SYLLABUS_QUERY);
+    console.log(syllabusData)
+    // useEffect(() => {
+    //     try {
+    //       subscribeToMore({
+    //         document: SYLLABUS_SUBSCRIPTION,
+    //         updateQuery: (prev, { subscriptionData }) => {
+    //           if (!subscriptionData.data) return prev;
+    //           const newSyllabus = subscriptionData.data.syllabus
+    //           console.log(newSyllabus)
+    //           return {
+    //             ...prev,
+    //             posts: [newSyllabus, ...prev.syllabus],
+    //           };
+    //         },
+    //       });
+    //     } catch (e) {}
+    //   }, [subscribeToMore]);
     return (
         <AllContext.Provider
             value={{
-                me, signedIn,setSignedIn,signIn,status,displayStatus,loginData
+                user, setUser,signIn,status,displayStatus,loginData,syllabusData,syllabusLoading
             }}
             {...props}
         />

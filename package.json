@@ -4,5 +4,9 @@
   "main": "index.js",
   "repository": "git@github.com:Hsiao-Chien-Ti/NTU-Cooler.git",
   "author": "Hsiao-Chien-Ti <0410adi@gmail.com>",
-  "license": "MIT"
+  "license": "MIT",
+  "scripts": {
+    "start": "cd frontend && yarn start",
+    "server": "cd backend && yarn start"
+    }
 }

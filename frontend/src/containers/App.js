@@ -9,11 +9,8 @@ import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import Announcement from './Announcement';
 
 const App = () => {
-    const { signedIn } = useAll()
+    const { user } = useAll()
     return (
-        // <>
-        // {signedIn ? <Homepage /> : <SignIn />}
-        // </>
         <Router>
             <Routes>
                 <Route path="/" element={<SignIn />} />

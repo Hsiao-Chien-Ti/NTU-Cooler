@@ -1,10 +1,14 @@
-// import { gql } from '@apollo/client';
+import { gql } from '@apollo/client';
 
-// export const MESSAGE_SUBSCRIPTION = gql`
-//   subscription createChatBox($name1: String!, $name2: String!) {
-//   message(name1:$name1,name2:$name2) {
-//         sender
-//         body
-//   }
-//   }
-// `;
+export const SYLLABUS_SUBSCRIPTION = gql`
+  subscription syllabus {
+    syllabus {
+      weekNum
+      outline
+      file{
+        fileName
+        fileLink
+      }
+    }
+  }
+`;

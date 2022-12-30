@@ -1,9 +1,9 @@
 import mongoose from "mongoose";
 import { Schema } from "mongoose";
 const SyllabusSchema = new Schema({
-    weeknum: { type: Number },
+    weekNum: { type: String },
     outline: { type: String },
-    file: [{ fileName: { type: String }, file: { type: String } }]
+    file: [{ fileName: { type: String }, fileLink: { type: String } }]
 });
 const SyllabusModel = mongoose.model('Syllabus', SyllabusSchema);
 

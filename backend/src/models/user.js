@@ -5,6 +5,7 @@ const UserSchema = new Schema({
     studentID:{type:String},
     passwd:{type:String},
     groupNum:{type:Number},
+    login:{type:Boolean}
 });
 const UserModel = mongoose.model('User', UserSchema);
 
