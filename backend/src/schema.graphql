@@ -107,8 +107,12 @@ type Message {
   hidden: Boolean
 }
 
+type AttendantInfo {
+  name: String!
+  studentID: String!
+}
 type Mutation {
-  createInfo(name: String, courseID: String!, attendants: [String]): Info!
+  createInfo(name: String, courseID: String!): Info!
   createUser(
     name: String!
     studentID: String!
