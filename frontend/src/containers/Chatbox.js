@@ -5,7 +5,7 @@ import { Input, Tabs } from "antd";
 import ChatModal from "../components/Chatbox/ChatboxContent";
 import { useEffect, useState, useRef } from "react";
 import { subscribe } from "graphql";
-
+import Menu from "antd";
 import {
   MenuFoldOutlined,
   MenuUnfoldOutlined,
@@ -42,7 +42,7 @@ const ChatRoom = () => {
     messages,
     allRooms,
     chatBoxData,
-    loading,
+    chatBoxLoading,
     currentChat,
     setCurrentChat,
     sendMessage,
@@ -219,9 +219,31 @@ const ChatRoom = () => {
             background: colorBgContainer,
           }}
         >
-          {!loading ? (
+          <Sider trigger={null} collapsible collapsed={collapsed}>
+            <div className="logo" />
+            <Menu
+              theme="dark"
+              mode="inline"
+              defaultSelectedKeys={[]}
+              onClick={(e) => {
+                if (e.key === "_add_") setModalOpen(true);
+                else handleOnChange(e.key);
+              }}
+            >
+              {allRooms.map((room) => {
+                <Menu.Item key={room.name}>
+                  <span>room.name</span>
+                  <Link to={`/course/message/${room.name}`} />
+                </Menu.Item>;
+              })}
+              <Menu.Item key="_add_">
+                <span>+</span>
+              </Menu.Item>
+            </Menu>
+          </Sider>
+          {!chatBoxLoading ? (
             <>
-              <ChatBoxesWrapper
+              {/* <ChatBoxesWrapper
                 type="editable-card"
                 onChange={(key) => {
                   handleOnChange(key);
@@ -237,7 +259,8 @@ const ChatRoom = () => {
                   }
                 }}
                 items={chatBoxes}
-              />
+              /> */}
+              <Outlet />
               <ChatModal
                 me={user.studentID}
                 open={modalOpen}
