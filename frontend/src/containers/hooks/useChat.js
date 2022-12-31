@@ -4,6 +4,7 @@ import {
   CREATE_CHATBOX_MUTATION,
   MESSAGE_SUBSCRIPTION,
   CREATE_MESSAGE_MUTATION,
+  CHATBOX_OF_USER_QUERY,
 } from "../../graphql";
 import { useState, useEffect, useContext, createContext } from "react";
 import { message } from "antd";
@@ -16,12 +17,11 @@ const savedMe = localStorage.getItem(LOCALSTORAGE_KEY);
 
 const ChatContext = createContext({
   me: "",
-  friend: "",
+  //friend: "",
+  currentChat: "",
   messages: [],
   //status: {},
-  signedIn: false,
-  users: [],
-  data: {},
+  chatBoxData: {},
   loading: false,
   startChat: () => {},
   sendMessage: () => {},
@@ -31,24 +31,37 @@ const ChatContext = createContext({
   displayStatus: () => {},
   setStatus: () => {},
   createGroup: () => {},
-  setFriend: () => {},
+  setCurrentChat: () => {},
 });
 const ChatProvider = (props) => {
   //const [me, setMe] = useState(savedMe || "");
-  const { user } = useAll();
+  const { user, courseID } = useAll();
   const [me, setMe] = useState("KKK");
-  const [friend, setFriend] = useState("");
+  const [currentChat, setCurrentChat] = useState("");
   const [messages, setMessages] = useState([]);
   const [status, setStatus] = useState({ type: "", msg: "" });
-  const [signedIn, setSignedIn] = useState(false);
-  const [users, setUsers] = useState([]);
   const [allRooms, setAllRooms] = useState([]);
-  const { data, loading, subscribeToMore, refetch } = useQuery(CHATBOX_QUERY, {
+  const {
+    data: chatBoxData,
+    loading: chatBoxLoading,
+    subscribeToMore,
+    refetch,
+  } = useQuery(CHATBOX_QUERY, {
     variables: {
-      name: makeName(me, friend),
+      name: currentChat,
+      courseID,
+      studentID: user.studentID,
     },
   });
-  const [logChatBox] = useQuery;
+  const { data: listOfChatboxes, loading: listLoading } = useQuery(
+    CHATBOX_OF_USER_QUERY,
+    {
+      variables: {
+        studentID: user.studentID,
+        courseID,
+      },
+    }
+  );
   const [startChat] = useMutation(CREATE_CHATBOX_MUTATION);
   const [sendMessage] = useMutation(CREATE_MESSAGE_MUTATION);
   const displayStatus = (s) => {
@@ -74,32 +87,38 @@ const ChatProvider = (props) => {
   };
 
   useEffect(() => {
+    if (!listLoading) setAllRooms(listOfChatboxes);
+  }, [listOfChatboxes]);
+
+  useEffect(() => {
     displayStatus(status);
   }, [status]);
   useEffect(() => {
-    console.log(me, " ", friend);
-    if (data) {
-      console.log("DATA: ", data);
-      if (data.chatbox && friend) setMessages(data.chatbox.messages);
+    console.log(me, " ", currentChat);
+    if (chatBoxData) {
+      console.log("DATA: ", chatBoxData);
+      if (chatBoxData.chatbox && currentChat)
+        setMessages(chatBoxData.chatbox.messages);
     }
-  }, [data]);
+  }, [chatBoxData]);
   useEffect(() => {
-    if (friend) {
-      console.log(me + "!!!!!" + friend);
+    if (currentChat) {
+      console.log(me + "!!!!!" + currentChat);
       refetch({
-        name: makeName(me, friend),
+        name: currentChat,
+        courseID,
       });
       //console.log("DATA");
-      if (data) {
+      if (chatBoxData) {
         console.log("reset message");
-        setMessages(data.chatbox.messages);
+        setMessages(chatBoxData.chatbox.messages);
       }
-      if (!allRooms.includes(friend)) {
+      if (!allRooms.includes(currentChat)) {
         try {
-          setAllRooms([...allRooms, friend]);
+          setAllRooms([...allRooms, currentChat]);
           subscribeToMore({
             document: MESSAGE_SUBSCRIPTION,
-            variables: { from: me, to: friend, courseID },
+            variables: { from: me, to: currentChat, courseID },
             updateQuery: (prev, { subscriptionData }) => {
               if (!subscriptionData.data) {
                 console.log("no data");
@@ -120,7 +139,7 @@ const ChatProvider = (props) => {
               //   };
               return {
                 chatbox: {
-                  name: makeName(me, friend),
+                  name: currentChat,
                   messages: [...prev.chatbox.messages, newMessage],
                 },
               };
@@ -131,7 +150,7 @@ const ChatProvider = (props) => {
         }
       }
     }
-  }, [friend]);
+  }, [currentChat]);
   const sendData = (settings) => {};
   const createGroup = () => {
     sendData({ type: "USER", payload: {} });
@@ -162,23 +181,16 @@ const ChatProvider = (props) => {
   //   sendData({ type: "CLEAR", payload: { name } });
   // };
   useEffect(() => {
-    if (signedIn) {
-      localStorage.setItem(LOCALSTORAGE_KEY, me);
-    }
-  }, [me, signedIn]);
+    localStorage.setItem(LOCALSTORAGE_KEY, me);
+  }, [me]);
   return (
     <ChatContext.Provider
       value={{
         //status,
-        users,
-        me,
-        friend,
-        signedIn,
+        currentChat,
+        setCurrentChat,
         messages,
-        data,
-        loading,
-        setMe,
-        setSignedIn,
+        chatBoxData,
         setStatus,
         sendMessage,
         displayStatus,
@@ -186,7 +198,6 @@ const ChatProvider = (props) => {
         setMessages,
         subscribeToMore,
         createGroup,
-        setFriend,
       }}
       {...props}
     />

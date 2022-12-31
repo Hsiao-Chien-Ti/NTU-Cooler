@@ -40,17 +40,18 @@ const FootRef = styled.div`
 const ChatRoom = () => {
   const {
     messages,
-    me,
-    users,
-    data,
+    allRooms,
+    chatBoxData,
     loading,
-    friend,
-    setFriend,
+    currentChat,
+    setCurrentChat,
     sendMessage,
     startChat,
     setStatus,
     createGroup,
   } = useChat();
+  const { logout, attendants, user, courseID } = useAll();
+
   const [modalOpen, setModalOpen] = useState(false);
   const [msgSent, setMsgSent] = useState(false);
   const [chatBoxes, setChatBoxes] = useState([]);
@@ -58,7 +59,6 @@ const ChatRoom = () => {
   const {
     token: { colorBgContainer },
   } = theme.useToken();
-  const { logout, courseID } = useAll();
   const msgFooter = useRef(null);
   const bodyRef = useRef(null);
 
@@ -75,13 +75,13 @@ const ChatRoom = () => {
     const chat = renderChat();
     let newChatBoxes = chatBoxes;
     newChatBoxes.forEach((element, index) => {
-      if (element.label === friend) {
+      if (element.label === currentChat) {
         element.children = chat;
       }
     });
     setChatBoxes(newChatBoxes);
     setMsgSent(true);
-  }, [messages, friend]);
+  }, [messages, currentChat]);
   //const renderChat = (chat) => <div>test</div>;
   const renderChat = () => {
     console.log("re-render");
@@ -92,7 +92,7 @@ const ChatRoom = () => {
       <>
         {messages.map((mes, i) => (
           <Message
-            isMe={mes.sender === me ? true : false}
+            isMe={mes.sender === user.name ? true : false}
             message={mes.body}
             key={i}
           />
@@ -126,12 +126,13 @@ const ChatRoom = () => {
         : activeKey
       : "";
   };
-  const testChat = (name1, name2) => {
+  const testChat = (name, participants) => {
     try {
       const box = startChat({
         variables: {
-          name1,
-          name2,
+          name,
+          courseID,
+          participants,
         },
       });
       return box;
@@ -141,7 +142,7 @@ const ChatRoom = () => {
   };
   const handleOnChange = (key) => {
     if (key) {
-      setFriend(key);
+      setCurrentChat(key);
       const chat = renderChat();
       let newChatBoxes = chatBoxes;
       newChatBoxes.forEach((element, index) => {
@@ -225,24 +226,29 @@ const ChatRoom = () => {
                 onChange={(key) => {
                   handleOnChange(key);
                 }}
-                activeKey={friend}
+                activeKey={currentChat}
                 onEdit={(targetKey, action) => {
                   if (action === "add") {
+                    console.log(attendants);
                     createGroup();
                     setModalOpen(true);
                   } else if (action === "remove") {
-                    setFriend(removeChatBox(targetKey, friend));
+                    setCurrentChat(removeChatBox(targetKey, currentChat));
                   }
                 }}
                 items={chatBoxes}
               />
               <ChatModal
+                me={user.studentID}
                 open={modalOpen}
-                onCreate={async ({ name, settings }) => {
+                onCreate={async ({ name, participants }) => {
                   console.log(name);
-                  setFriend(name);
-                  const CurrentChatBox = testChat({ name1: me, name2: name });
-                  console.log(data);
+                  setCurrentChat(name);
+                  const CurrentChatBox = testChat({
+                    name,
+                    participants,
+                  });
+                  console.log(chatBoxData);
                   console.log(CurrentChatBox);
                   createChatBox(name);
                   setModalOpen(false);
@@ -251,8 +257,7 @@ const ChatRoom = () => {
                 onCancel={() => {
                   setModalOpen(false);
                 }}
-                //users={users}
-                users={users}
+                users={attendants}
               />
               <Input.Search
                 ref={bodyRef}
@@ -268,9 +273,10 @@ const ChatRoom = () => {
                   }
                   sendMessage({
                     variables: {
-                      name: me,
-                      to: friend,
+                      name: user.studentID,
+                      to: currentChat,
                       body: msg,
+                      courseID,
                     },
                   });
                   //setBody("");

@@ -4,7 +4,10 @@ export const INFO_QUERY = gql`
   query info($courseID: String!) {
     info(courseID: $courseID) {
       name
-      attendants
+      attendants {
+        name
+        studentID
+      }
       courseID
     }
   }
