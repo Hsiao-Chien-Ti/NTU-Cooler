@@ -5,6 +5,6 @@ const InfoSchema = new Schema({
   attendants: [{ type: String }],
   courseID: { type: String },
 });
-const InfoModel = mongoose.model("File", InfoSchema);
+const InfoModel = mongoose.model("Info", InfoSchema);
 
 export default InfoModel;
