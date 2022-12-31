@@ -47,10 +47,11 @@ const AllProvider = (props) => {
         }
     },[loginData])
     useEffect(() => {
-        if (user.login) {
-            localStorage.setItem(LOCALSTORAGE_KEY, JSON.stringify(user));
-            // console.log(JSON.parse(localStorage.getItem(LOCALSTORAGE_KEY)))
-        }
+        localStorage.setItem(LOCALSTORAGE_KEY, JSON.stringify(user));
+        // if (user.login) {
+            
+        //     // console.log(JSON.parse(localStorage.getItem(LOCALSTORAGE_KEY)))
+        // }
     }, [user]);
     function logout(e){
         if(e.key==6)

@@ -14,6 +14,7 @@ import { BrowserRouter as Router, Route, Link } from "react-router-dom";
 import React, { useEffect } from 'react';
 import { useState } from 'react';
 import { useAll } from './hooks/useAll';
+import { useNavigate } from 'react-router-dom';
 const { Header, Sider, Content } = Layout;
 const Grade = () => {
     const [collapsed, setCollapsed] = useState(false);
@@ -22,9 +23,14 @@ const Grade = () => {
     } = theme.useToken();
     const { gradeLoading, gradeData,getGrade,subject,user ,logout} = useAll()
     useEffect(()=>{
-        getGrade({ studentID: user.studentID, subject: subject })
+        if(!user.login)
+        {
+            navigate('/')
+            return
+        }
+        getGrade({variables:{ studentID: user.studentID, subject: subject }})
     },[])
-
+    const navigate = useNavigate();
     return (
         <Layout>
             <Sider trigger={null} collapsible collapsed={collapsed}>

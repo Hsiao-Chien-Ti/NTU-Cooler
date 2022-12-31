@@ -14,14 +14,19 @@ import React, { useEffect } from 'react';
 import { useState } from 'react';
 import { useAll } from './hooks/useAll';
 import AnnouncementContent from '../components/AnnouncementContent';
-
+import { useNavigate } from 'react-router-dom';
 const { Header, Sider, Content } = Layout;
 const Announcement = () => {
     const [collapsed, setCollapsed] = useState(false);
     const {
         token: { colorBgContainer },
     } = theme.useToken();
-    const { announcementLoading, announcementData,logout } = useAll()
+    const { announcementLoading, announcementData,logout,user } = useAll()
+    const navigate = useNavigate();
+    useEffect(()=>{
+        if(!user.login)
+            navigate('/')
+    },[])
     return (
         <Layout>
             <Sider trigger={null} collapsible collapsed={collapsed}>
