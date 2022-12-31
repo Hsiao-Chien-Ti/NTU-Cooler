@@ -1,5 +1,18 @@
 import { gql } from "@apollo/client";
 
+const CREATE_INFO_MUTATION = gql`
+  mutation createInfo(
+    $name: String
+    $courseID: String!
+    $attendants: [String]
+  ) {
+    createInfo(name: $name, courseID: $courseID, attendants: $attendants) {
+      name
+      courseID
+      attendants
+    }
+  }
+`;
 const CREATE_USER_MUTATION = gql`
   mutation createUser(
     $name: String!
@@ -103,9 +116,16 @@ const CREATE_GRADE_MUTATION = gql`
 `;
 
 const CREATE_CHATBOX_MUTATION = gql`
-  mutation createChatBox($name1: String!, $name2: String!) {
-    createChatBox(name1: $name1, name2: $name2) {
+  mutation createChatBox(
+    $name: String!
+    $courseID: String!
+    $participants: [String]
+  ) {
+    name: String
+    createChatBox(name: $name, courseID: $courseID) {
       name
+      courseID
+      participants
       messages {
         sender
         body
@@ -115,8 +135,13 @@ const CREATE_CHATBOX_MUTATION = gql`
 `;
 
 const CREATE_MESSAGE_MUTATION = gql`
-  mutation createMessage($name: String!, $to: String!, $body: String!) {
-    createMessage(name: $name, to: $to, body: $body) {
+  mutation createMessage(
+    $sender: String!
+    $to: String!
+    $body: String!
+    $courseID: String!
+  ) {
+    createMessage(sender: $sender, to: $to, body: $body, courseID: $courseID) {
       sender
       body
     }
@@ -124,6 +149,7 @@ const CREATE_MESSAGE_MUTATION = gql`
 `;
 
 export {
+  CREATE_INFO_MUTATION,
   CREATE_MESSAGE_MUTATION,
   CREATE_CHATBOX_MUTATION,
   CREATE_GRADE_MUTATION,

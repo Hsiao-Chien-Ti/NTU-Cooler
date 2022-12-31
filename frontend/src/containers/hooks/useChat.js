@@ -97,7 +97,7 @@ const ChatProvider = (props) => {
           setAllRooms([...allRooms, friend]);
           subscribeToMore({
             document: MESSAGE_SUBSCRIPTION,
-            variables: { from: me, to: friend },
+            variables: { from: me, to: friend, courseID },
             updateQuery: (prev, { subscriptionData }) => {
               if (!subscriptionData.data) {
                 console.log("no data");
