@@ -2,6 +2,7 @@ import UserModel from "../models/user";
 import SyllabusModel from "../models/syllabus"
 import FileModel from "../models/file";
 import AnnouncementModel from "../models/announcement";
+import GradeModel from "../models/grade"
 const Mutation = {
     createUser: async (parent, { name, studentID, passwd, groupNum }) => {
         let user = await UserModel.findOne({ studentID: studentID });
@@ -42,6 +43,12 @@ const Mutation = {
         if (!announcement)
             announcement = await new AnnouncementModel({ time:time, title:title, content:content}).save();
         return announcement
+    },
+    createGrade: async (parent, { studentID,subject,itemName,type,score,weight }) => {
+        let grade = await GradeModel.findOne({ studentID:studentID,subject:subject,itemName:itemName});
+        if (!grade)
+            grade = await new GradeModel({ studentID:studentID,subject:subject,itemName:itemName,type:type,score:score,weight:weight}).save();
+        return grade
     },
 }
 export default Mutation

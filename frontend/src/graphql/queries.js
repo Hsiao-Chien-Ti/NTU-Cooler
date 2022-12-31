@@ -21,3 +21,16 @@ export const ANNOUNCEMENT_QUERY = gql`
     }
     }
 `;
+
+export const GRADE_QUERY = gql`
+  query grade($studentID: String!, $subject: String!){
+    grade(studentID: $studentID, subject: $subject){
+        studentID
+        subject
+        itemName
+        type
+        score
+        weight
+    }
+  }
+`;

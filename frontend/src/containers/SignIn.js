@@ -13,7 +13,7 @@ const Wrapper = styled.div`
     width: 500px;
     margin: auto;`
 const SignIn = () => {
-    const { user,setUser, displayStatus, signIn,loginData } = useAll();
+    const { user,setUser, displayStatus, signIn,loginData,getGrade,subject } = useAll();
     const navigate = useNavigate();
     const handleLogin = async(s) => {
         const{studentID,passwd}=s
@@ -34,12 +34,14 @@ const SignIn = () => {
         else
         {
             await signIn({ variables: { studentID:studentID,passwd:passwd } })
+            
         }
     }
     useEffect(()=>{
         if(loginData!=undefined)
         {
             setUser(loginData.login)
+            
             if(!loginData.login.login)
             {
                 displayStatus({
@@ -50,6 +52,7 @@ const SignIn = () => {
             }
             else
             {
+
                 navigate('/homepage')
             }
         }
