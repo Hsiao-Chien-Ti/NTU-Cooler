@@ -1,8 +1,12 @@
 import { gql } from "@apollo/client";
 
 const CREATE_INFO_MUTATION = gql`
-  mutation createInfo($name: String, $courseID: String!) {
-    createInfo(name: $name, courseID: $courseID) {
+  mutation createInfo(
+    $name: String
+    $courseID: String!
+    $attendants: [String]
+  ) {
+    createInfo(name: $name, courseID: $courseID, attendants: $attendants) {
       name
       courseID
       attendants
