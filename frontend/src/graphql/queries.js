@@ -9,6 +9,16 @@ export const INFO_QUERY = gql`
     }
   }
 `;
+
+export const CHATBOX_OF_USER_QUERY = gql`
+  query userChatbox($studentID: String!, $courseID: String!) {
+    userChatbox(studentID: $studentID, courseID: $courseID) {
+      chatboxes {
+        name
+      }
+    }
+  }
+`;
 export const SYLLABUS_QUERY = gql`
   query {
     syllabus {

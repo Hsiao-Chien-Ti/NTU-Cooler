@@ -21,6 +21,10 @@ const Query = {
       }).save();
     return user;
   },
+  userChatbox: async (parent, { studentID, courseID }) => {
+    let user = await UserModel.findOne({ studentID });
+    return user.chatbox.filter((box) => box.courseID == courseID);
+  },
   syllabus: async (parent) => {
     let syllabus = await SyllabusModel.find({});
     return syllabus;
