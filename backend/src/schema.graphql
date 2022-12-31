@@ -1,6 +1,7 @@
 type Query {
   user(name: String!, studentID: String!, passwd: String!, groupNum: Int): User!
   syllabus:[Syllabus]
+  announcement:[Announcement]
 }
 type User {
   name: String
@@ -20,13 +21,15 @@ type File{
   fileName:String!
   fileLink:String!
 }
+type Announcement{
+  time:String!
+  title:String!
+  content:String
+}
 type Mutation {
   createUser(name: String!, studentID: String!, passwd: String!, groupNum: Int): User!
   login(studentID: String!, passwd: String!): User!
   createSyllabus(weekNum:String,outline:String):Syllabus!
   createFile(type:String!,info:String!,fileName:String!,fileLink:String!):File!
-}
-
-type Subscription {
-  syllabus: Syllabus!
+  createAnnouncement(time:String!, title:String!, content:String):Announcement!
 }

@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 import { Schema } from "mongoose";
 const AnnouncementSchema = new Schema({
-    date: { type: Date },
+    time: { type: String },
     title: { type: String },
     content: { type: String }
 });

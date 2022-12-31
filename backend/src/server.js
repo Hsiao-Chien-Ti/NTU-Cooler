@@ -4,6 +4,8 @@ import { useServer } from 'graphql-ws/lib/use/ws'
 import { WebSocketServer } from 'ws'
 import * as fs from 'fs'
 import UserModel from './models/user'
+import SyllabusModel from './models/syllabus'
+import AnnouncementModel from './models/announcement'
 import Mutation from './resolvers/Mutation';
 import Query from './resolvers/Query'
 
@@ -22,6 +24,8 @@ const yoga = createYoga({
     }),
     context: {
         UserModel,
+        SyllabusModel,
+        AnnouncementModel,
         pubsub,
     },
     // graphqlEndpoint: '/',   // uncomment this to send the app to: 4000/ otherwise: 4000/graphql

@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { createContext, useContext } from "react";
 import { useQuery, useMutation } from '@apollo/react-hooks';
-import { LOGIN_MUTATION,SYLLABUS_QUERY,SYLLABUS_SUBSCRIPTION } from "../../graphql";
+import { LOGIN_MUTATION,SYLLABUS_QUERY,ANNOUNCEMENT_QUERY} from "../../graphql";
 import { message } from "antd";
 import { useNavigate } from 'react-router-dom';
 const LOCALSTORAGE_KEY = "save-me";
@@ -14,7 +14,9 @@ const AllContext = createContext({
     displayStatus:()=>{},
     loginData:{},
     syllabusData:[],
-    syllabusLoading:false
+    syllabusLoading:false,
+    announcementData:[],
+    announcementLoading:false
 });
 const AllProvider = (props) => {
     const [user, setUser] = useState(savedMe || {login:false});
@@ -46,26 +48,11 @@ const AllProvider = (props) => {
         displayStatus(status)
     }, [status])
     const { data:syllabusData,loading: syllabusLoading} = useQuery(SYLLABUS_QUERY);
-    // useEffect(() => {
-    //     try {
-    //       subscribeToMore({
-    //         document: SYLLABUS_SUBSCRIPTION,
-    //         updateQuery: (prev, { subscriptionData }) => {
-    //           if (!subscriptionData.data) return prev;
-    //           const newSyllabus = subscriptionData.data.syllabus
-    //           console.log(newSyllabus)
-    //           return {
-    //             ...prev,
-    //             posts: [newSyllabus, ...prev.syllabus],
-    //           };
-    //         },
-    //       });
-    //     } catch (e) {}
-    //   }, [subscribeToMore]);
+    const { data:announcementData,loading: announcementLoading} = useQuery(ANNOUNCEMENT_QUERY);
     return (
         <AllContext.Provider
             value={{
-                user, setUser,signIn,status,displayStatus,loginData,syllabusData,syllabusLoading
+                user, setUser,signIn,status,displayStatus,loginData,syllabusData,syllabusLoading,announcementData,announcementLoading
             }}
             {...props}
         />

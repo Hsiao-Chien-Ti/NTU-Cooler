@@ -12,3 +12,12 @@ export const SYLLABUS_QUERY = gql`
     }
     }
 `;
+export const ANNOUNCEMENT_QUERY = gql`
+    query {
+      announcement{
+        time
+        title
+        content
+    }
+    }
+`;

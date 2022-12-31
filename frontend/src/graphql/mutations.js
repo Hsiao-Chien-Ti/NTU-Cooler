@@ -41,3 +41,12 @@ export const CREATE_FILE_MUTATION = gql`
   }
 }
 `;
+export const CREATE_ANNOUNCEMENT_MUTATION = gql`
+    mutation createAnnouncement($time: String!, $title: String!,$content:String) {
+    createSyllabus(time:$time,title:$title,content:$content) {
+        time
+        title
+        content
+  }
+}
+`;
