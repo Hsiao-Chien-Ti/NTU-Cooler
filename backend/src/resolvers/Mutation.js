@@ -33,6 +33,7 @@ const Mutation = {
         groupNum: groupNum,
         login: true,
         isTeacher: isTeacher,
+        chatbox: [],
       }).save();
     return user;
   },
@@ -165,6 +166,7 @@ const Mutation = {
         score: score,
         weight: weight,
       },
+    });
     return grade;
   },
 

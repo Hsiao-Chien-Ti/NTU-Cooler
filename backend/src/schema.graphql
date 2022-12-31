@@ -76,6 +76,37 @@ type AttendantInfo {
   name: String!
   studentID: String!
 }
+type Announcement {
+  time: String!
+  title: String!
+  content: String
+}
+type Grade {
+  studentID: String!
+  subject: String!
+  itemName: String!
+  type: Boolean!
+  score: Float!
+  weight: Float
+}
+
+type ChatBox {
+  type: Boolean
+  courseID: String!
+  name: String!
+  messages: [Message!]!
+  notAccess: [String]
+  pinMsg: Message
+  participants: [String]
+}
+
+type Message {
+  sender: String!
+  body: String!
+  groupnum: Int
+  hidden: Boolean
+}
+
 type Mutation {
   createInfo(name: String, courseID: String!): Info!
   createUser(

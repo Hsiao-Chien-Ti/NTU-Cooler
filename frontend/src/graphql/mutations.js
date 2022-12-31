@@ -70,6 +70,7 @@ const CREATE_FILE_MUTATION = gql`
     createFile(
       type: $type
       info: $info
+      outline: $outline
       fileName: $fileName
       fileLink: $fileLink
     ) {
@@ -109,7 +110,6 @@ const CREATE_GRADE_MUTATION = gql`
     score
     weight
   }
-}
 `;
 
 const CREATE_CHATBOX_MUTATION = gql`
