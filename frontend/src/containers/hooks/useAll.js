@@ -15,6 +15,7 @@ import {
   ANNOUNCEMENT_SUBSCRIPTION,
   CREATE_GRADE_MUTATION,
   GRADE_SUBSCRIPTION,
+  INFO_QUERY,
 } from "../../graphql";
 import { message } from "antd";
 import { useNavigate } from "react-router-dom";
@@ -23,6 +24,7 @@ const savedMe = JSON.parse(localStorage.getItem(LOCALSTORAGE_KEY));
 
 const AllContext = createContext({
   user: { login: false },
+  attendants: [],
   courseID: "",
   signIn: [],
   status: {},
@@ -54,7 +56,27 @@ const AllProvider = (props) => {
   });
   const [subject, setSubject] = useState("Introduction to Computer Network");
   const [courseID, setCourseID] = useState("EE1234");
+  const [attendants, setAttendants] = useState([]);
   const [signIn, { data: loginData }] = useMutation(LOGIN_MUTATION);
+  const { data: courseInfo, loading: infoLoading } = useQuery(INFO_QUERY, {
+    variables: {
+      courseID,
+    },
+  });
+  useEffect(() => {
+    if (!infoLoading) {
+      const users = courseInfo.info.attendants.map((person) => ({
+        value: person.studentID,
+        label: person.name,
+      }));
+      setAttendants(users);
+      console.log(courseInfo);
+    }
+  }, [courseInfo]);
+
+  // useEffect(() => {
+  //   console.log("attedants:", attendants);
+  // }, [attendants]);
   useEffect(() => {
     // console.log(loginData);
     if (loginData != undefined) {
@@ -197,6 +219,7 @@ const AllProvider = (props) => {
       value={{
         subject,
         user,
+        attendants,
         courseID,
         setUser,
         signIn,
