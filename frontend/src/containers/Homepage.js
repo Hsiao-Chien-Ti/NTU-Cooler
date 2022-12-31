@@ -5,7 +5,8 @@ import {
     FileOutlined,
     ScheduleOutlined,
     NotificationOutlined,
-    SolutionOutlined
+    SolutionOutlined,
+    LogoutOutlined
 } from '@ant-design/icons';
 import { Layout, Menu, theme } from 'antd';
 import { BrowserRouter as Router, Route, Link } from "react-router-dom";
@@ -20,7 +21,7 @@ const Homepage = () => {
     const {
         token: { colorBgContainer },
     } = theme.useToken();
-    const { syllabusLoading, syllabusData } = useAll()
+    const { syllabusLoading, syllabusData,logout } = useAll()
     return (
         <Layout>
             <Sider trigger={null} collapsible collapsed={collapsed}>
@@ -29,6 +30,7 @@ const Homepage = () => {
                     theme="dark"
                     mode="inline"
                     defaultSelectedKeys={['1']}
+                    onClick={logout}
                 >
                     <Menu.Item key="1">
                         <HomeOutlined />
@@ -54,6 +56,11 @@ const Homepage = () => {
                         <FileOutlined />
                         <span>Files</span>
                         <Link to="/files" />
+                    </Menu.Item>
+                    <Menu.Item key="6">
+                        <LogoutOutlined />
+                        <span>Logout</span>
+                        <Link to="/" />
                     </Menu.Item>
                 </Menu>
             </Sider>

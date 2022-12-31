@@ -6,7 +6,8 @@ import {
     FileOutlined,
     ScheduleOutlined,
     NotificationOutlined,
-    SolutionOutlined
+    SolutionOutlined,
+    LogoutOutlined
 } from '@ant-design/icons';
 import { Layout, Menu, theme } from 'antd';
 import { BrowserRouter as Router, Route, Link } from "react-router-dom";
@@ -19,7 +20,7 @@ const Grade = () => {
     const {
         token: { colorBgContainer },
     } = theme.useToken();
-    const { gradeLoading, gradeData,getGrade,subject,user } = useAll()
+    const { gradeLoading, gradeData,getGrade,subject,user ,logout} = useAll()
     useEffect(()=>{
         getGrade({ studentID: user.studentID, subject: subject })
     },[])
@@ -32,6 +33,7 @@ const Grade = () => {
                     theme="dark"
                     mode="inline"
                     defaultSelectedKeys={['4']}
+                    onClick={logout}
                 >
                     <Menu.Item key="1">
                         <HomeOutlined />
@@ -57,6 +59,11 @@ const Grade = () => {
                         <FileOutlined />
                         <span>Files</span>
                         <Link to="/files" />
+                    </Menu.Item>
+                    <Menu.Item key="6">
+                        <LogoutOutlined />
+                        <span>Logout</span>
+                        <Link to="/" />
                     </Menu.Item>
                 </Menu>
             </Sider>

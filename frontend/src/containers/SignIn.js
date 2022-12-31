@@ -34,29 +34,32 @@ const SignIn = () => {
         else
         {
             await signIn({ variables: { studentID:studentID,passwd:passwd } })
-            
         }
     }
     useEffect(()=>{
-        if(loginData!=undefined)
-        {
-            setUser(loginData.login)
-            
-            if(!loginData.login.login)
-            {
-                displayStatus({
-                    type: "error",
-                    msg: "Invalid student ID or password",
-                    duration:1
-                });   
-            }
-            else
-            {
-
-                navigate('/homepage')
-            }
-        }
-    },[loginData])
+        if(user.login)
+            navigate('/homepage')
+    },[user])
+    // useEffect(()=>{
+    //     console.log(loginData)
+    //     if(loginData!=undefined)
+    //     {
+    //         setUser(loginData.login)
+    //         if(!loginData.login.login)
+    //         {
+    //             displayStatus({
+    //                 type: "error",
+    //                 msg: "Invalid student ID or password",
+    //                 duration:1
+    //             });   
+    //         }
+    //         else
+    //         {
+    //             if(user.login)
+    //                 navigate('/homepage')
+    //         }
+    //     }
+    // },[loginData])
     return (
         <Wrapper>
             <Title />

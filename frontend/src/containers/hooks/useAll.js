@@ -20,18 +20,42 @@ const AllContext = createContext({
     gradeData: [],
     gradeLoading: false,
     getGrade: () => { },
-    subject:""
+    subject:"",
+    logout:()=>{}
 });
 const AllProvider = (props) => {
     const [user, setUser] = useState(savedMe || { login: false });
     const [subject,setSubject]=useState("Introduction to Computer Network")
     const [signIn, { data: loginData }] = useMutation(LOGIN_MUTATION);
+    useEffect(()=>{
+        console.log(loginData)
+        if(loginData!=undefined)
+        {
+            setUser(loginData.login)
+            if(!loginData.login.login)
+            {
+                displayStatus({
+                    type: "error",
+                    msg: "Invalid student ID or password",
+                    duration:1
+                });   
+            }
+            else
+            {
+
+            }
+        }
+    },[loginData])
     useEffect(() => {
         if (user.login) {
             localStorage.setItem(LOCALSTORAGE_KEY, JSON.stringify(user));
             // console.log(JSON.parse(localStorage.getItem(LOCALSTORAGE_KEY)))
         }
     }, [user]);
+    function logout(e){
+        if(e.key==6)
+            setUser({login:false})
+    }
     const [status, setStatus] = useState({});
     const displayStatus = (s) => {
         if (s.msg) {
@@ -62,7 +86,7 @@ const AllProvider = (props) => {
     return (
         <AllContext.Provider
             value={{
-                subject,user, setUser, signIn, status, displayStatus, loginData, syllabusData, syllabusLoading, announcementData, announcementLoading, gradeData, gradeLoading,getGrade
+                subject,user, setUser, signIn, status, displayStatus, loginData, syllabusData, syllabusLoading, announcementData, announcementLoading, gradeData, gradeLoading,getGrade, logout
             }}
             {...props}
         />
