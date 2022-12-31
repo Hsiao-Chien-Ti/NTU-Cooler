@@ -1,45 +1,58 @@
-import { gql } from '@apollo/client';
+import { gql } from "@apollo/client";
 
 export const SYLLABUS_QUERY = gql`
   query {
-    syllabus{
+    syllabus {
       weekNum
       outline
-      file{
+      file {
         fileName
         fileLink
       }
     }
-    }
+  }
 `;
 export const ANNOUNCEMENT_QUERY = gql`
-    query {
-      announcement{
-        time
-        title
-        content
+  query {
+    announcement {
+      time
+      title
+      content
     }
-    }
+  }
 `;
 
 export const GRADE_QUERY = gql`
-  query grade($studentID: String!, $subject: String!){
-    grade(studentID: $studentID, subject: $subject){
-        studentID
-        subject
-        itemName
-        score
-        weight
+  query grade($studentID: String!, $subject: String!) {
+    grade(studentID: $studentID, subject: $subject) {
+      studentID
+      subject
+      itemName
+      type
+      score
+      weight
     }
   }
 `;
 export const FILE_QUERY = gql`
-    query {
-      file{
-        type
-        info
-        fileName
-        fileLink
+  query {
+    file {
+      type
+      info
+      fileName
+      fileLink
     }
+  }
+`;
+
+export const CHATBOX_QUERY = gql`
+  query chatBox($name: String!) {
+    chatbox(name: $name) {
+      name
+      messages {
+        sender
+        body
+      }
     }
+  }
 `;
