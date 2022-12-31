@@ -14,6 +14,7 @@ const savedMe = JSON.parse(localStorage.getItem(LOCALSTORAGE_KEY));
 
 const AllContext = createContext({
   user: { login: false },
+  courseID: "",
   signIn: [],
   status: {},
   displayStatus: () => {},
@@ -29,8 +30,15 @@ const AllContext = createContext({
   logout: () => {},
 });
 const AllProvider = (props) => {
-  const [user, setUser] = useState(savedMe || { login: false });
+  //const [user, setUser] = useState(savedMe || { login: false });
+  const [user, setUser] = useState({
+    name: "KKK",
+    studentID: "KKK",
+    login: true,
+    passwd: "7",
+  });
   const [subject, setSubject] = useState("Introduction to Computer Network");
+  const [courseID, setCourseID] = useState("EE1234");
   const [signIn, { data: loginData }] = useMutation(LOGIN_MUTATION);
   useEffect(() => {
     console.log(loginData);
@@ -92,6 +100,7 @@ const AllProvider = (props) => {
       value={{
         subject,
         user,
+        courseID,
         setUser,
         signIn,
         status,

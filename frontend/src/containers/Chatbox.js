@@ -58,7 +58,7 @@ const ChatRoom = () => {
   const {
     token: { colorBgContainer },
   } = theme.useToken();
-  const { logout } = useAll();
+  const { logout, courseID } = useAll();
   const msgFooter = useRef(null);
   const bodyRef = useRef(null);
 
