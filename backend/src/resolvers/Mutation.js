@@ -16,6 +16,13 @@ const Mutation = {
       }).save();
     return info;
   },
+  addUserToCourse: async (parent, { courseID, studentID }) => {
+    let info = await InfoModel.findOne({ courseID });
+    let student = await UserModel.findOne({ studentID });
+    info.attendants.push({ studentID, name: student.name });
+    info.save();
+    return info.attendants;
+  },
   createUser: async (parent, { name, studentID, passwd, groupNum }) => {
     let user = await UserModel.findOne({ studentID: studentID });
     if (!user)

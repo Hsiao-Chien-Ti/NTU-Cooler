@@ -9,7 +9,7 @@ const ChatModal = ({ open, onCreate, onCancel, users, me }) => {
   //console.log("users:", users);
 
   const handleCreateGroup = () => {
-    setIsGroup(true);
+    setIsGroup(!isGroup);
   };
 
   return (
@@ -29,6 +29,7 @@ const ChatModal = ({ open, onCreate, onCancel, users, me }) => {
                 name: values.chatRoomName,
                 participants: [values.users, me],
               });
+              setIsGroup(false);
             } else {
               onCreate({
                 name: makeName(values.name, me),
@@ -75,7 +76,7 @@ const ChatModal = ({ open, onCreate, onCancel, users, me }) => {
               options={users}
             />
           </Form.Item>
-          <Button onClick={handleCreateGroup}>Create Group</Button>
+          <Button onClick={handleCreateGroup}>Single Chat</Button>
         </Form>
       ) : (
         <Form form={form} layout="vertical" name="form_in_modal">
