@@ -9,6 +9,7 @@ import { useState, useEffect, useContext, createContext } from "react";
 import { message } from "antd";
 
 import { makeName } from "./functions";
+import { useAll } from "./useAll";
 
 const LOCALSTORAGE_KEY = "save-me";
 const savedMe = localStorage.getItem(LOCALSTORAGE_KEY);
@@ -34,7 +35,8 @@ const ChatContext = createContext({
 });
 const ChatProvider = (props) => {
   //const [me, setMe] = useState(savedMe || "");
-  const [me, setMe] = useState("k");
+  const { user } = useAll();
+  const [me, setMe] = useState("KKK");
   const [friend, setFriend] = useState("");
   const [messages, setMessages] = useState([]);
   const [status, setStatus] = useState({ type: "", msg: "" });
@@ -46,7 +48,7 @@ const ChatProvider = (props) => {
       name: makeName(me, friend),
     },
   });
-
+  const [logChatBox] = useQuery;
   const [startChat] = useMutation(CREATE_CHATBOX_MUTATION);
   const [sendMessage] = useMutation(CREATE_MESSAGE_MUTATION);
   const displayStatus = (s) => {
