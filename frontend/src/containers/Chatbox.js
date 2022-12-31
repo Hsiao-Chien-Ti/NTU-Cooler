@@ -250,9 +250,13 @@ const ChatRoom = () => {
                   });
                   console.log(chatBoxData);
                   console.log(CurrentChatBox);
-                  createChatBox(name);
+                  let newName = name;
+                  if (participants.length === 2) {
+                    newName = participants[0];
+                  }
+                  createChatBox(newName);
                   setModalOpen(false);
-                  console.log("Start Chat with " + name);
+                  console.log("Start Chat with " + newName);
                 }}
                 onCancel={() => {
                   setModalOpen(false);

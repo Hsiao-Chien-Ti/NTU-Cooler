@@ -82,6 +82,7 @@ type Mutation {
     groupNum: Int
   ): User!
   login(studentID: String!, passwd: String!): User!
+  addUserToCourse(studentID: String!, courseID: String!): [AttendantInfo!]!
   createSyllabus(weekNum: String, outline: String): Syllabus!
   createFile(
     type: String!

@@ -50,10 +50,14 @@ const AllProvider = (props) => {
   });
   useEffect(() => {
     if (!infoLoading) {
-      const users = courseInfo.info.attendants.map((person) => ({
-        value: person.studentID,
-        label: person.name,
-      }));
+      const users = courseInfo.info.attendants
+        .filter((person) => person.studentID !== user.studentID)
+        .map((person) => {
+          return {
+            value: person.studentID,
+            label: person.name + " (" + person.studentID + ") ",
+          };
+        });
       setAttendants(users);
       console.log(courseInfo);
     }
