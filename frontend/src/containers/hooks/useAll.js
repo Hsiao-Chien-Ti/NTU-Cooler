@@ -11,7 +11,7 @@ import {
 import { message } from "antd";
 import { useNavigate } from "react-router-dom";
 const LOCALSTORAGE_KEY = "save-me";
-//const savedMe = JSON.parse(localStorage.getItem(LOCALSTORAGE_KEY));
+const savedMe = JSON.parse(localStorage.getItem(LOCALSTORAGE_KEY));
 
 const AllContext = createContext({
   user: { login: false },
@@ -32,12 +32,12 @@ const AllContext = createContext({
   fileLoading: false,
 });
 const AllProvider = (props) => {
-  const [user, setUser] = useState({ login: false });
+  const [user, setUser] = useState(savedMe || { login: false });
   const [subject, setSubject] = useState("Introduction to Computer Network");
   const [signIn, { data: loginData }] = useMutation(LOGIN_MUTATION);
   useEffect(() => {
     console.log(loginData);
-    if (loginData !== undefined) {
+    if (loginData != undefined) {
       setUser(loginData.login);
       if (!loginData.login.login) {
         displayStatus({
@@ -57,7 +57,7 @@ const AllProvider = (props) => {
     // }
   }, [user]);
   function logout(e) {
-    if (e.key === 6) setUser({ login: false });
+    if (e.key == 6) setUser({ login: false });
   }
   const [status, setStatus] = useState({});
   const displayStatus = (s) => {
