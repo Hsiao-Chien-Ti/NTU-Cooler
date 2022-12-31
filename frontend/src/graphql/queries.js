@@ -1,5 +1,14 @@
 import { gql } from "@apollo/client";
 
+export const INFO_QUERY = gql`
+  query info($courseID: String!) {
+    info(courseID: $courseID) {
+      name
+      attendants
+      courseID
+    }
+  }
+`;
 export const SYLLABUS_QUERY = gql`
   query {
     syllabus {
@@ -46,13 +55,18 @@ export const FILE_QUERY = gql`
 `;
 
 export const CHATBOX_QUERY = gql`
-  query chatBox($name: String!) {
-    chatbox(name: $name) {
+  query chatBox($name: String!, $courseID: String!, $studentID: String!) {
+    chatbox(name: $name, courseID: $courseID, studentID: $studentID) {
       name
       messages {
         sender
         body
       }
+      type
+      courseID
+      notAccess
+      pinMsg
+      participants
     }
   }
 `;
