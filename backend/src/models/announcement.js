@@ -1,10 +1,10 @@
 import mongoose from "mongoose";
 import { Schema } from "mongoose";
-const SyllabusSchema = new Schema({
+const AnnouncementSchema = new Schema({
     date: { type: Date },
     title: { type: String },
     content: { type: String }
 });
-const SyllabusModel = mongoose.model('Syllabus', SyllabusSchema);
+const AnnouncementModel = mongoose.model('Announcement', AnnouncementSchema);
 
-export default SyllabusModel
+export default AnnouncementModel

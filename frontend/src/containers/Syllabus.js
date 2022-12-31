@@ -71,8 +71,9 @@ const Syllabus = () => {
                         background: colorBgContainer,
                     }}
                 >
-                    {!syllabusLoading ? syllabusData.syllabus.map(({weekNum,outline,file}) =>(<SyllabusContent weekNum={weekNum} outline={outline}></SyllabusContent> )
-                    ) : <p>loading</p>}
+                    {/* {!syllabusLoading ? syllabusData.syllabus.map(({weekNum,outline,file}) =>(<SyllabusContent weekNum={weekNum} outline={outline}></SyllabusContent> )
+                    ) : <p>loading</p>} */}
+                    {!syllabusLoading ? <SyllabusContent rawdata={syllabusData.syllabus}></SyllabusContent> : <p>loading</p>}
                 </Content>
             </Layout>
         </Layout>
