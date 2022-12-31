@@ -108,7 +108,7 @@ type Message {
 }
 
 type Mutation {
-  createInfo(name: String, courseID: String!): Info!
+  createInfo(name: String, courseID: String!, attendants: [String]): Info!
   createUser(
     name: String!
     studentID: String!
