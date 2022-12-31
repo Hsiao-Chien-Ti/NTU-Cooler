@@ -5,7 +5,24 @@ import GradeModel from "../models/grade";
 import ChatBoxModel from "../models/chatbox";
 
 import FileModel from "../models/file";
+import InfoModel from "../models/info";
 const Query = {
+  info: async (parent, { courseID }) => {
+    let course = await InfoModel.findOne({ courseID });
+    if (!course) throw new Error(`${courseID} doesn't exist!`);
+    else return course;
+  },
+  user: async (parent, { name, studentID, passwd, groupNum }) => {
+    let user = await UserModel.findOne({ studentID: studentID });
+    if (!user)
+      user = await new UserModel({
+        name: name,
+        studentID: studentID,
+        passwd: passwd,
+        groupNum: groupNum,
+      }).save();
+    return user;
+  },
   syllabus: async (parent) => {
     let syllabus = await SyllabusModel.find({});
     return syllabus;

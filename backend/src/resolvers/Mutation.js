@@ -4,11 +4,19 @@ import FileModel from "../models/file";
 import AnnouncementModel from "../models/announcement";
 import GradeModel from "../models/grade";
 import ChatBoxModel from "../models/chatbox";
+import InfoModel from "../models/info";
 const Mutation = {
-  createUser: async (
-    parent,
-    { name, studentID, passwd, groupNum, isTeacher }
-  ) => {
+  createInfo: async (parent, { name, courseID, attendants }) => {
+    let info = await InfoModel.findOne({ courseID });
+    if (!info)
+      info = await new InfoModel({
+        name,
+        courseID,
+        attendants: attendants ? attendants : [],
+      }).save();
+    return info;
+  },
+  createUser: async (parent, { name, studentID, passwd, groupNum }) => {
     let user = await UserModel.findOne({ studentID: studentID });
     if (!user)
       user = await new UserModel({
