@@ -1,4 +1,5 @@
 type Query {
+  info(courseID: String!): Info!
   user(name: String!, studentID: String!, passwd: String!, groupNum: Int): User!
   syllabus: [Syllabus]
   announcement: [Announcement]
@@ -68,6 +69,7 @@ type Message {
 }
 
 type Mutation {
+  createInfo(name: String, courseID: String!, attendants: [String]): Info!
   createUser(
     name: String!
     studentID: String!
