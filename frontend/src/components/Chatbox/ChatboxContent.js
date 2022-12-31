@@ -1,6 +1,9 @@
 import { Modal, Form, Input, Button, Select } from "antd";
 import { useState } from "react";
-const ChatModal = ({ open, onCreate, onCancel, users }) => {
+const makeName = (name, to) => {
+  return [name, to].sort().join("_");
+};
+const ChatModal = ({ open, onCreate, onCancel, users, me }) => {
   const [form] = Form.useForm();
   const [isGroup, setIsGroup] = useState(false);
   //console.log("users:", users);
@@ -21,7 +24,17 @@ const ChatModal = ({ open, onCreate, onCancel, users }) => {
           .validateFields()
           .then((values) => {
             form.resetFields();
-            onCreate(values);
+            if (isGroup) {
+              onCreate({
+                name: values.chatRoomName,
+                participants: [values.users, me],
+              });
+            } else {
+              onCreate({
+                name: makeName(values.name, me),
+                participants: [values.name, me],
+              });
+            }
           })
           .catch((e) => {
             window.alert(e);
@@ -76,7 +89,19 @@ const ChatModal = ({ open, onCreate, onCancel, users }) => {
               },
             ]}
           >
-            <Input />
+            <Select
+              showSearch
+              placeholder="Select a person"
+              optionFilterProp="children"
+              // onChange={onChange}
+              // onSearch={onSearch}
+              filterOption={(input, option) =>
+                (option?.label ?? "")
+                  .toLowerCase()
+                  .includes(input.toLowerCase())
+              }
+              options={users}
+            />
           </Form.Item>
           <Button onClick={handleCreateGroup}>Create Group</Button>
         </Form>

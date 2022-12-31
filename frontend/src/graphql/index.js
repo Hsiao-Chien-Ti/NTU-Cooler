@@ -5,6 +5,7 @@ export {
   GRADE_QUERY,
   FILE_QUERY,
   CHATBOX_QUERY,
+  CHATBOX_OF_USER_QUERY,
 } from "./queries";
 export {
   CREATE_INFO_MUTATION,
