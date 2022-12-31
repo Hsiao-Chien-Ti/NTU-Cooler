@@ -34,3 +34,13 @@ export const GRADE_QUERY = gql`
     }
   }
 `;
+export const FILE_QUERY = gql`
+    query {
+      file{
+        type
+        info
+        fileName
+        fileLink
+    }
+    }
+`;

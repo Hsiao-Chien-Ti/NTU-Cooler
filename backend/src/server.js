@@ -7,6 +7,7 @@ import UserModel from './models/user'
 import SyllabusModel from './models/syllabus'
 import AnnouncementModel from './models/announcement'
 import GradeModel from './models/grade'
+import FileModel from './models/file'
 import Mutation from './resolvers/Mutation';
 import Query from './resolvers/Query'
 
@@ -28,6 +29,7 @@ const yoga = createYoga({
         SyllabusModel,
         AnnouncementModel,
         GradeModel,
+        FileModel,
         pubsub,
     },
     // graphqlEndpoint: '/',   // uncomment this to send the app to: 4000/ otherwise: 4000/graphql

@@ -3,6 +3,7 @@ type Query {
   syllabus:[Syllabus]
   announcement:[Announcement]
   grade(studentID:String!, subject:String!):[Grade]
+  file:[File]
 }
 type User {
   name: String

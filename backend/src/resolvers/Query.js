@@ -2,6 +2,7 @@ import UserModel from "../models/user";
 import SyllabusModel from "../models/syllabus";
 import AnnouncementModel from "../models/announcement"
 import GradeModel from "../models/grade";
+import FileModel from "../models/file"
 const Query = {
     user: async (parent, { name,studentID,passwd,groupNum}) => {
         let user = await UserModel.findOne({ studentID:studentID });
@@ -20,6 +21,10 @@ const Query = {
     grade: async (parent,{studentID,subject}) => {
         let grade= await GradeModel.find({studentID:studentID,subject:subject});
         return grade
+    },
+    file: async (parent) => {
+        let file= await FileModel.find({});
+        return file
     },
 }
 export default Query;

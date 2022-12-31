@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { createContext, useContext } from "react";
 import { useQuery, useLazyQuery, useMutation } from '@apollo/react-hooks';
-import { LOGIN_MUTATION, SYLLABUS_QUERY, ANNOUNCEMENT_QUERY,GRADE_QUERY } from "../../graphql";
+import { LOGIN_MUTATION, SYLLABUS_QUERY, ANNOUNCEMENT_QUERY, GRADE_QUERY, FILE_QUERY } from "../../graphql";
 import { message } from "antd";
 import { useNavigate } from 'react-router-dom';
 const LOCALSTORAGE_KEY = "save-me";
@@ -20,42 +20,41 @@ const AllContext = createContext({
     gradeData: [],
     gradeLoading: false,
     getGrade: () => { },
-    subject:"",
-    logout:()=>{}
+    subject: "",
+    logout: () => { },
+    fileData: [],
+    fileLoading: false,
 });
 const AllProvider = (props) => {
     const [user, setUser] = useState(savedMe || { login: false });
-    const [subject,setSubject]=useState("Introduction to Computer Network")
+    const [subject, setSubject] = useState("Introduction to Computer Network")
     const [signIn, { data: loginData }] = useMutation(LOGIN_MUTATION);
-    useEffect(()=>{
+    useEffect(() => {
         console.log(loginData)
-        if(loginData!=undefined)
-        {
+        if (loginData != undefined) {
             setUser(loginData.login)
-            if(!loginData.login.login)
-            {
+            if (!loginData.login.login) {
                 displayStatus({
                     type: "error",
                     msg: "Invalid student ID or password",
-                    duration:1
-                });   
+                    duration: 1
+                });
             }
-            else
-            {
+            else {
 
             }
         }
-    },[loginData])
+    }, [loginData])
     useEffect(() => {
         localStorage.setItem(LOCALSTORAGE_KEY, JSON.stringify(user));
         // if (user.login) {
-            
+
         //     // console.log(JSON.parse(localStorage.getItem(LOCALSTORAGE_KEY)))
         // }
     }, [user]);
-    function logout(e){
-        if(e.key==6)
-            setUser({login:false})
+    function logout(e) {
+        if (e.key == 6)
+            setUser({ login: false })
     }
     const [status, setStatus] = useState({});
     const displayStatus = (s) => {
@@ -80,6 +79,7 @@ const AllProvider = (props) => {
     }, [status])
     const { data: syllabusData, loading: syllabusLoading } = useQuery(SYLLABUS_QUERY);
     const { data: announcementData, loading: announcementLoading } = useQuery(ANNOUNCEMENT_QUERY);
+    const { data: fileData, loading: fileLoading } = useQuery(FILE_QUERY);
     const [getGrade, { data: gradeData, loading: gradeLoading }]
         = useLazyQuery(GRADE_QUERY, {
             variables: { studentID: user.studentID, subject: subject }
@@ -87,7 +87,7 @@ const AllProvider = (props) => {
     return (
         <AllContext.Provider
             value={{
-                subject,user, setUser, signIn, status, displayStatus, loginData, syllabusData, syllabusLoading, announcementData, announcementLoading, gradeData, gradeLoading,getGrade, logout
+                subject, user, setUser, signIn, status, displayStatus, loginData, syllabusData, syllabusLoading, announcementData, announcementLoading, gradeData, gradeLoading, getGrade, logout, fileData, fileLoading
             }}
             {...props}
         />

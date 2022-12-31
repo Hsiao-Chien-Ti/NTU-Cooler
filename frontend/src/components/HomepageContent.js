@@ -16,7 +16,6 @@ const HomepageContent=({weekNum,outline,file})=>{
                     <LinkOutlined style={{marginRight:'1%'}}/>
                     <a href={fileLink}>{fileName}</a>
                 </Card.Grid>
-                
             ))}
         </Card>
     )
