@@ -22,7 +22,7 @@ const ChatContext = createContext({
   messages: [],
   //status: {},
   chatBoxData: {},
-  loading: false,
+  chatBoxLoading: false,
   startChat: () => {},
   sendMessage: () => {},
   clearMessages: () => {},
@@ -187,6 +187,7 @@ const ChatProvider = (props) => {
     <ChatContext.Provider
       value={{
         //status,
+        chatBoxLoading,
         currentChat,
         setCurrentChat,
         messages,
