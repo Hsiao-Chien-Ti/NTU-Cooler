@@ -41,10 +41,11 @@ const Mutation = {
       studentID: studentID,
       passwd: passwd,
     });
-    if (!user) {
-      user = await UserModel.findOne({ login: false });
-      if (!user) user = await new UserModel({ login: false }).save();
+    if (user) {
+      user.login = true;
+      await user.save();
     }
+    if (!user) user = await new UserModel({ login: false }).save();
     return user;
   },
   createSyllabus: async (parent, { weekNum, outline }, { pubsub }) => {
@@ -193,6 +194,7 @@ const Mutation = {
     chatBox.messages.push(newMsg);
     await chatBox.save();
     //const chatBoxName = makeName(name, to);
+
     pubsub.publish(`chatBox ${to} in class ${courseID}`, { message: newMsg });
     return newMsg;
   },

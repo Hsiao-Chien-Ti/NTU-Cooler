@@ -12,7 +12,7 @@ const Query = {
     if (!course) throw new Error(`${courseID} doesn't exist!`);
     else return course;
   },
-  user: async (parent, { name, studentID, passwd, groupNum }) => {
+  user: async (parent, { name, studentID, passwd, groupNum, isTeacher }) => {
     let user = await UserModel.findOne({ studentID: studentID });
     if (!user)
       user = await new UserModel({
@@ -20,12 +20,15 @@ const Query = {
         studentID: studentID,
         passwd: passwd,
         groupNum: groupNum,
+        isTeacher,
       }).save();
     return user;
   },
   userChatbox: async (parent, { studentID, courseID }) => {
     let user = await UserModel.findOne({ studentID });
-    return user.chatbox.filter((box) => box.courseID == courseID);
+    return user.chatbox
+      ? user.chatbox.filter((box) => box.courseID == courseID)
+      : [];
   },
   syllabus: async (parent) => {
     let syllabus = await SyllabusModel.find({});
@@ -45,17 +48,6 @@ const Query = {
   file: async (parent) => {
     let file = await FileModel.find({});
     return file;
-  },
-  user: async (parent, { name, studentID, passwd, groupNum }) => {
-    let user = await UserModel.findOne({ studentID: studentID });
-    if (!user)
-      user = await new UserModel({
-        name: name,
-        studentID: studentID,
-        passwd: passwd,
-        groupNum: groupNum,
-      }).save();
-    return user;
   },
   chatbox: async (parent, { name, courseID, studentID }) => {
     let box = await ChatBoxModel.findOne({

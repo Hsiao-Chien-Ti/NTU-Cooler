@@ -19,9 +19,10 @@ const StyledMessage = styled.div`
     margin: auto 0;
   }
 `;
-const Message = ({ isMe, message }) => {
+const Message = ({ isMe, message, sender }) => {
   return (
     <StyledMessage isMe={isMe}>
+      <p style={{ color: "#9DC2F5" }}>{sender}</p>
       <p>{message}</p>
     </StyledMessage>
   );

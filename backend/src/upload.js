@@ -12,6 +12,7 @@ const testUser = [
     ],
     passwd: "7",
     groupNum: 7,
+    isTeacher: true,
   },
   {
     name: "yzl",
@@ -19,6 +20,7 @@ const testUser = [
     chatbox: [{ name: "My Group", courseID: "EE1234", showName: "My Group" }],
     passwd: "7",
     groupNum: 7,
+    isTeacher: false,
   },
   {
     name: "q",
@@ -29,6 +31,7 @@ const testUser = [
     ],
     passwd: "7",
     groupNum: 7,
+    isTeacher: false,
   },
 ];
 
@@ -39,31 +42,31 @@ const testChat = [
     messages: [
       {
         sender: "KKK",
-        groupnum: 7,
+        groupNum: 7,
         body: "hi q",
         hidden: false,
       },
       {
         sender: "q",
-        groupnum: 7,
+        groupMum: 7,
         body: "hi buddy",
         hidden: false,
       },
       {
         sender: "KKK",
-        groupnum: 7,
+        groupNum: 7,
         body: "how's your day",
         hidden: false,
       },
       {
         sender: "q",
-        groupnum: 7,
+        groupNum: 7,
         body: "so fucked",
         hidden: false,
       },
       {
         sender: "q",
-        groupnum: 7,
+        groupNum: 7,
         body: "but finally it's all finished",
         hidden: false,
       },
@@ -79,31 +82,31 @@ const testChat = [
     messages: [
       {
         sender: "KKK",
-        groupnum: 7,
+        groupNum: 7,
         body: "ans: 1",
         hidden: true,
       },
       {
         sender: "q",
-        groupnum: 7,
+        groupNum: 7,
         body: "ans: 2",
         hidden: true,
       },
       {
         sender: "KKK",
-        groupnum: 7,
+        groupNum: 7,
         body: "ans: 3",
         hidden: true,
       },
       {
         sender: "q",
-        groupnum: 7,
+        groupNum: 7,
         body: "ans: 4",
         hidden: true,
       },
       {
         sender: "q",
-        groupnum: 7,
+        groupNum: 7,
         body: "ans: 5",
         hidden: true,
       },

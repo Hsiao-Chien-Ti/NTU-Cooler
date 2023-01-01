@@ -28,6 +28,7 @@ const AllContext = createContext({
   courseID: "",
   signIn: [],
   status: {},
+  setStatus: () => {},
   displayStatus: () => {},
   loginData: {},
   syllabusData: [],
@@ -47,13 +48,13 @@ const AllContext = createContext({
   createGrade: [],
 });
 const AllProvider = (props) => {
-  //const [user, setUser] = useState(savedMe || { login: false });
-  const [user, setUser] = useState({
-    name: "KKK",
-    studentID: "KKK",
-    login: true,
-    passwd: "7",
-  });
+  const [user, setUser] = useState(savedMe || { login: false });
+  // const [user, setUser] = useState({
+  //   name: "KKK",
+  //   studentID: "KKK",
+  //   login: true,
+  //   passwd: "7",
+  // });
   const [subject, setSubject] = useState("Introduction to Computer Network");
   const [courseID, setCourseID] = useState("EE1234");
   const [attendants, setAttendants] = useState([]);
@@ -103,7 +104,7 @@ const AllProvider = (props) => {
     // }
   }, [user]);
   function logout(e) {
-    if (e.key == 6) setUser({ login: false });
+    if (e.key == "_logout_") setUser({ login: false });
   }
   const [status, setStatus] = useState({});
   const displayStatus = (s) => {
@@ -228,6 +229,7 @@ const AllProvider = (props) => {
         setUser,
         signIn,
         status,
+        setStatus,
         displayStatus,
         loginData,
         syllabusData,
