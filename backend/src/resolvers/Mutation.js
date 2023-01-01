@@ -196,7 +196,6 @@ const Mutation = {
     chatBox.messages.push(newMsg);
     await chatBox.save();
     //const chatBoxName = makeName(name, to);
-
     pubsub.publish(`chatBox ${to} in class ${courseID}`, { message: newMsg });
     return newMsg;
   },

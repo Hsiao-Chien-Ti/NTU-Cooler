@@ -22,8 +22,8 @@ const Subscription = {
     },
   },
   message: {
-    subscribe: (parent, { from, to, courseID }, { pubsub }) => {
-      return pubsub.subscribe(`chatBox ${to} in class ${courseID}`);
+    subscribe: (parent, { to, courseID }, { pubsub }) => {
+      return pubsub.subscribe(`chatBox ${to}`);
     },
   },
 };

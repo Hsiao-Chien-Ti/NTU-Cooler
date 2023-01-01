@@ -130,6 +130,8 @@ const ChatProvider = (props) => {
     <ChatContext.Provider
       value={{
         //status,
+        setMe,
+        me,
         allRooms,
         chatBoxLoading,
         currentChat,

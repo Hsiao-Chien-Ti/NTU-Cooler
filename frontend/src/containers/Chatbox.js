@@ -51,7 +51,6 @@ const ChatRoom = () => {
   const scrollToBottom = () => {
     msgFooter.current?.scrollIntoView({ behavior: "smooth", block: "start" });
   };
-
   useEffect(() => {
     scrollToBottom();
     setMsgSent(false);
