@@ -63,7 +63,7 @@ const Query = {
       courseID,
       attendats: { $in: [studentID] },
     });
-    //if (!box) box = await new ChatBoxModel({ name, courseID }).save();
+    if (!box) box = await new ChatBoxModel({ name, courseID }).save();
     return box;
   },
 };
