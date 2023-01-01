@@ -1,7 +1,7 @@
 type Query {
   info(courseID: String!): Info!
   user(name: String!, studentID: String!, passwd: String!, groupNum: Int): User!
-  userChatbox(studentID: String!, courseID: String!): [chatInfo]
+  userChatbox(studentID: String!, courseID: String!): [ChatInfo]
   syllabus: [Syllabus]
   announcement: [Announcement]
   grade(studentID: String!, subject: String!): [Grade]
@@ -20,12 +20,13 @@ type User {
   passwd: String
   groupNum: Int
   login: Boolean!
-  chatbox: [chatInfo]
+  chatbox: [ChatInfo]
 }
 
-type chatInfo {
+type ChatInfo {
   name: String
   courseID: String
+  showName: String
 }
 type Syllabus {
   weekNum: String

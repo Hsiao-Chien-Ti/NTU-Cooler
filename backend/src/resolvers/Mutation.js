@@ -125,9 +125,13 @@ const Mutation = {
       participants,
       messages: [],
     }).save();
+    let showName = participants.length > 2 ? name : "";
     participants?.forEach(async (person) => {
       const p = await UserModel.findOne({ studentID: person });
-      p.chatbox.push({ name, courseID });
+      if (!showName) {
+        showName = participants.filter((p) => p.studentID !== person)[0];
+      }
+      p.chatbox.push({ name, courseID, showName });
       await p.save();
     });
     return box;

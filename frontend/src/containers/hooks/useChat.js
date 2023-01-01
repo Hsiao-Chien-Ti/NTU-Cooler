@@ -23,6 +23,7 @@ const ChatContext = createContext({
   //status: {},
   chatBoxData: {},
   chatBoxLoading: false,
+  listOfChatboxes: [],
   startChat: () => {},
   sendMessage: () => {},
   clearMessages: () => {},
@@ -53,15 +54,16 @@ const ChatProvider = (props) => {
       studentID: user.studentID,
     },
   });
-  const { data: listOfChatboxes, loading: listLoading } = useQuery(
-    CHATBOX_OF_USER_QUERY,
-    {
-      variables: {
-        studentID: user.studentID,
-        courseID,
-      },
-    }
-  );
+  const {
+    data: { userChatBox: listOfChatboxes },
+    loading: listLoading,
+  } = useQuery(CHATBOX_OF_USER_QUERY, {
+    staleTime: 5000,
+    variables: {
+      studentID: user.studentID,
+      courseID,
+    },
+  });
   const [startChat] = useMutation(CREATE_CHATBOX_MUTATION);
   const [sendMessage] = useMutation(CREATE_MESSAGE_MUTATION);
   const displayStatus = (s) => {
@@ -85,10 +87,6 @@ const ChatProvider = (props) => {
       }
     }
   };
-
-  useEffect(() => {
-    if (!listLoading) setAllRooms(listOfChatboxes);
-  }, [listOfChatboxes]);
 
   useEffect(() => {
     displayStatus(status);
@@ -155,31 +153,7 @@ const ChatProvider = (props) => {
   const createGroup = () => {
     sendData({ type: "USER", payload: {} });
   };
-  // const startChat = (name, settings) => {
-  //   if (settings.chatRoomName) {
-  //     console.log("start group chat");
-  //     if (!name || !settings) throw new Error("Name or Settings required.");
-  //     sendData({ type: "CHAT_GROUP", payload: { name, settings } });
-  //     client.box = settings.chatRoomName;
 
-  //     //console.log(client.box);
-  //   } else {
-  //     console.log("start 1-1");
-  //     console.log(client.box);
-  //     let to = settings.name;
-  //     if (!name || !to) throw new Error("Name or To required.");
-  //     sendData({ type: "CHAT", payload: { name, to } });
-  //     client.box = to;
-  //   }
-  // };
-  // const sendMessage = async (name, to, body) => {
-  //   console.log(name, to, body);
-  //   if (!name || !to || !body) throw new Error("Name or To or Body required.");
-  //   await sendData({ type: "MESSAGE", payload: { name, to, body } });
-  // };
-  // const clearMessages = (name) => {
-  //   sendData({ type: "CLEAR", payload: { name } });
-  // };
   useEffect(() => {
     localStorage.setItem(LOCALSTORAGE_KEY, me);
   }, [me]);
@@ -187,8 +161,10 @@ const ChatProvider = (props) => {
     <ChatContext.Provider
       value={{
         //status,
+        allRooms,
         chatBoxLoading,
         currentChat,
+        listOfChatboxes,
         setCurrentChat,
         messages,
         chatBoxData,

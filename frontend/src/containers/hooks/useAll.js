@@ -68,7 +68,7 @@ const AllProvider = (props) => {
   // }, [attendants]);
   useEffect(() => {
     console.log(loginData);
-    if (loginData != undefined) {
+    if (loginData !== undefined) {
       setUser(loginData.login);
       if (!loginData.login.login) {
         displayStatus({
