@@ -28,7 +28,6 @@ export const GRADE_QUERY = gql`
         studentID
         subject
         itemName
-        type
         score
         weight
     }

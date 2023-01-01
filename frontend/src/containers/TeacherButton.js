@@ -6,7 +6,7 @@ import { useAll } from './hooks/useAll';
 const TeacherButton = () => {
     const [modalOpen, setModalOpen] = useState(false)
     const [mode, setMode] = useState('')
-    const { createAnnouncement, createSyllabus, createFile } = useAll()
+    const { createAnnouncement, createSyllabus, createFile,createGrade,subject } = useAll()
     const handleCreate = (form) => {
         console.log(form)
         if (form.addType === 'Announcement') {
@@ -21,6 +21,11 @@ const TeacherButton = () => {
         }
         else if (form.addType === 'File') {
             createFile({ variables: { type: form.type, info: form.info, fileName: form.fileName, fileLink: form.fileLink } })
+        }
+        else if(form.addType==='Grade'){
+            form.upload.map((student)=>{
+                createGrade({variables:{studentID:student[0],subject:subject,itemName:form.itemName,score:student[1],weight:parseFloat(form.weight)}})
+            })
         }
     }
     return (

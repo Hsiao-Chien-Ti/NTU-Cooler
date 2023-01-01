@@ -4,7 +4,6 @@ const GradeSchema = new Schema({
     studentID:{type:String},
     subject:{type:String},
     itemName:{type:String},
-    type:{type:Boolean},
     score:{type:Number},
     weight:{type:Number},
 });

@@ -1,13 +1,16 @@
-import { Modal, Form, Input, Select, InputNumber } from "antd";
-import { useState } from "react";
+import { Modal, Form, Input, Select, InputNumber, Upload, Button } from "antd";
+import { UploadOutlined } from '@ant-design/icons';
+import { createRef, useState } from "react";
+import * as XLSX from 'xlsx'
 const TeacherModal = ({ open, mode, onCreate, onCancel }) => {
     const [form] = Form.useForm();
     const [addType, setAddType] = useState('Announcement')
+    const uploadRef=createRef()
     return (
         <Modal
             open={open}
-            title={mode == 'add' ? 'Add' : 'Update'}
-            okText={mode == 'add' ? 'Add' : 'Update'}
+            title={mode === 'add' ? 'Add' : 'Update'}
+            okText={mode === 'add' ? 'Add' : 'Update'}
             cancelText="Cancel"
             onCancel={onCancel}
             onOk={() => {
@@ -23,8 +26,8 @@ const TeacherModal = ({ open, mode, onCreate, onCancel }) => {
             }}
         >
             <Form form={form} layout="vertical"
-                name="form_in_modal"
-                >
+                name="form_in_modal" ref={uploadRef}
+            >
                 <Form.Item
                     name="addType"
                     label="Add Type"
@@ -49,11 +52,15 @@ const TeacherModal = ({ open, mode, onCreate, onCancel }) => {
                                 value: 'File',
                                 label: 'File',
                             },
+                            {
+                                value: 'Grade',
+                                label: 'Grade',
+                            },
                         ]}
                         onChange={(value) => { setAddType(value) }}
                     />
                 </Form.Item>
-                {addType == 'Announcement' &&
+                {addType === 'Announcement' &&
                     <>
                         <Form.Item
                             name="title"
@@ -75,7 +82,7 @@ const TeacherModal = ({ open, mode, onCreate, onCancel }) => {
                         </Form.Item>
                     </>
                 }
-                {addType == 'Syllabus' &&
+                {addType === 'Syllabus' &&
                     <>
                         <Form.Item
                             name="weekNum"
@@ -87,7 +94,7 @@ const TeacherModal = ({ open, mode, onCreate, onCancel }) => {
                                 },
                             ]}
                         >
-                            <InputNumber min={1}/>
+                            <InputNumber min={1} />
                         </Form.Item>
                         <Form.Item
                             name="outline"
@@ -97,7 +104,7 @@ const TeacherModal = ({ open, mode, onCreate, onCancel }) => {
                         </Form.Item>
                     </>
                 }
-                {addType == 'File' &&
+                {addType === 'File' &&
                     <>
                         <Form.Item
                             name="type"
@@ -109,26 +116,26 @@ const TeacherModal = ({ open, mode, onCreate, onCancel }) => {
                                 },
                             ]}
                         >
-                    <Select
-                        options={[
-                            {
-                                value: 'weekNum',
-                                label: 'Week',
-                            },
-                            {
-                                value: 'HW',
-                                label: 'HW',
-                            },
-                            {
-                                value: 'Quiz',
-                                label: 'Quiz',
-                            },
-                            {
-                                value: 'Exam',
-                                label: 'Exam',
-                            },
-                        ]}
-                    />
+                            <Select
+                                options={[
+                                    {
+                                        value: 'weekNum',
+                                        label: 'Week',
+                                    },
+                                    {
+                                        value: 'HW',
+                                        label: 'HW',
+                                    },
+                                    {
+                                        value: 'Quiz',
+                                        label: 'Quiz',
+                                    },
+                                    {
+                                        value: 'Exam',
+                                        label: 'Exam',
+                                    },
+                                ]}
+                            />
                         </Form.Item>
                         <Form.Item
                             name="info"
@@ -165,6 +172,66 @@ const TeacherModal = ({ open, mode, onCreate, onCancel }) => {
                             ]}
                         >
                             <Input />
+                        </Form.Item>
+                    </>
+                }
+                {addType === 'Grade' &&
+                    <>
+                        <Form.Item
+                            name="itemName"
+                            label="Item Name"
+                            rules={[
+                                {
+                                    required: true,
+                                    message: 'Error: Please enter the item name!',
+                                },
+                            ]}
+                        >
+                            <Input />
+                        </Form.Item>
+                        <Form.Item
+                            name="weight"
+                            label="Weight"
+                        >
+                            <InputNumber
+                                style={{
+                                    width: 200,
+                                }}
+                                defaultValue="0"
+                                min="0"
+                                max="1"
+                                step="0.1"
+                                stringMode
+                            />
+                        </Form.Item>
+                        <Form.Item name="upload">
+                            <Upload
+                                // accept=".txt, .csv"
+                                // showUploadList={false}
+                                beforeUpload={file => {
+                                    const reader = new FileReader();
+
+                                    reader.onload = e => {
+                                        const workbook = XLSX.read(e.target.result);
+                                        const worksheet = workbook.Sheets[workbook.SheetNames[0]];
+                                        const jsonData = XLSX.utils.sheet_to_json(worksheet, {
+                                            header: 1,
+                                            defval: "",
+                                        });
+                                        uploadRef.current.setFieldsValue({upload:jsonData})
+                                        console.log(jsonData);
+                                    };
+                                    reader.readAsArrayBuffer(file)
+
+                                    // reader.readAsText(file);
+
+                                    // Prevent upload
+                                    return false;
+                                }}
+                            >
+                                <Button icon={<UploadOutlined />}> Click to Upload
+                                </Button>
+                            </Upload>
                         </Form.Item>
                     </>
                 }

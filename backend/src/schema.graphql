@@ -33,7 +33,6 @@ type Grade{
   studentID:String!
   subject:String!
   itemName:String!
-  type:Boolean!
   score:Float!
   weight:Float
 }
@@ -43,11 +42,11 @@ type Mutation {
   createSyllabus(weekNum:String!,outline:String):Syllabus!
   createFile(type:String!,info:String!,fileName:String!,fileLink:String!):File!
   createAnnouncement(time:String!, title:String!, content:String):Announcement!
-  createGrade(studentID:String!, subject:String!, itemName:String!, type:Boolean!, score:Float!, weight:Float):Grade!
+  createGrade(studentID:String!, subject:String!, itemName:String!, score:Float!, weight:Float):Grade!
 }
 type Subscription {
   syllabus: Syllabus!
   announcement: Announcement!
   file: File!
-  grade: Grade! 
+  grade(studentID:String!, subject:String!): Grade! 
 }

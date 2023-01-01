@@ -16,10 +16,11 @@ const Subscription = {
             return pubsub.subscribe('FILE')
         }
 	},
-    // grade: {
-    //     subscribe:(parent, args, {pubsub})=>{
-    //         return pubsub.subscribe('GRADE')
-    //     }
-	// }
+    grade: {
+        subscribe:(parent, {studentID, subject}, {pubsub})=>{
+            console.log(studentID)
+            return pubsub.subscribe('GRADE')
+        }
+	}
 }
 export default Subscription

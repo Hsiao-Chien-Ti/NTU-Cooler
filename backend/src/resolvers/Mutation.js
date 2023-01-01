@@ -69,16 +69,25 @@ const Mutation = {
         pubsub.publish('ANNOUNCEMENT', {
             announcement: {
                 time: time,
-                title: title, 
+                title: title,
                 content: content
             }
         })
         return announcement
     },
-    createGrade: async (parent, { studentID, subject, itemName, type, score, weight }, { pubsub }) => {
+    createGrade: async (parent, { studentID, subject, itemName, score, weight }, { pubsub }) => {
         let grade = await GradeModel.findOne({ studentID: studentID, subject: subject, itemName: itemName });
         if (!grade)
-            grade = await new GradeModel({ studentID: studentID, subject: subject, itemName: itemName, type: type, score: score, weight: weight }).save();
+            grade = await new GradeModel({ studentID: studentID, subject: subject, itemName: itemName, score: score, weight: weight }).save();
+        pubsub.publish('GRADE', {
+            grade: {
+                studentID: studentID, 
+                subject: subject, 
+                itemName: itemName, 
+                score: score, 
+                weight: weight 
+            }
+        })
         return grade
     },
 }

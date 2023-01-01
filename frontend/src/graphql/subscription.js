@@ -31,3 +31,14 @@ export const ANNOUNCEMENT_SUBSCRIPTION = gql`
   }
   }
 `;
+export const GRADE_SUBSCRIPTION = gql`
+  subscription grade($studentID:String!, $subject:String!){
+    grade(studentID:$studentID,subject:$subject) {
+      studentID
+      subject
+      itemName
+      score
+      weight 
+  }
+  }
+`;

@@ -52,12 +52,13 @@ export const CREATE_ANNOUNCEMENT_MUTATION = gql`
 }
 `;
 export const CREATE_GRADE_MUTATION = gql`
-mutation createGrade($studentID:String!,$subject:String!,$itemName:String!,$type:Boolean!,$score:Float!,$weight:Float) {
+mutation createGrade($studentID:String!,$subject:String!,$itemName:String!,$score:Float!,$weight:Float) {
+    createGrade(studentID:$studentID,subject:$subject,itemName:$itemName,score:$score,weight:$weight) {
         studentID
         subject
         itemName
-        type
         score
         weight
   }
+}
 `;

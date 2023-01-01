@@ -12,7 +12,9 @@ import {
     CREATE_FILE_MUTATION,
     SYLLABUS_SUBSCRIPTION,
     FILE_SUBSCRIPTION,
-    ANNOUNCEMENT_SUBSCRIPTION
+    ANNOUNCEMENT_SUBSCRIPTION,
+    CREATE_GRADE_MUTATION,
+    GRADE_SUBSCRIPTION
 } from "../../graphql";
 import { message } from "antd";
 import { useNavigate } from "react-router-dom";
@@ -38,7 +40,8 @@ const AllContext = createContext({
     fileLoading: false,
     createAnnouncement: [],
     createSyllabus: [],
-    createFile: []
+    createFile: [],
+    createGrade:[]
 });
 const AllProvider = (props) => {
     const [user, setUser] = useState(savedMe || { login: false });
@@ -143,15 +146,34 @@ const AllProvider = (props) => {
             });
         } catch (e) { }
     }, [fileSubscribe]);
-    const [getGrade, { data: gradeData, loading: gradeLoading }] = useLazyQuery(
+    const [getGrade, { data: gradeData, loading: gradeLoading, subscribeToMore: gradeSubscribe  }] = useLazyQuery(
         GRADE_QUERY,
         {
             variables: { studentID: user.studentID, subject: subject },
+            fetchPolicy: 'network-only'
         }
     );
+    useEffect(() => {
+        try {
+            gradeSubscribe({
+                document: GRADE_SUBSCRIPTION,
+                variables: { studentID: user.studentID, subject: subject },
+                updateQuery: (prev, { subscriptionData }) => {
+                    console.log(prev)
+                    if (!subscriptionData.data) return prev;
+                    const newGrade = subscriptionData.data.grade
+                    return {
+                        ...prev,
+                        grade: [newGrade, ...prev.grade],
+                    };
+                },
+            });
+        } catch (e) { }
+    }, [gradeSubscribe]);
     const [createAnnouncement] = useMutation(CREATE_ANNOUNCEMENT_MUTATION)
     const [createSyllabus] = useMutation(CREATE_SYLLABUS_MUTATION)
     const [createFile] = useMutation(CREATE_FILE_MUTATION)
+    const [createGrade]=useMutation(CREATE_GRADE_MUTATION)
     return (
         <AllContext.Provider
             value={{
@@ -174,7 +196,8 @@ const AllProvider = (props) => {
                 fileLoading,
                 createAnnouncement,
                 createSyllabus,
-                createFile
+                createFile,
+                createGrade
             }}
             {...props}
         />
