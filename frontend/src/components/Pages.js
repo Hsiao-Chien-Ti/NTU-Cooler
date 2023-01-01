@@ -8,7 +8,7 @@ import {
   SolutionOutlined,
   LogoutOutlined,
 } from "@ant-design/icons";
-import { Layout, Menu, theme } from "antd";
+import { Layout, Menu, theme, FloatButton } from "antd";
 import {
   BrowserRouter as Router,
   Route,
@@ -20,11 +20,7 @@ import React, { useEffect } from "react";
 import { useState } from "react";
 import { useAll } from "../containers/hooks/useAll";
 import { useNavigate } from "react-router-dom";
-import Announcement from "../containers/Announcement";
-import Syllabus from "../containers/Syllabus";
-import Grade from "../containers/Grade";
-import Files from "../containers/Files";
-import Homepage from "../containers/Homepage";
+import TeacherButton from "../containers/TeacherButton";
 import Sider from "antd/es/layout/Sider";
 import { Header } from "antd/es/layout/layout";
 const AllPages = [
@@ -80,6 +76,7 @@ const Page = ({ current, content }) => {
             </Menu.Item>
           ))}
         </Menu>
+        {user.isTeacher && <TeacherButton/>}
       </Sider>
       <Layout className="site-layout">
         <Header style={{ padding: 5, background: colorBgContainer }}>

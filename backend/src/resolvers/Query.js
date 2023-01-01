@@ -4,10 +4,8 @@ import AnnouncementModel from "../models/announcement"
 import GradeModel from "../models/grade";
 import FileModel from "../models/file"
 const Query = {
-    user: async (parent, { name,studentID,passwd,groupNum}) => {
-        let user = await UserModel.findOne({ studentID:studentID });
-        if (!user)
-            user = await new UserModel({ name:name,studentID:studentID,passwd:passwd,groupNum:groupNum }).save();
+    user: async (parent) => {
+        let user = await UserModel.find({});
         return user
     },
     syllabus: async (parent) => {

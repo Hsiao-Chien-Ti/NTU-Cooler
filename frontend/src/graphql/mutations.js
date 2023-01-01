@@ -16,6 +16,7 @@ export const LOGIN_MUTATION = gql`
         studentID
         groupNum
         login
+        isTeacher
     }
 }
 `;
@@ -33,7 +34,7 @@ export const CREATE_SYLLABUS_MUTATION = gql`
 `;
 export const CREATE_FILE_MUTATION = gql`
     mutation createFile($type: String!, $info: String!,$fileName:String!,$fileLink:String!) {
-    createFile(type: $type, outline: $outline,fileName:$fileName,fileLink:$fileLink) {
+    createFile(type: $type, info: $info,fileName:$fileName,fileLink:$fileLink) {
         type
         info
         fileName
@@ -43,7 +44,7 @@ export const CREATE_FILE_MUTATION = gql`
 `;
 export const CREATE_ANNOUNCEMENT_MUTATION = gql`
     mutation createAnnouncement($time: String!, $title: String!,$content:String) {
-    createSyllabus(time:$time,title:$title,content:$content) {
+    createAnnouncement(time:$time,title:$title,content:$content) {
         time
         title
         content

@@ -4,10 +4,10 @@ import FileModel from "../models/file";
 import AnnouncementModel from "../models/announcement";
 import GradeModel from "../models/grade"
 const Mutation = {
-    createUser: async (parent, { name, studentID, passwd, groupNum }) => {
+    createUser: async (parent, { name, studentID, passwd, groupNum, isTeacher }) => {
         let user = await UserModel.findOne({ studentID: studentID });
         if (!user)
-            user = await new UserModel({ name: name, studentID: studentID, passwd: passwd, groupNum: groupNum, login: true }).save();
+            user = await new UserModel({ name: name, studentID: studentID, passwd: passwd, groupNum: groupNum, login: true, isTeacher:isTeacher }).save();
         return user
     },
     login: async (parent, { studentID, passwd }) => {
