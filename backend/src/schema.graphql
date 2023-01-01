@@ -11,6 +11,7 @@ type User {
   passwd: String
   groupNum: Int
   login: Boolean!
+  isTeacher:Boolean
 }
 type Syllabus{
   weekNum:String
@@ -37,7 +38,7 @@ type Grade{
   weight:Float
 }
 type Mutation {
-  createUser(name: String!, studentID: String!, passwd: String!, groupNum: Int): User!
+  createUser(name: String!, studentID: String!, passwd: String!, groupNum: Int,isTeacher:Boolean): User!
   login(studentID: String!, passwd: String!): User!
   createSyllabus(weekNum:String,outline:String):Syllabus!
   createFile(type:String!,info:String!,fileName:String!,fileLink:String!):File!
