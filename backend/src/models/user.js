@@ -6,8 +6,14 @@ const UserSchema = new Schema({
   passwd: { type: String },
   groupNum: { type: Number },
   login: { type: Boolean },
-  chatbox: [{ name: { type: String }, courseID: { type: String } }],
   isTeacher: { type: Boolean },
+  chatbox: [
+    {
+      name: { type: String },
+      courseID: { type: String },
+      showName: { type: String },
+    },
+  ],
 });
 const UserModel = mongoose.model("User", UserSchema);
 

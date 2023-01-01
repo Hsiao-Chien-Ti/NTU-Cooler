@@ -118,7 +118,6 @@ const CREATE_CHATBOX_MUTATION = gql`
     $courseID: String!
     $participants: [String]
   ) {
-    name: String
     createChatBox(
       name: $name
       courseID: $courseID
