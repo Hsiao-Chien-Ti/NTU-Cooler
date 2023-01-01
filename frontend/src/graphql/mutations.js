@@ -70,6 +70,7 @@ const CREATE_FILE_MUTATION = gql`
     createFile(
       type: $type
       info: $info
+      outline: $outline
       fileName: $fileName
       fileLink: $fileLink
     ) {
@@ -87,6 +88,7 @@ const CREATE_ANNOUNCEMENT_MUTATION = gql`
     $content: String
   ) {
     createAnnouncement(time: $time, title: $title, content: $content) {
+    createSyllabus(time: $time, title: $title, content: $content) {
       time
       title
       content

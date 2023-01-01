@@ -1,7 +1,11 @@
 import UserModel from "../models/user";
 import SyllabusModel from "../models/syllabus";
+import SyllabusModel from "../models/syllabus";
 import FileModel from "../models/file";
 import AnnouncementModel from "../models/announcement";
+import GradeModel from "../models/grade";
+import ChatBoxModel from "../models/chatbox";
+import InfoModel from "../models/info";
 import GradeModel from "../models/grade";
 import ChatBoxModel from "../models/chatbox";
 import InfoModel from "../models/info";
@@ -122,7 +126,6 @@ const Mutation = {
       }).save();
     return grade;
   },
-
   createChatBox: async (parent, { name, courseID, participants }) => {
     const box = await new ChatBoxModel({
       name,
@@ -149,7 +152,6 @@ const Mutation = {
     chatBox.messages.push(newMsg);
     await chatBox.save();
     //const chatBoxName = makeName(name, to);
-
     pubsub.publish(`chatBox ${to} in class ${courseID}`, { message: newMsg });
     return newMsg;
   },

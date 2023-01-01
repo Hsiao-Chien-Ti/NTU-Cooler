@@ -1,5 +1,6 @@
 type Query {
   info(courseID: String!): Info!
+  info(courseID: String!): Info!
   user(name: String!, studentID: String!, passwd: String!, groupNum: Int): User!
   userChatbox(studentID: String!, courseID: String!): [ChatInfo]
   syllabus: [Syllabus]
@@ -14,6 +15,7 @@ type Info {
   attendants: [AttendantInfo]
   courseID: String!
 }
+
 
 type User {
   name: String
@@ -53,7 +55,23 @@ type Grade {
   type: Boolean!
   score: Float!
   weight: Float
+type Grade {
+  studentID: String!
+  subject: String!
+  itemName: String!
+  type: Boolean!
+  score: Float!
+  weight: Float
 }
+
+type ChatBox {
+  type: Boolean
+  courseID: String!
+  name: String!
+  messages: [Message!]!
+  notAccess: [String]
+  pinMsg: Int
+  participants: [String]
 
 type ChatBox {
   type: Boolean
@@ -70,7 +88,17 @@ type Message {
   body: String!
   groupnum: Int
   hidden: Boolean
+
+type Message {
+  sender: String!
+  body: String!
+  groupnum: Int
+  hidden: Boolean
 }
+
+type AttendantInfo {
+  name: String!
+  studentID: String!
 
 type AttendantInfo {
   name: String!

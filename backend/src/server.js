@@ -24,6 +24,7 @@ const yoga = createYoga({
     resolvers: {
       Query,
       Mutation,
+      Subscription,
     },
   }),
   context: {
@@ -32,6 +33,8 @@ const yoga = createYoga({
     AnnouncementModel,
     GradeModel,
     FileModel,
+    ChatBoxModel,
+    InfoModel,
     pubsub,
   },
   // graphqlEndpoint: '/',   // uncomment this to send the app to: 4000/ otherwise: 4000/graphql
