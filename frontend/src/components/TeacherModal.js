@@ -112,7 +112,7 @@ const TeacherModal = ({ open, mode, onCreate, onCancel }) => {
                     <Select
                         options={[
                             {
-                                value: 'Week',
+                                value: 'weekNum',
                                 label: 'Week',
                             },
                             {

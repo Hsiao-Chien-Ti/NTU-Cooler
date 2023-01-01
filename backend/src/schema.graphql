@@ -40,8 +40,14 @@ type Grade{
 type Mutation {
   createUser(name: String!, studentID: String!, passwd: String!, groupNum: Int,isTeacher:Boolean): User!
   login(studentID: String!, passwd: String!): User!
-  createSyllabus(weekNum:String,outline:String):Syllabus!
+  createSyllabus(weekNum:String!,outline:String):Syllabus!
   createFile(type:String!,info:String!,fileName:String!,fileLink:String!):File!
   createAnnouncement(time:String!, title:String!, content:String):Announcement!
   createGrade(studentID:String!, subject:String!, itemName:String!, type:Boolean!, score:Float!, weight:Float):Grade!
+}
+type Subscription {
+  syllabus: Syllabus!
+  announcement: Announcement!
+  file: File!
+  grade: Grade! 
 }

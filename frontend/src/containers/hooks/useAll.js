@@ -9,7 +9,10 @@ import {
     FILE_QUERY,
     CREATE_ANNOUNCEMENT_MUTATION,
     CREATE_SYLLABUS_MUTATION,
-    CREATE_FILE_MUTATION
+    CREATE_FILE_MUTATION,
+    SYLLABUS_SUBSCRIPTION,
+    FILE_SUBSCRIPTION,
+    ANNOUNCEMENT_SUBSCRIPTION
 } from "../../graphql";
 import { message } from "antd";
 import { useNavigate } from "react-router-dom";
@@ -33,16 +36,16 @@ const AllContext = createContext({
     logout: () => { },
     fileData: [],
     fileLoading: false,
-    createAnnouncement:[],
-    createSyllabus:[],
-    createFile:[]
+    createAnnouncement: [],
+    createSyllabus: [],
+    createFile: []
 });
 const AllProvider = (props) => {
     const [user, setUser] = useState(savedMe || { login: false });
     const [subject, setSubject] = useState("Introduction to Computer Network");
     const [signIn, { data: loginData }] = useMutation(LOGIN_MUTATION);
     useEffect(() => {
-        console.log(loginData);
+        // console.log(loginData);
         if (loginData != undefined) {
             setUser(loginData.login);
             if (!loginData.login.login) {
@@ -87,20 +90,68 @@ const AllProvider = (props) => {
     useEffect(() => {
         displayStatus(status);
     }, [status]);
-    const { data: syllabusData, loading: syllabusLoading } =
+    const { data: syllabusData, loading: syllabusLoading, subscribeToMore: syllabusSubscribe } =
         useQuery(SYLLABUS_QUERY);
-    const { data: announcementData, loading: announcementLoading } =
+    useEffect(() => {
+        try {
+            syllabusSubscribe({
+                document: SYLLABUS_SUBSCRIPTION,
+                updateQuery: (prev, { subscriptionData }) => {
+                    console.log(subscriptionData)
+                    if (!subscriptionData.data) return prev;
+                    const newSyllabus = subscriptionData.data.syllabus
+                    return {
+                        ...prev,
+                        syllabus: [newSyllabus, ...prev.syllabus],
+                    };
+                },
+            });
+        } catch (e) { }
+    }, [syllabusSubscribe]);
+    const { data: announcementData, loading: announcementLoading, subscribeToMore: announcementSubscribe  } =
         useQuery(ANNOUNCEMENT_QUERY);
-    const { data: fileData, loading: fileLoading } = useQuery(FILE_QUERY);
+    useEffect(() => {
+        try {
+            announcementSubscribe({
+                document: ANNOUNCEMENT_SUBSCRIPTION,
+                updateQuery: (prev, { subscriptionData }) => {
+                    console.log(subscriptionData)
+                    if (!subscriptionData.data) return prev;
+                    const newAnnouncement = subscriptionData.data.announcement
+                    return {
+                        ...prev,
+                        announcement: [newAnnouncement, ...prev.announcement],
+                    };
+                },
+            });
+        } catch (e) { }
+    }, [announcementSubscribe]);
+    const { data: fileData, loading: fileLoading, subscribeToMore: fileSubscribe } = useQuery(FILE_QUERY);
+    useEffect(() => {
+        try {
+            fileSubscribe({
+                document: FILE_SUBSCRIPTION,
+                updateQuery: (prev, { subscriptionData }) => {
+                    console.log(subscriptionData)
+                    if (!subscriptionData.data) return prev;
+                    const newFile = subscriptionData.data.file
+                    return {
+                        ...prev,
+                        file: [newFile, ...prev.file],
+                    };
+                },
+            });
+        } catch (e) { }
+    }, [fileSubscribe]);
     const [getGrade, { data: gradeData, loading: gradeLoading }] = useLazyQuery(
         GRADE_QUERY,
         {
             variables: { studentID: user.studentID, subject: subject },
         }
     );
-    const [createAnnouncement]=useMutation(CREATE_ANNOUNCEMENT_MUTATION)
-    const [createSyllabus]=useMutation(CREATE_SYLLABUS_MUTATION)
-    const [createFile]=useMutation(CREATE_FILE_MUTATION)
+    const [createAnnouncement] = useMutation(CREATE_ANNOUNCEMENT_MUTATION)
+    const [createSyllabus] = useMutation(CREATE_SYLLABUS_MUTATION)
+    const [createFile] = useMutation(CREATE_FILE_MUTATION)
     return (
         <AllContext.Provider
             value={{

@@ -14,13 +14,13 @@ const TeacherButton = () => {
             let date = today.getFullYear() + '-' + (today.getMonth() + 1) + '-' + today.getDate();
             let time = today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
             let dateTime = date + ' ' + time;
-            createAnnouncement({ variables: { time:dateTime, title: form.title, content: form.content } })
+            createAnnouncement({ variables: { time: dateTime, title: form.title, content: form.content } })
         }
         else if (form.addType === 'Syllabus') {
-            createSyllabus({ variables: { weekNum:form.weekNum,outline:form.outline } })
+            createSyllabus({ variables: { weekNum: form.weekNum.toString(), outline: form.outline } })
         }
         else if (form.addType === 'File') {
-            createFile({ variables: { type:form.type,info:form.info,fileName:form.fileName,fileLink:form.fileLink } })
+            createFile({ variables: { type: form.type, info: form.info, fileName: form.fileName, fileLink: form.fileLink } })
         }
     }
     return (

@@ -10,6 +10,7 @@ import GradeModel from './models/grade'
 import FileModel from './models/file'
 import Mutation from './resolvers/Mutation';
 import Query from './resolvers/Query'
+import Subscription from './resolvers/Subscription'
 
 const pubsub = createPubSub();
 
@@ -21,7 +22,8 @@ const yoga = createYoga({
         ),
         resolvers: {
             Query,
-            Mutation
+            Mutation,
+            Subscription
         },
     }),
     context: {

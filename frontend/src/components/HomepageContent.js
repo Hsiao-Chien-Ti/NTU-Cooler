@@ -10,7 +10,7 @@ const HomepageContent=({weekNum,outline,file})=>{
       };
     return (
         <Card title={"Week "+weekNum} style={{margin:'3%'}}>
-            <Card.Grid style={gridStyle}>{outline}</Card.Grid>
+        {outline!==''&&<Card.Grid style={gridStyle}>{outline}</Card.Grid>}
             {file.map(({fileName,fileLink})=>(
                 <Card.Grid style={gridStyle}>
                     <LinkOutlined style={{marginRight:'1%'}}/>

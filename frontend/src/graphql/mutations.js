@@ -21,8 +21,8 @@ export const LOGIN_MUTATION = gql`
 }
 `;
 export const CREATE_SYLLABUS_MUTATION = gql`
-    mutation createSyllabus($weekNum: String!, $outline: String,$fileName:String,$fileLink:String) {
-    createSyllabus(weekNum: $weekNum, outline: $outline,fileName:$fileName,fileLink:$fileLink) {
+    mutation createSyllabus($weekNum: String!, $outline: String) {
+    createSyllabus(weekNum: $weekNum, outline: $outline) {
         weekNum
         outline
         file{
