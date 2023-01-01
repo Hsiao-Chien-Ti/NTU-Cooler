@@ -121,5 +121,5 @@ type Mutation {
 }
 
 type Subscription {
-  message(to: String!, courseID: String!): Message!
+  message(to: String!, courseID: String!): Message
 }

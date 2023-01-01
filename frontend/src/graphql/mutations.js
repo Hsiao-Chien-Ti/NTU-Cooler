@@ -28,7 +28,7 @@ const CREATE_USER_MUTATION = gql`
     }
   }
 `;
-export const LOGIN_MUTATION = gql`
+const LOGIN_MUTATION = gql`
   mutation login($studentID: String!, $passwd: String!) {
     login(studentID: $studentID, passwd: $passwd) {
       name
