@@ -61,7 +61,7 @@ type ChatBox {
   name: String!
   messages: [Message!]!
   notAccess: [String]
-  pinMsg: Message
+  pinMsg: Int
   participants: [String]
 }
 
@@ -121,5 +121,5 @@ type Mutation {
 }
 
 type Subscription {
-  message(from: String!, to: String!, courseID: String!): Message!
+  message(to: String!, courseID: String!): Message!
 }

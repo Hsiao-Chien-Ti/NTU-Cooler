@@ -1,4 +1,5 @@
 import Message from "../components/Chatbox/Message";
+import { Breadcrumb } from "antd";
 import styled from "styled-components";
 import { useChat } from "./hooks/useChat";
 import { Input, Tabs } from "antd";
@@ -21,7 +22,7 @@ import { BrowserRouter as Router, Route, Link } from "react-router-dom";
 import React from "react";
 import { useAll } from "./hooks/useAll";
 import HomepageContent from "../components/HomepageContent";
-const { Header, Sider, Content } = Layout;
+const { Header, Sider, Content, Footer } = Layout;
 
 const ChatBoxesWrapper = styled(Tabs)`
   width: 100%;
@@ -41,8 +42,11 @@ const ChatRoom = () => {
     messages,
     chatBoxData,
     chatBoxLoading,
+    listLoading,
     listOfChatboxes,
     currentChat,
+    setMe,
+    me,
     setCurrentChat,
     sendMessage,
     startChat,
@@ -63,18 +67,20 @@ const ChatRoom = () => {
   const scrollToBottom = () => {
     msgFooter.current?.scrollIntoView({ behavior: "smooth", block: "start" });
   };
-
   useEffect(() => {
-    let newChatBoxes = [];
-    console.log(listOfChatboxes);
-    listOfChatboxes.forEach((room) => {
-      newChatBoxes.push({
-        key: room.name,
-        label: room.showName,
-        children: {},
+    if (!listLoading) {
+      let newChatBoxes = [];
+      console.log(listOfChatboxes);
+      listOfChatboxes.userChatbox.forEach((room) => {
+        newChatBoxes.push({
+          key: room.name,
+          label: room.showName,
+          chat: {},
+        });
+        console.log(newChatBoxes);
       });
-    });
-    setChatBoxes(newChatBoxes);
+      setChatBoxes(newChatBoxes);
+    }
   }, [listOfChatboxes]);
   useEffect(() => {
     scrollToBottom();
@@ -86,8 +92,8 @@ const ChatRoom = () => {
     const chat = renderChat();
     let newChatBoxes = chatBoxes;
     newChatBoxes.forEach((element, index) => {
-      if (element.label === currentChat) {
-        element.children = chat;
+      if (element.key === currentChat) {
+        element.chat = chat;
       }
     });
     setChatBoxes(newChatBoxes);
@@ -122,15 +128,12 @@ const ChatRoom = () => {
       throw new Error(room + "'s chat box has already opened.");
     }
     const chat = renderChat(); //turn msgs into DOM nodes
-    const label =
-      room.participants.length > 2
-        ? room.name
-        : room.participants.filter((p) => p.name !== user.name)[0];
+
     setChatBoxes([
       ...chatBoxes,
       {
-        label,
-        children: chat,
+        label: room.showName,
+        chat: chat,
         key: room.name,
         participants: room.participants,
       },
@@ -169,8 +172,8 @@ const ChatRoom = () => {
       const chat = renderChat();
       let newChatBoxes = chatBoxes;
       newChatBoxes.forEach((element, index) => {
-        if (element.label === key) {
-          element.children = chat;
+        if (element.key === key) {
+          element.chat = chat;
         }
       });
       setChatBoxes(newChatBoxes);
@@ -242,89 +245,120 @@ const ChatRoom = () => {
             background: colorBgContainer,
           }}
         >
-          <Menu
-            onClick={(e) => {
-              if (e.key === "_add_") setModalOpen(true);
-              else handleOnChange(e.key);
-            }}
-            selectedKeys={[currentChat]}
-            mode="horizontal"
-            items={chatBoxes}
-          />
-          ;
-          {!chatBoxLoading ? (
-            <>
-              {/* <ChatBoxesWrapper
-                type="editable-card"
-                onChange={(key) => {
-                  handleOnChange(key);
+          <Layout style={{ flexDirection: "row" }}>
+            {/* <Sider
+              style={{ width: 128 }}
+              // collapsible
+              // collapsed={collapsed}
+              // onCollapse={(value) => setCollapsed(value)}
+            > */}
+            {/* <div
+                style={{
+                  height: 32,
+                  margin: 16,
+                  background: "rgba(255, 255, 255, 0.2)",
                 }}
-                activeKey={currentChat}
-                onEdit={(targetKey, action) => {
-                  if (action === "add") {
-                    console.log(attendants);
-                    createGroup();
-                    setModalOpen(true);
-                  } else if (action === "remove") {
-                    setCurrentChat(removeChatBox(targetKey, currentChat));
-                  }
-                }}
-                items={chatBoxes}
               /> */}
+            <Menu
+              onClick={(e) => {
+                if (e.key === "_add_") {
+                  setModalOpen(true);
+                  setMe(!me);
+                } else handleOnChange(e.key);
+              }}
+              style={{ width: 128 }}
+              defaultSelectedKeys={[currentChat]}
+              // defaultOpenKeys={[currentChat]}
+              mode="inline"
+              items={[...chatBoxes, { key: "_add_", label: "+" }]}
+              theme="light"
+            />
+            {/* </Sider> */}
+            <Layout className="site-layout">
+              <Content style={{ margin: "0 16px" }}>
+                <Breadcrumb style={{ margin: "16px 0" }}>
+                  <Breadcrumb.Item>
+                    {chatBoxes.find((b) => b.key === currentChat)
+                      ? chatBoxes.find((b) => b.key === currentChat).label
+                      : "Choose One To Start"}
+                  </Breadcrumb.Item>
+                </Breadcrumb>
+                <div
+                  style={{
+                    padding: 24,
+                    minHeight: 360,
+                    background: colorBgContainer,
+                    flexDirection: "column",
+                  }}
+                >
+                  {!chatBoxLoading ? (
+                    <div style={{ minHeight: "90%" }}>
+                      <div style={{ height: "320px" }}>
+                        {chatBoxes.find((b) => b.key === currentChat)
+                          ? chatBoxes.find((b) => b.key === currentChat).chat
+                            ? chatBoxes.find((b) => b.key === currentChat).chat
+                            : "no messages"
+                          : "no messages"}
+                      </div>
 
-              {chatBoxes[{ label: currentChat }]}
-              <ChatModal
-                me={user.studentID}
-                open={modalOpen}
-                onCreate={async ({ name, participants }) => {
-                  console.log(name);
-                  setCurrentChat(name);
-                  const CurrentChatBox = testChat({
-                    name,
-                    participants,
-                  });
-                  console.log(chatBoxData);
-                  console.log(CurrentChatBox);
-                  let newName = name;
-                  if (participants.length === 2) {
-                    newName = participants[0];
-                  }
-                  createChatBox(CurrentChatBox);
-                  setModalOpen(false);
-                  console.log("Start Chat with " + newName);
-                }}
-                onCancel={() => {
-                  setModalOpen(false);
-                }}
-                users={attendants}
-              />
-              <Input.Search
-                ref={bodyRef}
-                enterButton="Send"
-                placeholder="Type a message here..."
-                onSearch={(msg) => {
-                  if (!msg) {
-                    setStatus({
-                      type: "error",
-                      msg: "Please enter a message body.",
-                    });
-                    return;
-                  }
-                  sendMessage({
-                    variables: {
-                      name: user.studentID,
-                      to: currentChat,
-                      body: msg,
-                      courseID,
-                    },
-                  });
-                  //setBody("");
-                }}
-              ></Input.Search>
-            </>
-          ) : (
-            <p>loading</p>
-          )}
+                      <ChatModal
+                        me={user.studentID}
+                        open={modalOpen}
+                        onCreate={async ({ name, participants }) => {
+                          console.log(name);
+                          setCurrentChat(name);
+                          const CurrentChatBox = testChat({
+                            name,
+                            participants,
+                          });
+                          console.log(chatBoxData);
+                          console.log(CurrentChatBox);
+                          let newName = name;
+                          if (participants.length === 2) {
+                            newName = participants[0];
+                          }
+                          createChatBox(CurrentChatBox);
+                          setModalOpen(false);
+                          console.log("Start Chat with " + newName);
+                        }}
+                        onCancel={() => {
+                          setModalOpen(false);
+                        }}
+                        users={attendants}
+                      />
+                      <Footer style={{ justifySelf: "flex-end", padding: 0 }}>
+                        <Input.Search
+                          ref={bodyRef}
+                          enterButton="Send"
+                          placeholder="Type a message here..."
+                          onSearch={(msg) => {
+                            if (!msg) {
+                              setStatus({
+                                type: "error",
+                                msg: "Please enter a message body.",
+                              });
+                              return;
+                            }
+                            sendMessage({
+                              variables: {
+                                name: user.studentID,
+                                to: currentChat,
+                                body: msg,
+                                courseID,
+                              },
+                            });
+                            //setBody("");
+                          }}
+                        ></Input.Search>
+                      </Footer>
+                    </div>
+                  ) : (
+                    <p>loading</p>
+                  )}
+                </div>
+              </Content>
+            </Layout>
+          </Layout>
         </Content>
       </Layout>
     </Layout>

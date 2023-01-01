@@ -20,10 +20,13 @@ const ChatContext = createContext({
   //friend: "",
   currentChat: "",
   messages: [],
+  me: false,
+  setMe: () => {},
   //status: {},
   chatBoxData: {},
   chatBoxLoading: false,
   listOfChatboxes: [],
+  listLoading: false,
   startChat: () => {},
   sendMessage: () => {},
   clearMessages: () => {},
@@ -37,7 +40,7 @@ const ChatContext = createContext({
 const ChatProvider = (props) => {
   //const [me, setMe] = useState(savedMe || "");
   const { user, courseID } = useAll();
-  const [me, setMe] = useState("KKK");
+  const [me, setMe] = useState(true);
   const [currentChat, setCurrentChat] = useState("");
   const [messages, setMessages] = useState([]);
   const [status, setStatus] = useState({ type: "", msg: "" });
@@ -46,6 +49,7 @@ const ChatProvider = (props) => {
     data: chatBoxData,
     loading: chatBoxLoading,
     subscribeToMore,
+    error,
     refetch,
   } = useQuery(CHATBOX_QUERY, {
     variables: {
@@ -54,16 +58,16 @@ const ChatProvider = (props) => {
       studentID: user.studentID,
     },
   });
-  const {
-    data: { userChatBox: listOfChatboxes },
-    loading: listLoading,
-  } = useQuery(CHATBOX_OF_USER_QUERY, {
-    staleTime: 5000,
-    variables: {
-      studentID: user.studentID,
-      courseID,
-    },
-  });
+  const { data: listOfChatboxes, loading: listLoading } = useQuery(
+    CHATBOX_OF_USER_QUERY,
+    {
+      variables: {
+        studentID: user.studentID,
+        courseID,
+      },
+    }
+  );
+
   const [startChat] = useMutation(CREATE_CHATBOX_MUTATION);
   const [sendMessage] = useMutation(CREATE_MESSAGE_MUTATION);
   const displayStatus = (s) => {
@@ -92,6 +96,9 @@ const ChatProvider = (props) => {
     displayStatus(status);
   }, [status]);
   useEffect(() => {
+    if (error) {
+      throw new Error(error);
+    }
     console.log(me, " ", currentChat);
     if (chatBoxData) {
       console.log("DATA: ", chatBoxData);
@@ -101,12 +108,20 @@ const ChatProvider = (props) => {
   }, [chatBoxData]);
   useEffect(() => {
     if (currentChat) {
-      console.log(me + "!!!!!" + currentChat);
+      console.log("!!!!!" + currentChat);
       refetch({
         name: currentChat,
         courseID,
+        studentID: user.studentID,
       });
+      if (error) {
+        throw new Error(error);
+      }
+      if (chatBoxLoading) {
+        console.log("loading");
+      }
       //console.log("DATA");
+      console.log(chatBoxData);
       if (chatBoxData) {
         console.log("reset message");
         setMessages(chatBoxData.chatbox.messages);
@@ -116,7 +131,7 @@ const ChatProvider = (props) => {
           setAllRooms([...allRooms, currentChat]);
           subscribeToMore({
             document: MESSAGE_SUBSCRIPTION,
-            variables: { from: me, to: currentChat, courseID },
+            variables: { to: currentChat, courseID },
             updateQuery: (prev, { subscriptionData }) => {
               if (!subscriptionData.data) {
                 console.log("no data");
@@ -148,23 +163,26 @@ const ChatProvider = (props) => {
         }
       }
     }
-  }, [currentChat]);
+  }, [currentChat, chatBoxData, chatBoxLoading]);
   const sendData = (settings) => {};
   const createGroup = () => {
     sendData({ type: "USER", payload: {} });
   };
 
   useEffect(() => {
-    localStorage.setItem(LOCALSTORAGE_KEY, me);
+    localStorage.setItem(LOCALSTORAGE_KEY, "KKK");
   }, [me]);
   return (
     <ChatContext.Provider
       value={{
         //status,
+        setMe,
+        me,
         allRooms,
         chatBoxLoading,
         currentChat,
         listOfChatboxes,
+        listLoading,
         setCurrentChat,
         messages,
         chatBoxData,

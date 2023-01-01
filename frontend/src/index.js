@@ -13,6 +13,7 @@ import { createClient } from "graphql-ws";
 import { AllProvider } from "./containers/hooks/useAll";
 import App from "./containers/App";
 import reportWebVitals from "./reportWebVitals";
+import { ChatProvider } from "./containers/hooks/useChat";
 const httpLink = new HttpLink({
   uri: "http://localhost:4000/graphql",
 });
@@ -44,7 +45,9 @@ root.render(
   <React.StrictMode>
     <ApolloProvider client={client}>
       <AllProvider>
-        <App />
+        <ChatProvider>
+          <App />
+        </ChatProvider>
       </AllProvider>
     </ApolloProvider>
   </React.StrictMode>
