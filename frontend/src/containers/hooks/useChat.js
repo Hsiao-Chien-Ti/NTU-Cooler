@@ -14,6 +14,8 @@ const ChatContext = createContext({
   messages: [],
   chatBoxes: [],
   chatBoxLoading: false,
+  pinMsg: -1,
+  setPinMsg: () => {},
   setCurrentChat: () => {},
   setMessages: () => {},
   setChatBoxes: () => {},
@@ -27,6 +29,7 @@ const ChatProvider = (props) => {
   const [messages, setMessages] = useState([]);
   const [allRooms, setAllRooms] = useState([]);
   const [chatBoxes, setChatBoxes] = useState([]);
+  const [pinMsg, setPinMsg] = useState(-1);
   const [startChat] = useMutation(CREATE_CHATBOX_MUTATION);
   const [sendMessage, { error: errorSendMsg }] = useMutation(
     CREATE_MESSAGE_MUTATION
@@ -69,7 +72,10 @@ const ChatProvider = (props) => {
     }
     if (!chatBoxLoading) {
       console.log("Query_chatBoxData:", chatBoxData);
-      if (chatBoxData) setMessages(chatBoxData.chatbox.messages);
+      if (chatBoxData) {
+        setMessages(chatBoxData.chatbox.messages);
+        setPinMsg(chatBoxData.chatbox.pinMsg);
+      }
     }
   }, [chatBoxData]);
 
@@ -95,13 +101,18 @@ const ChatProvider = (props) => {
                 chatbox: {
                   name: currentChat,
                   messages: [...prev.chatbox.messages, newMessage],
+                  type: chatBoxData.chatbox.type,
+                  courseID: chatBoxData.chatbox.courseID,
+                  participants: chatBoxData.chatbox.participants,
+                  notAccess: chatBoxData.chatbox.notAccess,
+                  pinMsg: chatBoxData.chatbox.pinMsg,
                 },
               };
             },
           });
           console.log("AllRoom: ", allRooms);
         } catch (e) {
-          console.log("subscribe error: " + e);
+          throw new Error("subscribe error: " + e);
         }
       }
     }
@@ -130,15 +141,13 @@ const ChatProvider = (props) => {
     <ChatContext.Provider
       value={{
         //status,
-        setMe,
-        me,
-        allRooms,
         chatBoxLoading,
         currentChat,
         messages,
         chatBoxes,
         chatBoxLoading,
-
+        pinMsg,
+        setPinMsg,
         setCurrentChat,
         setMessages,
         setChatBoxes,

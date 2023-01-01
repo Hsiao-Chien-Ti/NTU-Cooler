@@ -5,11 +5,10 @@ import { useChat } from "./hooks/useChat";
 import { Input, Tabs } from "antd";
 import ChatModal from "../components/Chatbox/ChatboxContent";
 import { useEffect, useState, useRef } from "react";
-import { useQuery } from "@apollo/client";
-import { CHATBOX_QUERY, MESSAGE_SUBSCRIPTION } from "../graphql";
 import { Layout, Menu, theme } from "antd";
 import React from "react";
 import { useAll } from "./hooks/useAll";
+import ChatboxHeader from "../components/Chatbox/ChatboxHeader";
 const { Content, Footer } = Layout;
 
 const ChatBoxesWrapper = styled(Tabs)`
@@ -31,6 +30,8 @@ const ChatRoom = () => {
     messages,
     chatBoxes,
     chatBoxLoading,
+    pinMsg,
+    setPinMsg,
     setCurrentChat,
     setMessages,
     setChatBoxes,
@@ -163,7 +164,7 @@ const ChatRoom = () => {
               setModalOpen(true);
             } else handleOnChange(e.key);
           }}
-          style={{ width: 128 }}
+          style={{ width: 128, justifyItems: "center" }}
           defaultSelectedKeys={[currentChat]}
           // defaultOpenKeys={[currentChat]}
           mode="inline"
@@ -171,76 +172,86 @@ const ChatRoom = () => {
           theme="light"
         />
         {/* </Sider> */}
-        <Layout className="site-layout">
-          <Content style={{ margin: "0 16px" }}>
-            <Breadcrumb style={{ margin: "16px 0" }}>
-              <Breadcrumb.Item>
-                {chatBoxes.find((b) => b.key === currentChat)
-                  ? chatBoxes.find((b) => b.key === currentChat).label
-                  : "Choose One To Start"}
-              </Breadcrumb.Item>
-            </Breadcrumb>
-            <div
-              style={{
-                padding: 24,
-                minHeight: 360,
-                background: colorBgContainer,
-                flexDirection: "column",
-              }}
-            >
-              {!chatBoxLoading ? (
-                <div style={{ minHeight: "90%" }}>
-                  <div style={{ height: "320px" }}>
-                    {chatBoxes.find((b) => b.key === currentChat)
-                      ? chatBoxes.find((b) => b.key === currentChat).chat !== {}
-                        ? chatBoxes.find((b) => b.key === currentChat).chat
-                        : "no messages"
-                      : "no messages"}
-                  </div>
+        {/* <Layout className="site-layout"> */}
+        <Content style={{ margin: "16px 16px" }}>
+          <div
+            style={{
+              maxHeight: "420px",
+              flexDirection: "column",
+            }}
+          >
+            {!chatBoxLoading ? (
+              <div style={{ minHeight: "90%" }}>
+                <ChatboxHeader
+                  isPin={pinMsg !== -1}
+                  msg={
+                    pinMsg === -1 ? "no pinned message" : messages[pinMsg]?.body
+                  }
+                  groupName={
+                    chatBoxes.find((b) => b.key === currentChat)?.label
+                  }
+                  color={colorBgContainer}
+                />
 
-                  <ChatModal
-                    me={user.studentID}
-                    open={modalOpen}
-                    onCreate={async ({ name, participants }) => {
-                      await createChatBox({ name, participants });
-                    }}
-                    onCancel={() => {
-                      setModalOpen(false);
-                    }}
-                    users={attendants}
-                  />
-                  <Footer style={{ justifySelf: "flex-end", padding: 0 }}>
-                    <Input.Search
-                      ref={bodyRef}
-                      enterButton="Send"
-                      placeholder="Type a message here..."
-                      onSearch={(msg) => {
-                        if (!msg) {
-                          setStatus({
-                            type: "error",
-                            msg: "Please enter a message body.",
-                          });
-                          return;
-                        }
-                        sendMessage({
-                          variables: {
-                            sender: user.studentID,
-                            to: currentChat,
-                            body: msg,
-                            courseID,
-                          },
-                        });
-                        //setBody("");
-                      }}
-                    ></Input.Search>
-                  </Footer>
+                <div style={{ height: "16px" }}></div>
+                <div
+                  style={{
+                    padding: 12,
+                    overflow: "auto",
+                    height: "300px",
+                    background: colorBgContainer,
+                  }}
+                >
+                  {chatBoxes.find((b) => b.key === currentChat)
+                    ? chatBoxes.find((b) => b.key === currentChat).chat !== {}
+                      ? chatBoxes.find((b) => b.key === currentChat).chat
+                      : "no messages"
+                    : "no messages"}
                 </div>
-              ) : (
-                <p>loading</p>
-              )}
-            </div>
-          </Content>
-        </Layout>
+
+                <ChatModal
+                  me={user.studentID}
+                  open={modalOpen}
+                  onCreate={async ({ name, participants }) => {
+                    await createChatBox({ name, participants });
+                  }}
+                  onCancel={() => {
+                    setModalOpen(false);
+                  }}
+                  users={attendants}
+                />
+                <Footer style={{ justifySelf: "flex-end", padding: 0 }}>
+                  <Input.Search
+                    ref={bodyRef}
+                    enterButton="Send"
+                    placeholder="Type a message here..."
+                    onSearch={(msg) => {
+                      if (!msg) {
+                        setStatus({
+                          type: "error",
+                          msg: "Please enter a message body.",
+                        });
+                        return;
+                      }
+                      sendMessage({
+                        variables: {
+                          sender: user.studentID,
+                          to: currentChat,
+                          body: msg,
+                          courseID,
+                        },
+                      });
+                      //setBody("");
+                    }}
+                  ></Input.Search>
+                </Footer>
+              </div>
+            ) : (
+              <p>loading</p>
+            )}
+          </div>
+        </Content>
+        {/* </Layout> */}
       </Layout>
     </Content>
   );

@@ -63,15 +63,6 @@ type ChatBox {
   notAccess: [String]
   pinMsg: Int
   participants: [String]
-
-type ChatBox {
-  type: Boolean
-  courseID: String!
-  name: String!
-  messages: [Message!]!
-  notAccess: [String]
-  pinMsg: Int
-  participants: [String]
 }
 
 type Message {
@@ -130,5 +121,9 @@ type Mutation {
 }
 
 type Subscription {
+  syllabus: Syllabus!
+  announcement: Announcement!
+  file: File!
+  grade(studentID: String!, subject: String!): Grade!
   message(to: String!, courseID: String!): Message!
 }
