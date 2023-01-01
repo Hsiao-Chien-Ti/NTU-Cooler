@@ -17,6 +17,7 @@ export const CHATBOX_OF_USER_QUERY = gql`
   query userChatbox($studentID: String!, $courseID: String!) {
     userChatbox(studentID: $studentID, courseID: $courseID) {
       name
+      showName
     }
   }
 `;
