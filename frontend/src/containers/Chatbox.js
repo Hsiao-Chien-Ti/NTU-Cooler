@@ -5,7 +5,6 @@ import { Input, Tabs } from "antd";
 import ChatModal from "../components/Chatbox/ChatboxContent";
 import { useEffect, useState, useRef } from "react";
 import { subscribe } from "graphql";
-import Menu from "antd";
 import {
   MenuFoldOutlined,
   MenuUnfoldOutlined,
@@ -40,15 +39,14 @@ const FootRef = styled.div`
 const ChatRoom = () => {
   const {
     messages,
-    allRooms,
     chatBoxData,
     chatBoxLoading,
+    listOfChatboxes,
     currentChat,
     setCurrentChat,
     sendMessage,
     startChat,
     setStatus,
-    createGroup,
   } = useChat();
   const { logout, attendants, user, courseID } = useAll();
 
@@ -65,6 +63,19 @@ const ChatRoom = () => {
   const scrollToBottom = () => {
     msgFooter.current?.scrollIntoView({ behavior: "smooth", block: "start" });
   };
+
+  useEffect(() => {
+    let newChatBoxes = [];
+    console.log(listOfChatboxes);
+    listOfChatboxes.forEach((room) => {
+      newChatBoxes.push({
+        key: room.name,
+        label: room.showName,
+        children: {},
+      });
+    });
+    setChatBoxes(newChatBoxes);
+  }, [listOfChatboxes]);
   useEffect(() => {
     scrollToBottom();
     // renderChat();
@@ -111,7 +122,19 @@ const ChatRoom = () => {
       throw new Error(room + "'s chat box has already opened.");
     }
     const chat = renderChat(); //turn msgs into DOM nodes
-    setChatBoxes([...chatBoxes, { label: room, children: chat, key: room }]);
+    const label =
+      room.participants.length > 2
+        ? room.name
+        : room.participants.filter((p) => p.name !== user.name)[0];
+    setChatBoxes([
+      ...chatBoxes,
+      {
+        label,
+        children: chat,
+        key: room.name,
+        participants: room.participants,
+      },
+    ]);
     setMsgSent(true);
   };
   const removeChatBox = (targetKey, activeKey) => {
@@ -219,28 +242,16 @@ const ChatRoom = () => {
             background: colorBgContainer,
           }}
         >
-          <Sider trigger={null} collapsible collapsed={collapsed}>
-            <div className="logo" />
-            <Menu
-              theme="dark"
-              mode="inline"
-              defaultSelectedKeys={[]}
-              onClick={(e) => {
-                if (e.key === "_add_") setModalOpen(true);
-                else handleOnChange(e.key);
-              }}
-            >
-              {allRooms.map((room) => {
-                <Menu.Item key={room.name}>
-                  <span>room.name</span>
-                  <Link to={`/course/message/${room.name}`} />
-                </Menu.Item>;
-              })}
-              <Menu.Item key="_add_">
-                <span>+</span>
-              </Menu.Item>
-            </Menu>
-          </Sider>
+          <Menu
+            onClick={(e) => {
+              if (e.key === "_add_") setModalOpen(true);
+              else handleOnChange(e.key);
+            }}
+            selectedKeys={[currentChat]}
+            mode="horizontal"
+            items={chatBoxes}
+          />
+          ;
           {!chatBoxLoading ? (
             <>
               {/* <ChatBoxesWrapper
@@ -260,7 +271,8 @@ const ChatRoom = () => {
                 }}
                 items={chatBoxes}
               /> */}
-              <Outlet />
+
+              {chatBoxes[{ label: currentChat }]}
               <ChatModal
                 me={user.studentID}
                 open={modalOpen}
@@ -277,7 +289,7 @@ const ChatRoom = () => {
                   if (participants.length === 2) {
                     newName = participants[0];
                   }
-                  createChatBox(newName);
+                  createChatBox(CurrentChatBox);
                   setModalOpen(false);
                   console.log("Start Chat with " + newName);
                 }}
