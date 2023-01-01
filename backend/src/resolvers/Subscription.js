@@ -20,10 +20,10 @@ const Subscription = {
       console.log(studentID);
       return pubsub.subscribe("GRADE");
     },
-    message: {
-      subscribe: (parent, { from, to, courseID }, { pubsub }) => {
-        return pubsub.subscribe(`chatBox ${to} in class ${courseID}`);
-      },
+  },
+  message: {
+    subscribe: (parent, { to, courseID }, { pubsub }) => {
+      return pubsub.subscribe(`chatBox ${to} in class ${courseID}`);
     },
   },
 };

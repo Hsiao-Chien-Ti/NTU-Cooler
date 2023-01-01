@@ -23,7 +23,7 @@ const LOCALSTORAGE_KEY = "save-me";
 const savedMe = JSON.parse(localStorage.getItem(LOCALSTORAGE_KEY));
 
 const AllContext = createContext({
-  user: { login: false },
+  user: { name: "", passwd: "", studentID: "", login: false },
   attendants: [],
   courseID: "",
   signIn: [],

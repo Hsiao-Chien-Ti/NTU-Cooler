@@ -173,6 +173,8 @@ const Mutation = {
       courseID,
       participants,
       messages: [],
+      type: false,
+      pinMsg: -1,
     }).save();
     let showName = participants.length > 2 ? name : "";
     participants?.forEach(async (person) => {
@@ -183,7 +185,16 @@ const Mutation = {
       p.chatbox.push({ name, courseID, showName });
       await p.save();
     });
-    return grade;
+    return box;
+  },
+  createMessage: async (parent, { sender, to, body, courseID }, { pubsub }) => {
+    const chatBox = await ChatBoxModel.findOne({ name: to, courseID });
+    const newMsg = { sender, body, groupnum: -1, hidden: false };
+    chatBox.messages.push(newMsg);
+    await chatBox.save();
+    //const chatBoxName = makeName(name, to);
+    pubsub.publish(`chatBox ${to} in class ${courseID}`, { message: newMsg });
+    return newMsg;
   },
 };
 export default Mutation;
