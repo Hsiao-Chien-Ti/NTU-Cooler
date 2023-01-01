@@ -63,32 +63,6 @@ type ChatBox {
   notAccess: [String]
   pinMsg: Int
   participants: [String]
-}
-
-type Message {
-  sender: String!
-  body: String!
-  groupnum: Int
-  hidden: Boolean
-}
-
-type AttendantInfo {
-  name: String!
-  studentID: String!
-}
-type Announcement {
-  time: String!
-  title: String!
-  content: String
-}
-type Grade {
-  studentID: String!
-  subject: String!
-  itemName: String!
-  type: Boolean!
-  score: Float!
-  weight: Float
-}
 
 type ChatBox {
   type: Boolean
@@ -96,7 +70,7 @@ type ChatBox {
   name: String!
   messages: [Message!]!
   notAccess: [String]
-  pinMsg: Message
+  pinMsg: Int
   participants: [String]
 }
 
