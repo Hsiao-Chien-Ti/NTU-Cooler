@@ -1,6 +1,7 @@
 import { SoundOutlined } from "@ant-design/icons";
+import { Button } from "antd";
 
-const ChatboxHeader = ({ isPin, msg, groupName, color }) => {
+const ChatboxHeader = ({ isPin, msg, groupName, color, handlePinOnClick }) => {
   return (
     <div
       style={{
@@ -12,9 +13,13 @@ const ChatboxHeader = ({ isPin, msg, groupName, color }) => {
     >
       <div>{groupName}</div>
       <div style={{ flexDirection: "row", alignItems: "flex-end" }}>
-        {isPin ? <SoundOutlined /> : ""}
-        {"  "}
-        {msg}
+        {isPin ? (
+          <Button onClick={handlePinOnClick}>
+            <SoundOutlined /> {msg}
+          </Button>
+        ) : (
+          <>{msg}</>
+        )}
       </div>
     </div>
   );

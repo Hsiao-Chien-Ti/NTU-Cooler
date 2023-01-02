@@ -8,7 +8,7 @@ const ChatBoxSchema = new Schema({
   notAccess: [{ type: String }],
   messages: [
     {
-      sender: { type: String },
+      sender: { studentID: { type: String }, name: { type: String } },
       groupnum: { type: Number },
       body: { type: String },
       hidden: { type: Boolean },

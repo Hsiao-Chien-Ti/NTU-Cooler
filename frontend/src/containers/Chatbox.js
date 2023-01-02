@@ -31,6 +31,7 @@ const ChatRoom = () => {
     chatBoxes,
     chatBoxLoading,
     pinMsg,
+    access,
     setPinMsg,
     setCurrentChat,
     setMessages,
@@ -48,6 +49,7 @@ const ChatRoom = () => {
   } = theme.useToken();
   const msgFooter = useRef(null);
   const bodyRef = useRef(null);
+  const pinRef = useRef(null);
 
   const scrollToBottom = () => {
     msgFooter.current?.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -57,6 +59,10 @@ const ChatRoom = () => {
     setMsgSent(false);
   }, [msgSent]);
 
+  const handlePinOnClick = () => {
+    if (pinMsg !== -1)
+      pinRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+  };
   const renderChat = () => {
     console.log("renderChat");
     console.log(messages);
@@ -64,48 +70,60 @@ const ChatRoom = () => {
       <p style={{ color: "#ccc" }}>No messages...</p>
     ) : (
       <>
-        {messages.map((mes, i) => (
-          <Message
-            isMe={mes.sender === user.name ? true : false}
-            sender={mes.sender}
-            message={mes.body}
-            key={i}
-          />
-        ))}
+        {messages.map((mes, i) => {
+          console.log("message: ", i, mes.body);
+          return pinMsg === i ? (
+            <>
+              <div ref={pinRef} />
+              <Message
+                isMe={mes.sender.studentID === user.studentID ? true : false}
+                sender={mes.sender}
+                message={mes.body}
+                key={i}
+                access={access}
+                hidden={mes.hidden}
+              />
+            </>
+          ) : (
+            <Message
+              isMe={mes.sender.studentID === user.studentID ? true : false}
+              sender={mes.sender}
+              message={mes.body}
+              key={i}
+              access={access}
+              hidden={mes.hidden}
+            />
+          );
+        })}
         <FootRef ref={msgFooter} />
       </>
     );
   }; //produce chat's DOM nodes
 
-  const testChat = async (name, participants) => {
-    try {
-      const box = await startChat({
-        variables: {
-          name,
-          courseID,
-          participants,
-        },
-      });
-      return box;
-    } catch (e) {
-      throw new Error("Mutation_createChatBox_error", e);
-    }
-  };
-
-  const createChatBox = async ({ name, participants }) => {
+  const createChatBox = async ({ name, participants, quiz }) => {
     let newName = name;
     if (participants.length === 2) {
-      newName = participants[0];
+      newName = participants.filter((p) => p !== user.studentID)[0];
     }
     if (chatBoxes.some(({ key }) => key === name)) {
       setCurrentChat(name);
+      setStatus({ type: "error", msg: newName + "has exist" });
       setModalOpen(false);
     } else {
-      const CurrentChatBox = testChat({
-        name,
-        participants,
-      });
-      console.log("Mutation_createChatBox:", CurrentChatBox);
+      try {
+        console.log(name, participants);
+        startChat({
+          variables: {
+            name,
+            courseID,
+            participants,
+            type: quiz,
+          },
+        });
+        console.log("Mutation_createChatBox:", name);
+      } catch (e) {
+        throw new Error("Mutation_createChatBox_error", e);
+      }
       setCurrentChat(name);
       const chat = renderChat(); //turn msgs into DOM nodes
       setChatBoxes([
@@ -113,8 +131,8 @@ const ChatRoom = () => {
         {
           label: newName,
           chat: chat,
-          key: CurrentChatBox.name,
-          participants: CurrentChatBox.participants,
+          key: name,
+          participants: participants,
         },
       ]);
       setMsgSent(true);
@@ -136,13 +154,6 @@ const ChatRoom = () => {
 
   const handleOnChange = (key) => {
     if (key) {
-      // queryChat({
-      //   variables: {
-      //     name: key,
-      //     courseID,
-      //     studentID: user.studentID,
-      //   },
-      // });
       setCurrentChat(key);
       const chat = renderChat();
       let newChatBoxes = chatBoxes;
@@ -173,6 +184,7 @@ const ChatRoom = () => {
           }}
           style={{ width: 128, justifyItems: "center" }}
           defaultSelectedKeys={[currentChat]}
+          selectedKeys={[currentChat]}
           // defaultOpenKeys={[currentChat]}
           mode="inline"
           items={[...chatBoxes, { key: "_add_", label: "+" }]}
@@ -198,6 +210,7 @@ const ChatRoom = () => {
                     chatBoxes.find((b) => b.key === currentChat)?.label
                   }
                   color={colorBgContainer}
+                  handlePinOnClick={handlePinOnClick}
                 />
 
                 <div style={{ height: "16px" }}></div>
@@ -219,8 +232,14 @@ const ChatRoom = () => {
                 <ChatModal
                   me={user.studentID}
                   open={modalOpen}
-                  onCreate={async ({ name, participants }) => {
-                    await createChatBox({ name, participants });
+                  isTeacher={user.isTeacher}
+                  onCreate={async ({ name, participants, quiz }) => {
+                    console.log(participants);
+                    await createChatBox({
+                      name,
+                      participants,
+                      quiz,
+                    });
                   }}
                   onCancel={() => {
                     setModalOpen(false);
@@ -242,12 +261,23 @@ const ChatRoom = () => {
                       }
                       sendMessage({
                         variables: {
-                          sender: user.studentID,
+                          senderID: user.studentID,
+                          senderName: user.name,
                           to: currentChat,
                           body: msg,
                           courseID,
                         },
                       });
+                      if (!access) {
+                        console.log("finally", user.studentID, "can access!");
+                        // queryChat({
+                        //   variables: {
+                        //     name: currentChat,
+                        //     courseID,
+                        //     studentID: user.studentID,
+                        //   },
+                        // });
+                      }
                       //setBody("");
                     }}
                   ></Input.Search>

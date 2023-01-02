@@ -1,9 +1,9 @@
-import { Modal, Form, Input, Button, Select } from "antd";
+import { Modal, Form, Input, Button, Select, Checkbox } from "antd";
 import { useState } from "react";
 const makeName = (name, to) => {
   return [name, to].sort().join("_");
 };
-const ChatModal = ({ open, onCreate, onCancel, users, me }) => {
+const ChatModal = ({ open, onCreate, onCancel, users, me, isTeacher }) => {
   const [form] = Form.useForm();
   const [isGroup, setIsGroup] = useState(false);
   //console.log("users:", users);
@@ -24,18 +24,12 @@ const ChatModal = ({ open, onCreate, onCancel, users, me }) => {
           .validateFields()
           .then((values) => {
             form.resetFields();
-            if (isGroup) {
-              onCreate({
-                name: values.chatRoomName,
-                participants: [values.users, me],
-              });
-              setIsGroup(false);
-            } else {
-              onCreate({
-                name: makeName(values.name, me),
-                participants: [values.name, me],
-              });
-            }
+            onCreate({
+              name: isGroup ? values.chatRoomName : makeName(values.name, me),
+              participants: isGroup ? [...values.users, me] : [values.name, me],
+              quiz: isTeacher ? (isGroup ? values.quiz : false) : false,
+            });
+            setIsGroup(false);
           })
           .catch((e) => {
             window.alert(e);
@@ -43,7 +37,13 @@ const ChatModal = ({ open, onCreate, onCancel, users, me }) => {
       }}
     >
       {isGroup ? (
-        <Form form={form} layout="vertical" name="form_in_modal">
+        <Form
+          form={form}
+          layout="vertical"
+          name="form_in_modal"
+          labelCol={{ span: 8 }}
+          wrapperCol={{ span: 16 }}
+        >
           <Form.Item
             name="chatRoomName"
             label="Enter Chat Room Name"
@@ -76,6 +76,18 @@ const ChatModal = ({ open, onCreate, onCancel, users, me }) => {
               options={users}
             />
           </Form.Item>
+          {isTeacher ? (
+            <Form.Item
+              name="quiz"
+              valuePropName="checked"
+              wrapperCol={{ offset: 8, span: 16 }}
+            >
+              <Checkbox>Make it a quiz</Checkbox>
+            </Form.Item>
+          ) : (
+            <></>
+          )}
+
           <Button onClick={handleCreateGroup}>Single Chat</Button>
         </Form>
       ) : (

@@ -66,12 +66,16 @@ type ChatBox {
 }
 
 type Message {
-  sender: String!
+  sender: MessageSender!
   body: String!
-  groupnum: Int
+  groupNum: Int
   hidden: Boolean
 }
 
+type MessageSender {
+  studentID: String!
+  name: String!
+}
 type AttendantInfo {
   name: String!
   studentID: String!
@@ -96,26 +100,28 @@ type Mutation {
     linkType: Boolean!
   ): File!
   createAnnouncement(
-    time: String!,
-    title: String!,
+    time: String!
+    title: String!
     content: String
   ): Announcement!
   createGrade(
-    studentID: String!,
-    subject: String!,
-    itemName: String!,
-    score: Float!,
+    studentID: String!
+    subject: String!
+    itemName: String!
+    score: Float!
     weight: Float
   ): Grade!
   createChatBox(
-    name: String,
-    courseID: String,
-    participants: [String]
+    name: String!
+    courseID: String!
+    participants: [String!]!
+    type: Boolean!
   ): ChatBox!
   createMessage(
-    sender: String!,
-    to: String!,
-    body: String!,
+    senderID: String!
+    senderName: String!
+    to: String!
+    body: String!
     courseID: String!
   ): Message!
 }

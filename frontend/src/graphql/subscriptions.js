@@ -1,20 +1,20 @@
-import { gql } from '@apollo/client';
+import { gql } from "@apollo/client";
 
 export const SYLLABUS_SUBSCRIPTION = gql`
-  subscription syllabus{
+  subscription syllabus {
     syllabus {
       weekNum
       outline
-      file{
+      file {
         fileName
         fileLink
         linkType
       }
-  }
+    }
   }
 `;
 export const FILE_SUBSCRIPTION = gql`
-  subscription file{
+  subscription file {
     file {
       type
       info
@@ -25,31 +25,36 @@ export const FILE_SUBSCRIPTION = gql`
   }
 `;
 export const ANNOUNCEMENT_SUBSCRIPTION = gql`
-  subscription announcement{
+  subscription announcement {
     announcement {
       time
       title
       content
-  }
+    }
   }
 `;
 export const GRADE_SUBSCRIPTION = gql`
-  subscription grade($studentID:String!, $subject:String!){
-    grade(studentID:$studentID,subject:$subject) {
+  subscription grade($studentID: String!, $subject: String!) {
+    grade(studentID: $studentID, subject: $subject) {
       studentID
       subject
       itemName
       score
-      weight 
-  }
+      weight
+    }
   }
 `;
 
 export const MESSAGE_SUBSCRIPTION = gql`
   subscription message($to: String!, $courseID: String!) {
     message(to: $to, courseID: $courseID) {
-      sender
+      sender {
+        name
+        studentID
+      }
       body
+      hidden
+      groupNum
     }
   }
 `;

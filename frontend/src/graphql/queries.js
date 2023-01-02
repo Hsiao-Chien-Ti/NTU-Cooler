@@ -72,8 +72,13 @@ export const CHATBOX_QUERY = gql`
     chatbox(name: $name, courseID: $courseID, studentID: $studentID) {
       name
       messages {
-        sender
+        sender {
+          name
+          studentID
+        }
         body
+        hidden
+        groupNum
       }
       type
       courseID

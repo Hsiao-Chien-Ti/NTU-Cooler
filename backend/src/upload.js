@@ -10,9 +10,7 @@ const testUser = [
   {
     name: "t",
     studentID: "t",
-    chatbox: [
-      { name: "My Group", courseID: "EE1234", showName: "My Group" },
-    ],
+    chatbox: [{ name: "My Group", courseID: "EE1234", showName: "My Group" }],
     passwd: "t",
     groupNum: 7,
     isTeacher: true,
@@ -55,31 +53,31 @@ const testChat = [
     notAccess: [],
     messages: [
       {
-        sender: "KKK",
+        sender: { studentID: "KKK", name: "KKK" },
         groupNum: 7,
         body: "hi q",
         hidden: false,
       },
       {
-        sender: "q",
+        sender: { studentID: "q", name: "q" },
         groupMum: 7,
         body: "hi buddy",
         hidden: false,
       },
       {
-        sender: "KKK",
+        sender: { studentID: "KKK", name: "KKK" },
         groupNum: 7,
         body: "how's your day",
         hidden: false,
       },
       {
-        sender: "q",
+        sender: { studentID: "q", name: "q" },
         groupNum: 7,
         body: "so fucked",
         hidden: false,
       },
       {
-        sender: "q",
+        sender: { studentID: "q", name: "q" },
         groupNum: 7,
         body: "but finally it's all finished",
         hidden: false,
@@ -95,31 +93,31 @@ const testChat = [
     notAccess: ["b09901042"],
     messages: [
       {
-        sender: "KKK",
+        sender: { studentID: "KKK", name: "KKK" },
         groupNum: 7,
         body: "ans: 1",
         hidden: true,
       },
       {
-        sender: "q",
+        sender: { studentID: "q", name: "q" },
         groupNum: 7,
         body: "ans: 2",
         hidden: true,
       },
       {
-        sender: "KKK",
+        sender: { studentID: "KKK", name: "KKK" },
         groupNum: 7,
         body: "ans: 3",
         hidden: true,
       },
       {
-        sender: "q",
+        sender: { studentID: "q", name: "q" },
         groupNum: 7,
         body: "ans: 4",
         hidden: true,
       },
       {
-        sender: "q",
+        sender: { studentID: "q", name: "q" },
         groupNum: 7,
         body: "ans: 5",
         hidden: true,
@@ -148,12 +146,12 @@ const testSyllabus = [
   {
     weekNum: "1",
     outline: "No class for week 1",
-    file: [{ fileName: "CPBL", fileLink: "https://www.cpbl.com.tw/",linkType: false }]
+    file: [{ fileName: "CPBL", fileLink: "https://www.cpbl.com.tw/", linkType: false }]
   },
   {
     weekNum: "2",
     outline: "Field trip",
-    file: [{ fileName: "Taipei children's amusement park", fileLink: "https://www.tcap.taipei/",linkType: false }]
+    file: [{ fileName: "Taipei children's amusement park", fileLink: "https://www.tcap.taipei/", linkType: false }]
   }
 ]
 const testFile = [
@@ -178,42 +176,42 @@ const testFile = [
     fileLink: "https://leetcode.com/problemset/all/",
     linkType: false
   },
-]
+];
 const testAnnouncement = [
   {
     time: "2023-1-1 0:0:0",
     title: "Happy new year",
-    content: "Firework!!!!!"
+    content: "Firework!!!!!",
   },
   {
     time: "2023-1-2 10:22:52",
     title: "Good Morning",
-    content: "I am hungry"
-  }
-]
+    content: "I am hungry",
+  },
+];
 const testGrade = [
   {
-    studentID:"b09901042",
-    subject:"Introduction to Computer Network",
-    itemName:"exam 1",
-    score:100,
-    weight:0.2
+    studentID: "b09901042",
+    subject: "Introduction to Computer Network",
+    itemName: "exam 1",
+    score: 100,
+    weight: 0.2,
   },
   {
-    studentID:"b09901008",
-    subject:"Introduction to Computer Network",
-    itemName:"exam 1",
-    score:100,
-    weight:0.2
+    studentID: "b09901008",
+    subject: "Introduction to Computer Network",
+    itemName: "exam 1",
+    score: 100,
+    weight: 0.2,
   },
   {
-    studentID:"t",
-    subject:"Introduction to Computer Network",
-    itemName:"exam 1",
-    score:70,
-    weight:0.2
+    studentID: "t",
+    subject: "Introduction to Computer Network",
+    itemName: "exam 1",
+    score: 70,
+    weight: 0.2,
   },
-]
+];
 const dataInit = async () => {
   await UserModel.deleteMany({});
   await UserModel.insertMany(testUser);
@@ -229,7 +227,7 @@ const dataInit = async () => {
   await AnnouncementModel.insertMany(testAnnouncement);
   await GradeModel.deleteMany({});
   await GradeModel.insertMany(testGrade);
-  
+
   console.log("Database initialized!");
 };
 

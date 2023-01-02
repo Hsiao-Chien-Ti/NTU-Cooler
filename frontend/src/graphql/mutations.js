@@ -40,14 +40,8 @@ const LOGIN_MUTATION = gql`
   }
 `;
 const CREATE_SYLLABUS_MUTATION = gql`
-  mutation createSyllabus(
-    $weekNum: String!
-    $outline: String
-  ) {
-    createSyllabus(
-      weekNum: $weekNum
-      outline: $outline
-    ) {
+  mutation createSyllabus($weekNum: String!, $outline: String) {
+    createSyllabus(weekNum: $weekNum, outline: $outline) {
       weekNum
       outline
       file {
@@ -101,49 +95,77 @@ const CREATE_GRADE_MUTATION = gql`
     $itemName: String!
     $score: Float!
     $weight: Float
-  ){
-createGrade(studentID:$studentID,subject:$subject,itemName:$itemName,score:$score,weight:$weight) {
-    studentID
-    subject
-    itemName
-    score
-    weight
-  }    
-  } 
+  ) {
+    createGrade(
+      studentID: $studentID
+      subject: $subject
+      itemName: $itemName
+      score: $score
+      weight: $weight
+    ) {
+      studentID
+      subject
+      itemName
+      score
+      weight
+    }
+  }
 `;
 
 const CREATE_CHATBOX_MUTATION = gql`
   mutation createChatBox(
     $name: String!
     $courseID: String!
-    $participants: [String]
+    $participants: [String!]!
+    $type: Boolean!
   ) {
     createChatBox(
       name: $name
       courseID: $courseID
       participants: $participants
+      type: $type
     ) {
       name
-      courseID
-      participants
       messages {
-        sender
+        sender {
+          name
+          studentID
+        }
         body
+        hidden
+        groupNum
       }
+      type
+      courseID
+      notAccess
+      pinMsg
+      participants
     }
   }
 `;
 
 const CREATE_MESSAGE_MUTATION = gql`
   mutation createMessage(
-    $sender: String!
+    $senderID: String!
+    $senderName: String!
     $to: String!
     $body: String!
     $courseID: String!
   ) {
-    createMessage(sender: $sender, to: $to, body: $body, courseID: $courseID) {
-      sender
+    createMessage(
+      senderID: $senderID
+      senderName: $senderName
+      to: $to
+      body: $body
+      courseID: $courseID
+    ) {
+      sender {
+        name
+        studentID
+      }
       body
+      hidden
+      groupNum
     }
   }
 `;
