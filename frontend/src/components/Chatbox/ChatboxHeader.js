@@ -13,11 +13,13 @@ const ChatboxHeader = ({ isPin, msg, groupName, color, handlePinOnClick }) => {
     >
       <div>{groupName}</div>
       <div style={{ flexDirection: "row", alignItems: "flex-end" }}>
-        <Button onClick={handlePinOnClick}>
-          {isPin ? <SoundOutlined /> : ""}
-          {"  "}
-          {msg}
-        </Button>
+        {isPin ? (
+          <Button onClick={handlePinOnClick}>
+            <SoundOutlined /> {msg}
+          </Button>
+        ) : (
+          <>{msg}</>
+        )}
       </div>
     </div>
   );
