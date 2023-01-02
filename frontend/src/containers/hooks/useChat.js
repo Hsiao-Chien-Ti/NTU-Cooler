@@ -15,6 +15,7 @@ const ChatContext = createContext({
   chatBoxes: [],
   chatBoxLoading: false,
   pinMsg: 0,
+  access: false,
   setPinMsg: () => {},
   setCurrentChat: () => {},
   setMessages: () => {},
@@ -30,6 +31,7 @@ const ChatProvider = (props) => {
   const [allRooms, setAllRooms] = useState([]);
   const [chatBoxes, setChatBoxes] = useState([]);
   const [pinMsg, setPinMsg] = useState(0);
+  const [access, setAccess] = useState(false);
   const [startChat] = useMutation(CREATE_CHATBOX_MUTATION);
   const [sendMessage, { error: errorSendMsg }] = useMutation(
     CREATE_MESSAGE_MUTATION
@@ -65,6 +67,9 @@ const ChatProvider = (props) => {
   useEffect(() => {
     // console.log("error sending msg: ", errorSendMsg);
   }, [errorSendMsg]);
+  useEffect(() => {
+    console.log(access);
+  }, [access]);
 
   useEffect(() => {
     if (error) {
@@ -75,6 +80,14 @@ const ChatProvider = (props) => {
       if (chatBoxData) {
         setMessages(chatBoxData.chatbox.messages);
         setPinMsg(chatBoxData.chatbox.pinMsg);
+        console.log(user.studentID, chatBoxData.chatbox);
+        if (chatBoxData.chatbox.notAccess.includes(user.studentID)) {
+          setAccess(false);
+          console.log("not accessible!");
+        } else {
+          setAccess(true);
+          console.log("accessible!");
+        }
         console.log("set pinmsg:", chatBoxData.chatbox.pinMsg);
       }
     }
@@ -84,11 +97,7 @@ const ChatProvider = (props) => {
     if (currentChat) {
       if (!allRooms.includes(currentChat)) {
         console.log("pin before refetch:", pinMsg);
-        refetch({
-          name: currentChat,
-          courseID,
-          studentID: user.studentID,
-        });
+
         try {
           setAllRooms([...allRooms, currentChat]);
           // console.log("TEST");
@@ -101,9 +110,15 @@ const ChatProvider = (props) => {
                 return prev;
               }
               // console.log(subscriptionData);
+              refetch({
+                name: currentChat,
+                courseID,
+                studentID: user.studentID,
+              });
               const newMessage = subscriptionData.data.message;
               console.log(newMessage);
               console.log(pinMsg);
+              console.log();
               console.log("prev: ", prev);
               return {
                 chatbox: {
@@ -155,6 +170,7 @@ const ChatProvider = (props) => {
         chatBoxes,
         chatBoxLoading,
         pinMsg,
+        access,
         setPinMsg,
         setCurrentChat,
         setMessages,

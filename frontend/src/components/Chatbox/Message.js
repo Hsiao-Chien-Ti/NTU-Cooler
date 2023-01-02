@@ -19,11 +19,17 @@ const StyledMessage = styled.div`
     margin: auto 0;
   }
 `;
-const Message = ({ isMe, message, sender }) => {
+const Message = ({ isMe, message, sender, access, hidden }) => {
   return (
     <StyledMessage isMe={isMe}>
-      <p style={{ color: "#9DC2F5" }}>{sender}</p>
-      <p>{message}</p>
+      <p style={{ color: "#9DC2F5", width: "45px" }}>{sender.name}</p>
+      {access ? (
+        <p>{message}</p>
+      ) : hidden ? (
+        <p>reply to access</p>
+      ) : (
+        <p>{message}</p>
+      )}
     </StyledMessage>
   );
 };

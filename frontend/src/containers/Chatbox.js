@@ -31,6 +31,7 @@ const ChatRoom = () => {
     chatBoxes,
     chatBoxLoading,
     pinMsg,
+    access,
     setPinMsg,
     setCurrentChat,
     setMessages,
@@ -57,6 +58,15 @@ const ChatRoom = () => {
     setMsgSent(false);
   }, [msgSent]);
 
+  // useEffect(() => {
+  //   queryChat({
+  //     variables: {
+  //       name: currentChat,
+  //       courseID,
+  //       studentID: user.studentID,
+  //     },
+  //   });
+  // }, []);
   const renderChat = () => {
     console.log("renderChat");
     console.log(messages);
@@ -66,10 +76,12 @@ const ChatRoom = () => {
       <>
         {messages.map((mes, i) => (
           <Message
-            isMe={mes.sender === user.name ? true : false}
+            isMe={mes.sender.studentID === user.studentID ? true : false}
             sender={mes.sender}
             message={mes.body}
             key={i}
+            access={access}
+            hidden={mes.hidden}
           />
         ))}
         <FootRef ref={msgFooter} />
@@ -79,14 +91,14 @@ const ChatRoom = () => {
 
   const testChat = async (name, participants) => {
     try {
-      const box = await startChat({
+      console.log(name, participants);
+      startChat({
         variables: {
           name,
           courseID,
           participants,
         },
       });
-      return box;
     } catch (e) {
       throw new Error("Mutation_createChatBox_error", e);
     }
@@ -95,17 +107,13 @@ const ChatRoom = () => {
   const createChatBox = async ({ name, participants }) => {
     let newName = name;
     if (participants.length === 2) {
-      newName = participants[0];
+      newName = participants.filter((p) => p !== user.studentID)[0];
     }
     if (chatBoxes.some(({ key }) => key === name)) {
       setCurrentChat(name);
       setModalOpen(false);
     } else {
-      const CurrentChatBox = testChat({
-        name,
-        participants,
-      });
-      console.log("Mutation_createChatBox:", CurrentChatBox);
+      console.log("Mutation_createChatBox:", name);
       setCurrentChat(name);
       const chat = renderChat(); //turn msgs into DOM nodes
       setChatBoxes([
@@ -113,8 +121,8 @@ const ChatRoom = () => {
         {
           label: newName,
           chat: chat,
-          key: CurrentChatBox.name,
-          participants: CurrentChatBox.participants,
+          key: name,
+          participants: participants,
         },
       ]);
       setMsgSent(true);
@@ -136,13 +144,6 @@ const ChatRoom = () => {
 
   const handleOnChange = (key) => {
     if (key) {
-      // queryChat({
-      //   variables: {
-      //     name: key,
-      //     courseID,
-      //     studentID: user.studentID,
-      //   },
-      // });
       setCurrentChat(key);
       const chat = renderChat();
       let newChatBoxes = chatBoxes;
@@ -173,6 +174,7 @@ const ChatRoom = () => {
           }}
           style={{ width: 128, justifyItems: "center" }}
           defaultSelectedKeys={[currentChat]}
+          selectedKeys={[currentChat]}
           // defaultOpenKeys={[currentChat]}
           mode="inline"
           items={[...chatBoxes, { key: "_add_", label: "+" }]}
@@ -242,12 +244,23 @@ const ChatRoom = () => {
                       }
                       sendMessage({
                         variables: {
-                          sender: user.studentID,
+                          senderID: user.studentID,
+                          senderName: user.name,
                           to: currentChat,
                           body: msg,
                           courseID,
                         },
                       });
+                      if (!access) {
+                        console.log("finally", user.studentID, "can access!");
+                        // queryChat({
+                        //   variables: {
+                        //     name: currentChat,
+                        //     courseID,
+                        //     studentID: user.studentID,
+                        //   },
+                        // });
+                      }
                       //setBody("");
                     }}
                   ></Input.Search>
