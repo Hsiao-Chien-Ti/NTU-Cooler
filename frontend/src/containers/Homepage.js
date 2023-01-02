@@ -27,13 +27,10 @@ const Homepage = () => {
       }}
     >
       {!syllabusLoading ? (
-        syllabusData.syllabus.map(({ weekNum, outline, file }) => (
-          <HomepageContent
-            weekNum={weekNum}
-            outline={outline}
-            file={file}
-          ></HomepageContent>
-        ))
+        <HomepageContent
+          rawdata={syllabusData.syllabus}
+        ></HomepageContent>
+
       ) : (
         <p>loading</p>
       )}

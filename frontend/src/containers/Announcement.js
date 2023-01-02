@@ -36,13 +36,9 @@ const Announcement = () => {
       }}
     >
       {!announcementLoading ? (
-        announcementData.announcement.map(({ time, title, content }) => (
           <AnnouncementContent
-            time={time}
-            title={title}
-            content={content}
+            rawdata={announcementData.announcement}
           ></AnnouncementContent>
-        ))
       ) : (
         <p>loading</p>
       )}
