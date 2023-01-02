@@ -5,6 +5,7 @@ import {
   FileOutlined,
   ScheduleOutlined,
   NotificationOutlined,
+  WechatOutlined,
   SolutionOutlined,
   LogoutOutlined,
 } from "@ant-design/icons";
@@ -44,7 +45,13 @@ const AllPages = [
   },
   { key: "4", icon: <SolutionOutlined />, name: "Grade", nav: "/course/grade" },
   { key: "5", icon: <FileOutlined />, name: "Files", nav: "/course/files" },
-  { key: "6", icon: <LogoutOutlined />, name: "Logout", nav: "/" },
+  {
+    key: "6",
+    icon: <WechatOutlined />,
+    name: "Messages",
+    nav: "/course/messages",
+  },
+  { key: "_logout_", icon: <LogoutOutlined />, name: "Logout", nav: "/" },
 ];
 
 const Page = ({ current, content }) => {
@@ -76,7 +83,7 @@ const Page = ({ current, content }) => {
             </Menu.Item>
           ))}
         </Menu>
-        {user.isTeacher && <TeacherButton/>}
+        {user.isTeacher && <TeacherButton />}
       </Sider>
       <Layout className="site-layout">
         <Header style={{ padding: 5, background: colorBgContainer }}>

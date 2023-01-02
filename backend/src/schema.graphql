@@ -1,52 +1,126 @@
 type Query {
+  info(courseID: String!): Info!
   user(name: String!, studentID: String!, passwd: String!, groupNum: Int): User!
-  syllabus:[Syllabus]
-  announcement:[Announcement]
-  grade(studentID:String!, subject:String!):[Grade]
-  file:[File]
+  userChatbox(studentID: String!, courseID: String!): [ChatInfo]
+  syllabus: [Syllabus]
+  announcement: [Announcement]
+  grade(studentID: String!, subject: String!): [Grade]
+  file: [File]
+  chatbox(name: String!, courseID: String!, studentID: String!): ChatBox!
 }
+
+type Info {
+  name: String
+  attendants: [AttendantInfo]
+  courseID: String!
+}
+
 type User {
   name: String
   studentID: String
   passwd: String
   groupNum: Int
   login: Boolean!
-  isTeacher:Boolean
+  isTeacher: Boolean
+  chatbox: [ChatInfo]
 }
-type Syllabus{
-  weekNum:String
-  outline:String
-  file:[File]
+
+type ChatInfo {
+  name: String
+  courseID: String
+  showName: String
 }
-type File{
-  type:String!
-  info:String!
-  fileName:String!
-  fileLink:String!
+type Syllabus {
+  weekNum: String
+  outline: String
+  file: [File]
 }
-type Announcement{
-  time:String!
-  title:String!
-  content:String
+type File {
+  type: String!
+  info: String!
+  fileName: String!
+  fileLink: String!
 }
-type Grade{
-  studentID:String!
-  subject:String!
-  itemName:String!
-  score:Float!
-  weight:Float
+type Announcement {
+  time: String!
+  title: String!
+  content: String
+}
+type Grade {
+  studentID: String!
+  subject: String!
+  itemName: String!
+  score: Float!
+  weight: Float
+}
+
+type ChatBox {
+  type: Boolean
+  courseID: String!
+  name: String!
+  messages: [Message!]!
+  notAccess: [String]
+  pinMsg: Int
+  participants: [String]
+}
+
+type Message {
+  sender: String!
+  body: String!
+  groupnum: Int
+  hidden: Boolean
+}
+
+type AttendantInfo {
+  name: String!
+  studentID: String!
 }
 type Mutation {
-  createUser(name: String!, studentID: String!, passwd: String!, groupNum: Int,isTeacher:Boolean): User!
+  createInfo(name: String, courseID: String!): Info!
+  createUser(
+    name: String!
+    studentID: String!
+    passwd: String!
+    groupNum: Int
+    isTeacher: Boolean
+  ): User!
   login(studentID: String!, passwd: String!): User!
-  createSyllabus(weekNum:String!,outline:String):Syllabus!
-  createFile(type:String!,info:String!,fileName:String!,fileLink:String!):File!
-  createAnnouncement(time:String!, title:String!, content:String):Announcement!
-  createGrade(studentID:String!, subject:String!, itemName:String!, score:Float!, weight:Float):Grade!
+  addUserToCourse(studentID: String!, courseID: String!): [AttendantInfo!]!
+  createSyllabus(weekNum: String, outline: String): Syllabus!
+  createFile(
+    type: String!,
+    info: String!,
+    fileName: String!,
+    fileLink: String!
+  ): File!
+  createAnnouncement(
+    time: String!,
+    title: String!,
+    content: String
+  ): Announcement!
+  createGrade(
+    studentID: String!,
+    subject: String!,
+    itemName: String!,
+    score: Float!,
+    weight: Float
+  ): Grade!
+  createChatBox(
+    name: String,
+    courseID: String,
+    participants: [String]
+  ): ChatBox!
+  createMessage(
+    sender: String!,
+    to: String!,
+    body: String!,
+    courseID: String!
+  ): Message!
 }
 type Subscription {
   syllabus: Syllabus!
   announcement: Announcement!
   file: File!
-  grade(studentID:String!, subject:String!): Grade! 
+  grade(studentID: String!, subject: String!): Grade!
+  message(to: String!, courseID: String!): Message!
 }

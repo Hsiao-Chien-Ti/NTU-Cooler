@@ -5,6 +5,7 @@ import Homepage from "./Homepage";
 import Syllabus from "./Syllabus";
 import Grade from "./Grade";
 import Files from "./Files";
+import ChatRoom from "./Chatbox";
 import {
   BrowserRouter as Router,
   Route,
@@ -46,6 +47,10 @@ const router = createBrowserRouter([
       {
         path: "/course/files",
         element: <Files />,
+      },
+      {
+        path: "/course/messages",
+        element: <ChatRoom />,
       },
     ],
   },

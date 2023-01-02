@@ -42,3 +42,12 @@ export const GRADE_SUBSCRIPTION = gql`
   }
   }
 `;
+
+export const MESSAGE_SUBSCRIPTION = gql`
+  subscription message($to: String!, $courseID: String!) {
+    message(to: $to, courseID: $courseID) {
+      sender
+      body
+    }
+  }
+`;

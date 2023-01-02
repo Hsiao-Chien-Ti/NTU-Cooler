@@ -1,24 +1,11 @@
 import UserModel from "../models/user";
-import SyllabusModel from "../models/syllabus"
+import SyllabusModel from "../models/syllabus";
 import FileModel from "../models/file";
 import AnnouncementModel from "../models/announcement";
-import GradeModel from "../models/grade"
+import GradeModel from "../models/grade";
+import ChatBoxModel from "../models/chatbox";
+import InfoModel from "../models/info";
 const Mutation = {
-    createUser: async (parent, { name, studentID, passwd, groupNum, isTeacher }) => {
-        let user = await UserModel.findOne({ studentID: studentID });
-        if (!user)
-            user = await new UserModel({ name: name, studentID: studentID, passwd: passwd, groupNum: groupNum, login: true, isTeacher: isTeacher }).save();
-        return user
-    },
-    login: async (parent, { studentID, passwd }) => {
-        let user = await UserModel.findOne({ studentID: studentID, passwd: passwd });
-        if (!user) {
-            user = await UserModel.findOne({ login: false });
-            if (!user)
-                user = await new UserModel({ login: false }).save();
-        }
-        return user;
-    },
     createSyllabus: async (parent, { weekNum, outline }, { pubsub }) => {
         let syllabus = await SyllabusModel.findOne({ weekNum: weekNum });
         if (syllabus)
@@ -116,5 +103,77 @@ const Mutation = {
         })
         return grade
     },
-}
-export default Mutation
+  createInfo: async (parent, { name, courseID, attendants }) => {
+    let info = await InfoModel.findOne({ courseID });
+    if (!info)
+      info = await new InfoModel({
+        name,
+        courseID,
+        attendants: attendants ? attendants : [],
+      }).save();
+    return info;
+  },
+  addUserToCourse: async (parent, { courseID, studentID }) => {
+    let info = await InfoModel.findOne({ courseID });
+    let student = await UserModel.findOne({ studentID });
+    info.attendants.push({ studentID, name: student.name });
+    info.save();
+    return info.attendants;
+  },
+  createUser: async (parent, { name, studentID, passwd, groupNum, isTeacher }) => {
+    let user = await UserModel.findOne({ studentID: studentID });
+    if (!user)
+      user = await new UserModel({
+        name: name,
+        studentID: studentID,
+        passwd: passwd,
+        groupNum: groupNum,
+        login: true,
+        isTeacher: isTeacher,
+        chatbox: [],
+      }).save();
+    return user;
+  },
+  login: async (parent, { studentID, passwd }) => {
+    let user = await UserModel.findOne({
+      studentID: studentID,
+      passwd: passwd,
+    });
+    if (user) {
+      user.login = true;
+      await user.save();
+    }
+    if (!user) user = await new UserModel({ login: false }).save();
+    return user;
+  },
+  createChatBox: async (parent, { name, courseID, participants }) => {
+    const box = await new ChatBoxModel({
+      name,
+      courseID,
+      participants,
+      messages: [],
+      type: false,
+      pinMsg: -1,
+    }).save();
+    let showName = participants.length > 2 ? name : "";
+    participants?.forEach(async (person) => {
+      const p = await UserModel.findOne({ studentID: person });
+      if (!showName) {
+        showName = participants.filter((p) => p.studentID !== person)[0];
+      }
+      p.chatbox.push({ name, courseID, showName });
+      await p.save();
+    });
+    return box;
+  },
+  createMessage: async (parent, { sender, to, body, courseID }, { pubsub }) => {
+    const chatBox = await ChatBoxModel.findOne({ name: to, courseID });
+    const newMsg = { sender, body, groupnum: -1, hidden: false };
+    chatBox.messages.push(newMsg);
+    await chatBox.save();
+    //const chatBoxName = makeName(name, to);
+    pubsub.publish(`chatBox ${to} in class ${courseID}`, { message: newMsg });
+    return newMsg;
+  },
+};
+export default Mutation;

@@ -14,7 +14,8 @@ import {
     FILE_SUBSCRIPTION,
     ANNOUNCEMENT_SUBSCRIPTION,
     CREATE_GRADE_MUTATION,
-    GRADE_SUBSCRIPTION
+    GRADE_SUBSCRIPTION,
+    INFO_QUERY,
 } from "../../graphql";
 import { message } from "antd";
 import { useNavigate } from "react-router-dom";
@@ -22,9 +23,12 @@ const LOCALSTORAGE_KEY = "save-me";
 const savedMe = JSON.parse(localStorage.getItem(LOCALSTORAGE_KEY));
 
 const AllContext = createContext({
-    user: { login: false },
+    user: { name: "", passwd: "", studentID: "", login: false },
+    attendants: [],
+    courseID: "",
     signIn: [],
     status: {},
+    setStatus: () => { },
     displayStatus: () => { },
     loginData: {},
     syllabusData: [],
@@ -41,14 +45,34 @@ const AllContext = createContext({
     createAnnouncement: [],
     createSyllabus: [],
     createFile: [],
-    createGrade:[]
+    createGrade: [],
 });
 const AllProvider = (props) => {
     const [user, setUser] = useState(savedMe || { login: false });
     const [subject, setSubject] = useState("Introduction to Computer Network");
+    const [courseID, setCourseID] = useState("EE1234");
+    const [attendants, setAttendants] = useState([]);
     const [signIn, { data: loginData }] = useMutation(LOGIN_MUTATION);
+    const { data: courseInfo, loading: infoLoading } = useQuery(INFO_QUERY, {
+        variables: {
+            courseID,
+        },
+    });
     useEffect(() => {
-        // console.log(loginData);
+        if (!infoLoading) {
+            const users = courseInfo.info.attendants
+                .filter((person) => person.studentID !== user.studentID)
+                .map((person) => {
+                    return {
+                        value: person.studentID,
+                        label: person.name + " (" + person.studentID + ") ",
+                    };
+                });
+            setAttendants(users);
+            console.log(courseInfo);
+        }
+    }, [courseInfo]);
+    useEffect(() => {
         if (loginData != undefined) {
             setUser(loginData.login);
             if (!loginData.login.login) {
@@ -63,13 +87,9 @@ const AllProvider = (props) => {
     }, [loginData]);
     useEffect(() => {
         localStorage.setItem(LOCALSTORAGE_KEY, JSON.stringify(user));
-        // if (user.login) {
-
-        //     // console.log(JSON.parse(localStorage.getItem(LOCALSTORAGE_KEY)))
-        // }
     }, [user]);
     function logout(e) {
-        if (e.key == 6) setUser({ login: false });
+        if (e.key == "_logout_") setUser({ login: false });
     }
     const [status, setStatus] = useState({});
     const displayStatus = (s) => {
@@ -163,7 +183,6 @@ const AllProvider = (props) => {
                     const newGrade = subscriptionData.data.grade
                     return {
                         ...prev,
-                        // grade: [newGrade, ...prev.grade.filter((f)=>!(f.studentID===newGrade.studentID&&f.subject===newGrade.subject&&f.itemName===newGrade.itemName))],
                         grade: [newGrade, ...prev.grade.filter((f)=>f.itemName!==newGrade.itemName)],
                     };
                 },
@@ -173,15 +192,18 @@ const AllProvider = (props) => {
     const [createAnnouncement] = useMutation(CREATE_ANNOUNCEMENT_MUTATION)
     const [createSyllabus] = useMutation(CREATE_SYLLABUS_MUTATION)
     const [createFile] = useMutation(CREATE_FILE_MUTATION)
-    const [createGrade]=useMutation(CREATE_GRADE_MUTATION)
+    const [createGrade] = useMutation(CREATE_GRADE_MUTATION)
     return (
         <AllContext.Provider
             value={{
                 subject,
                 user,
+                attendants,
+                courseID,
                 setUser,
                 signIn,
                 status,
+                setStatus,
                 displayStatus,
                 loginData,
                 syllabusData,
