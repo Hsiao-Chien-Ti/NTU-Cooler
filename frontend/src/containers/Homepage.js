@@ -27,11 +27,12 @@ const Homepage = () => {
       }}
     >
       {!syllabusLoading ? (
-        syllabusData.syllabus.map(({ weekNum, outline, file }) => (
+        syllabusData.syllabus.map(({ weekNum, outline, file, index }) => (
           <HomepageContent
             weekNum={weekNum}
             outline={outline}
             file={file}
+            key={index}
           ></HomepageContent>
         ))
       ) : (

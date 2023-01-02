@@ -82,6 +82,13 @@ const ChatProvider = (props) => {
   useEffect(() => {
     if (currentChat) {
       if (!allRooms.includes(currentChat)) {
+        refetch({
+          variables: {
+            name: currentChat,
+            courseID,
+            studentID: user.studentID,
+          },
+        });
         try {
           setAllRooms([...allRooms, currentChat]);
           console.log("TEST");
@@ -101,11 +108,11 @@ const ChatProvider = (props) => {
                 chatbox: {
                   name: currentChat,
                   messages: [...prev.chatbox.messages, newMessage],
-                  type: chatBoxData.chatbox.type,
-                  courseID: chatBoxData.chatbox.courseID,
-                  participants: chatBoxData.chatbox.participants,
-                  notAccess: chatBoxData.chatbox.notAccess,
-                  pinMsg: chatBoxData.chatbox.pinMsg,
+                  type: false,
+                  courseID: courseID,
+                  participants: [],
+                  notAccess: [],
+                  pinMsg,
                 },
               };
             },
