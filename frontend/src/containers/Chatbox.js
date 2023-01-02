@@ -89,21 +89,6 @@ const ChatRoom = () => {
     );
   }; //produce chat's DOM nodes
 
-  const testChat = async (name, participants) => {
-    try {
-      console.log(name, participants);
-      startChat({
-        variables: {
-          name,
-          courseID,
-          participants,
-        },
-      });
-    } catch (e) {
-      throw new Error("Mutation_createChatBox_error", e);
-    }
-  };
-
   const createChatBox = async ({ name, participants }) => {
     let newName = name;
     if (participants.length === 2) {
@@ -111,9 +96,22 @@ const ChatRoom = () => {
     }
     if (chatBoxes.some(({ key }) => key === name)) {
       setCurrentChat(name);
+      setStatus({ type: "error", msg: newName + "has exist" });
       setModalOpen(false);
     } else {
-      console.log("Mutation_createChatBox:", name);
+      try {
+        console.log(name, participants);
+        startChat({
+          variables: {
+            name,
+            courseID,
+            participants,
+          },
+        });
+        console.log("Mutation_createChatBox:", name);
+      } catch (e) {
+        throw new Error("Mutation_createChatBox_error", e);
+      }
       setCurrentChat(name);
       const chat = renderChat(); //turn msgs into DOM nodes
       setChatBoxes([
@@ -222,7 +220,11 @@ const ChatRoom = () => {
                   me={user.studentID}
                   open={modalOpen}
                   onCreate={async ({ name, participants }) => {
-                    await createChatBox({ name, participants });
+                    console.log(participants);
+                    await createChatBox({
+                      name,
+                      participants,
+                    });
                   }}
                   onCancel={() => {
                     setModalOpen(false);

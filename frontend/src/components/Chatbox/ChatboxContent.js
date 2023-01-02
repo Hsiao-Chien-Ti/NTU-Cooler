@@ -27,7 +27,7 @@ const ChatModal = ({ open, onCreate, onCancel, users, me }) => {
             if (isGroup) {
               onCreate({
                 name: values.chatRoomName,
-                participants: [values.users, me],
+                participants: [...values.users, me],
               });
               setIsGroup(false);
             } else {
