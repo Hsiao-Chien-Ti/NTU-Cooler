@@ -4,7 +4,8 @@ const FileSchema = new Schema({
     type:{type:String},
     info:{type:String},
     fileLink:{type:String},
-    fileName:{type:String}
+    fileName:{type:String},
+    linkType:{type:Boolean}
 });
 const FileModel = mongoose.model('File', FileSchema);
 

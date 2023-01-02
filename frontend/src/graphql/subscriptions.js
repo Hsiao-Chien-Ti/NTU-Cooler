@@ -8,6 +8,7 @@ export const SYLLABUS_SUBSCRIPTION = gql`
       file{
         fileName
         fileLink
+        linkType
       }
   }
   }
@@ -19,6 +20,7 @@ export const FILE_SUBSCRIPTION = gql`
       info
       fileName
       fileLink
+      linkType
   }
   }
 `;

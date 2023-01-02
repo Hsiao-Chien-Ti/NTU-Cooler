@@ -53,6 +53,7 @@ const CREATE_SYLLABUS_MUTATION = gql`
       file {
         fileName
         fileLink
+        linkType
       }
     }
   }
@@ -63,17 +64,20 @@ const CREATE_FILE_MUTATION = gql`
     $info: String!
     $fileName: String!
     $fileLink: String!
+    $linkType: Boolean!
   ) {
     createFile(
       type: $type
       info: $info
       fileName: $fileName
       fileLink: $fileLink
+      linkType: $linkType
     ) {
       type
       info
       fileName
       fileLink
+      linkType
     }
   }
 `;

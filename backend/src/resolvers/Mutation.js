@@ -24,15 +24,15 @@ const Mutation = {
         })
         return syllabus
     },
-    createFile: async (parent, { type, info, fileName, fileLink }, { pubsub }) => {
+    createFile: async (parent, { type, info, fileName, fileLink, linkType }, { pubsub }) => {
         // console.log(type)
         let file = await FileModel.findOne({ type: type, info: info, fileName: fileName })
         if (file) {
-            await FileModel.updateOne({ type: type, info: info, fileName: fileName }, { $set: { fileLink: fileLink } })
+            await FileModel.updateOne({ type: type, info: info, fileName: fileName }, { $set: { fileLink: fileLink , linkType:linkType} })
             file = await FileModel.findOne({ type: type, info: info, fileName: fileName })
         }
         else {
-            file = await new FileModel({ type: type, info: info, fileName: fileName, fileLink: fileLink }).save()
+            file = await new FileModel({ type: type, info: info, fileName: fileName, fileLink: fileLink , linkType:linkType}).save()
         }
         // console.log(file)
         if (type == "weekNum") {
@@ -40,7 +40,7 @@ const Mutation = {
             if (!syllabus)
                 syllabus = await new SyllabusModel({ weekNum: info, outline: "", file: [] }).save();
 
-            let newFile = { type: type, info: info, fileName: fileName, fileLink: fileLink }
+            let newFile = { type: type, info: info, fileName: fileName, fileLink: fileLink , linkType:linkType}
             syllabus.file = syllabus.file.filter((f) => f.fileName !== fileName)
             console.log(syllabus.file)
             syllabus.file.push(newFile)
@@ -59,7 +59,8 @@ const Mutation = {
                 type: type,
                 info: info,
                 fileName: fileName,
-                fileLink: fileLink
+                fileLink: fileLink,
+                linkType:linkType
             }
         })
         return file

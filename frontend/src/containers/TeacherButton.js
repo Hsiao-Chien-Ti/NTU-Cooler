@@ -19,7 +19,7 @@ const TeacherButton = () => {
             createSyllabus({ variables: { weekNum: form.weekNum.toString(), outline: form.outline } })
         }
         else if (form.addType === 'File') {
-            createFile({ variables: { type: form.type, info: form.info, fileName: form.fileName, fileLink: form.fileLink } })
+            createFile({ variables: { type: form.type, info: form.info, fileName: form.fileName, fileLink: form.upload, linkType:form.linkType } })
         }
         else if(form.addType==='Grade'){
             form.upload.map((student)=>{

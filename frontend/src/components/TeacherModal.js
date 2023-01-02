@@ -5,6 +5,7 @@ import * as XLSX from 'xlsx'
 const TeacherModal = ({ open, onCreate, onCancel }) => {
     const [form] = Form.useForm();
     const [addType, setAddType] = useState('Announcement')
+    const [linkType, setLinkType] =useState(false) // false for link, true for file
     const uploadRef=createRef()
     return (
         <Modal
@@ -162,6 +163,30 @@ const TeacherModal = ({ open, onCreate, onCancel }) => {
                             <Input />
                         </Form.Item>
                         <Form.Item
+                            name="linkType"
+                            label="Link Type"
+                            rules={[
+                                {
+                                    required: true,
+                                    message: 'Error: Please enter the type of the link!',
+                                },
+                            ]}
+                        >
+                            <Select
+                                options={[
+                                    {
+                                        value: false,
+                                        label: 'Link',
+                                    },
+                                    {
+                                        value: true,
+                                        label: 'File',
+                                    },
+                                ]}
+                                onChange={(value) => { setLinkType(value) }}
+                            />
+                        </Form.Item>
+                        {!linkType&&<Form.Item
                             name="fileLink"
                             label="File Link"
                             rules={[
@@ -172,7 +197,27 @@ const TeacherModal = ({ open, onCreate, onCancel }) => {
                             ]}
                         >
                             <Input />
-                        </Form.Item>
+                        </Form.Item>}
+                        {linkType&&<Form.Item name="upload">
+                            <Upload
+                                // accept=".txt, .csv"
+                                // showUploadList={false}
+                                beforeUpload={file => {
+                                    const reader = new FileReader();
+
+                                    reader.onload = e => {
+                                        let s=e.target.result
+                                        console.log(s)
+                                        uploadRef.current.setFieldsValue({upload:s})
+                                    };
+                                    reader.readAsDataURL(file)
+                                    return false;
+                                }}
+                            >
+                                <Button icon={<UploadOutlined />}> Click to Upload
+                                </Button>
+                            </Upload>
+                        </Form.Item>}
                     </>
                 }
                 {addType === 'Grade' &&
@@ -222,10 +267,6 @@ const TeacherModal = ({ open, onCreate, onCancel }) => {
                                         console.log(jsonData);
                                     };
                                     reader.readAsArrayBuffer(file)
-
-                                    // reader.readAsText(file);
-
-                                    // Prevent upload
                                     return false;
                                 }}
                             >

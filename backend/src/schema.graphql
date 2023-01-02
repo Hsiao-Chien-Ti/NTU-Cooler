@@ -40,6 +40,7 @@ type File {
   info: String!
   fileName: String!
   fileLink: String!
+  linkType: Boolean!
 }
 type Announcement {
   time: String!
@@ -91,7 +92,8 @@ type Mutation {
     type: String!,
     info: String!,
     fileName: String!,
-    fileLink: String!
+    fileLink: String!,
+    linkType: Boolean!
   ): File!
   createAnnouncement(
     time: String!,

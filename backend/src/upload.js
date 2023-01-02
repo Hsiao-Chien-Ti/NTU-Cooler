@@ -148,12 +148,12 @@ const testSyllabus = [
   {
     weekNum: "1",
     outline: "No class for week 1",
-    file: [{ fileName: "CPBL", fileLink: "https://www.cpbl.com.tw/" }]
+    file: [{ fileName: "CPBL", fileLink: "https://www.cpbl.com.tw/",linkType: false }]
   },
   {
     weekNum: "2",
     outline: "Field trip",
-    file: [{ fileName: "Taipei children's amusement park", fileLink: "https://www.tcap.taipei/" }]
+    file: [{ fileName: "Taipei children's amusement park", fileLink: "https://www.tcap.taipei/",linkType: false }]
   }
 ]
 const testFile = [
@@ -161,19 +161,22 @@ const testFile = [
     type: "weekNum",
     info: "1",
     fileName: "CPBL",
-    fileLink: "https://www.cpbl.com.tw/"
+    fileLink: "https://www.cpbl.com.tw/",
+    linkType: false
   },
   {
     type: "weekNum",
     info: "2",
     fileName: "Taipei children's amusement park",
-    fileLink: "https://www.tcap.taipei/"
+    fileLink: "https://www.tcap.taipei/",
+    linkType: false
   },
   {
     type: "HW",
     info: "1",
     fileName: "Leetcode",
-    fileLink: "https://leetcode.com/problemset/all/"
+    fileLink: "https://leetcode.com/problemset/all/",
+    linkType: false
   },
 ]
 const testAnnouncement = [

@@ -29,6 +29,7 @@ export const SYLLABUS_QUERY = gql`
       file {
         fileName
         fileLink
+        linkType
       }
     }
   }
@@ -61,6 +62,7 @@ export const FILE_QUERY = gql`
       info
       fileName
       fileLink
+      linkType
     }
   }
 `;

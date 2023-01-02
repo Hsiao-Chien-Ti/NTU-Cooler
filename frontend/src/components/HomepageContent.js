@@ -1,6 +1,6 @@
 import React from "react";
 import { Card} from 'antd';
-import {LinkOutlined} from '@ant-design/icons'
+import {LinkOutlined, PaperClipOutlined} from '@ant-design/icons'
 const HomepageContent=({rawdata})=>{
     let sorted=[...rawdata]
     sorted.sort(function(a,b){
@@ -17,9 +17,9 @@ const HomepageContent=({rawdata})=>{
             return(
                 <Card title={"Week "+weekNum} style={{margin:'3%'}}>
                 {outline!==''&&<Card.Grid style={gridStyle}>{outline}</Card.Grid>}
-                    {file.map(({fileName,fileLink})=>(
+                    {file.map(({fileName,fileLink,linkType})=>(
                         <Card.Grid style={gridStyle}>
-                            <LinkOutlined style={{marginRight:'1%'}}/>
+                            {linkType?<PaperClipOutlined style={{marginRight:'1%'}}/>:<LinkOutlined style={{marginRight:'1%'}}/>}
                             <a href={fileLink}>{fileName}</a>
                         </Card.Grid>
                     ))}
