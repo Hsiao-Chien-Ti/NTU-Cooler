@@ -59,6 +59,7 @@ const AllProvider = (props) => {
         },
     });
     useEffect(() => {
+        
         if (!infoLoading) {
             const users = courseInfo.info.attendants
                 .filter((person) => person.studentID !== user.studentID)
@@ -68,8 +69,9 @@ const AllProvider = (props) => {
                         label: person.name + " (" + person.studentID + ") ",
                     };
                 });
+            console.log(users)    
             setAttendants(users);
-            console.log(courseInfo);
+            // console.log(courseInfo);
         }
     }, [courseInfo]);
     useEffect(() => {
@@ -173,21 +175,25 @@ const AllProvider = (props) => {
         }
     );
     useEffect(() => {
-        try {
-            gradeSubscribe({
-                document: GRADE_SUBSCRIPTION,
-                variables: { studentID: user.studentID, subject: subject },
-                updateQuery: (prev, { subscriptionData }) => {
-                    console.log(prev)
-                    if (!subscriptionData.data) return prev;
-                    const newGrade = subscriptionData.data.grade
-                    return {
-                        ...prev,
-                        grade: [newGrade, ...prev.grade.filter((f)=>f.itemName!==newGrade.itemName)],
-                    };
-                },
-            });
-        } catch (e) { }
+        console.log(gradeSubscribe)
+        if(user.login)       
+        {
+            try {
+                gradeSubscribe({
+                    document: GRADE_SUBSCRIPTION,
+                    variables: { studentID: user.studentID, subject: subject },
+                    updateQuery: (prev, { subscriptionData }) => {
+                        console.log(prev)
+                        if (!subscriptionData.data) return prev;
+                        const newGrade = subscriptionData.data.grade
+                        return {
+                            ...prev,
+                            grade: [newGrade, ...prev.grade.filter((f)=>f.itemName!==newGrade.itemName)],
+                        };
+                    },
+                });
+            } catch (e) { }            
+        }
     }, [gradeSubscribe,user]);
     const [createAnnouncement] = useMutation(CREATE_ANNOUNCEMENT_MUTATION)
     const [createSyllabus] = useMutation(CREATE_SYLLABUS_MUTATION)

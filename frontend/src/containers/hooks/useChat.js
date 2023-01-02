@@ -63,7 +63,7 @@ const ChatProvider = (props) => {
     fetchPolicy: "network-only",
   });
   useEffect(() => {
-    console.log("error sending msg: ", errorSendMsg);
+    // console.log("error sending msg: ", errorSendMsg);
   }, [errorSendMsg]);
 
   useEffect(() => {
@@ -71,7 +71,7 @@ const ChatProvider = (props) => {
       throw new Error("Query_chatBoxData_error:", error);
     }
     if (!chatBoxLoading) {
-      console.log("Query_chatBoxData:", chatBoxData);
+      // console.log("Query_chatBoxData:", chatBoxData);
       if (chatBoxData) {
         setMessages(chatBoxData.chatbox.messages);
         setPinMsg(chatBoxData.chatbox.pinMsg);
@@ -84,19 +84,19 @@ const ChatProvider = (props) => {
       if (!allRooms.includes(currentChat)) {
         try {
           setAllRooms([...allRooms, currentChat]);
-          console.log("TEST");
+          // console.log("TEST");
           subscribeToMore({
             document: MESSAGE_SUBSCRIPTION,
             variables: { to: currentChat, courseID: courseID },
             updateQuery: (prev, { subscriptionData }) => {
               if (!subscriptionData.data) {
-                console.log("no data");
+                // console.log("no data");
                 return prev;
               }
-              console.log(subscriptionData);
+              // console.log(subscriptionData);
               const newMessage = subscriptionData.data.message;
-              console.log(newMessage);
-              console.log("prev: ", prev);
+              // console.log(newMessage);
+              // console.log("prev: ", prev);
               return {
                 chatbox: {
                   name: currentChat,
@@ -110,7 +110,7 @@ const ChatProvider = (props) => {
               };
             },
           });
-          console.log("AllRoom: ", allRooms);
+          // console.log("AllRoom: ", allRooms);
         } catch (e) {
           throw new Error("subscribe error: " + e);
         }
@@ -120,16 +120,16 @@ const ChatProvider = (props) => {
 
   useEffect(() => {
     if (!listLoading) {
-      console.log("Query_listOfChatboxes:", listOfChatboxes);
+      // console.log("Query_listOfChatboxes:", listOfChatboxes);
       let newChatBoxes = [];
-      console.log(listOfChatboxes);
+      // console.log(listOfChatboxes);
       listOfChatboxes.userChatbox.forEach((room) => {
         newChatBoxes.push({
           key: room.name,
           label: room.showName,
           chat: [],
         });
-        console.log(newChatBoxes);
+        // console.log(newChatBoxes);
       });
       setChatBoxes(newChatBoxes);
       if (currentChat === "")

@@ -23,7 +23,7 @@ const GradeContent = ({ rawdata }) => {
     ]
     let total=0
     rawdata.map((item)=>(total+=item.score*item.weight))
-    const data=[...rawdata.map((item,i)=>({key:i,itemName:item.itemName,score:item.score,weight:item.weight})),{key:rawdata.length+1,itemName:"total",score:total,weight:1}]
+    const data=[...rawdata.map((item,i)=>({key:i,itemName:item.itemName,score:item.score,weight:item.weight})),{key:rawdata.length+1,itemName:"total",score:total}]
     return (
         <Table dataSource={data} columns={column} pagination={false} ></Table>
     )

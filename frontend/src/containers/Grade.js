@@ -22,14 +22,17 @@ const Grade = () => {
     token: { colorBgContainer },
   } = theme.useToken();
   const { gradeLoading, gradeData, getGrade, subject, user, logout } = useAll();
+  const navigate = useNavigate();  
   useEffect(() => {
     if (!user.login) {
+      console.log(user)
       navigate("/");
       return;
     }
+    
     getGrade({ variables: { studentID: user.studentID, subject: subject } });
   }, []);
-  const navigate = useNavigate();
+
   return (
     <Content
       style={{
