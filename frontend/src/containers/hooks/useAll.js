@@ -199,6 +199,9 @@ const AllProvider = (props) => {
     const [createSyllabus] = useMutation(CREATE_SYLLABUS_MUTATION)
     const [createFile] = useMutation(CREATE_FILE_MUTATION)
     const [createGrade] = useMutation(CREATE_GRADE_MUTATION)
+    window.onbeforeunload=()=>{
+        setUser({ login: false })
+    }
     return (
         <AllContext.Provider
             value={{
