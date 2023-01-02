@@ -136,6 +136,13 @@ const ChatRoom = () => {
 
   const handleOnChange = (key) => {
     if (key) {
+      // queryChat({
+      //   variables: {
+      //     name: key,
+      //     courseID,
+      //     studentID: user.studentID,
+      //   },
+      // });
       setCurrentChat(key);
       const chat = renderChat();
       let newChatBoxes = chatBoxes;

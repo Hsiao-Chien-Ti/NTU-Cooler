@@ -14,7 +14,7 @@ const ChatContext = createContext({
   messages: [],
   chatBoxes: [],
   chatBoxLoading: false,
-  pinMsg: -1,
+  pinMsg: 0,
   setPinMsg: () => {},
   setCurrentChat: () => {},
   setMessages: () => {},
@@ -29,7 +29,7 @@ const ChatProvider = (props) => {
   const [messages, setMessages] = useState([]);
   const [allRooms, setAllRooms] = useState([]);
   const [chatBoxes, setChatBoxes] = useState([]);
-  const [pinMsg, setPinMsg] = useState(-1);
+  const [pinMsg, setPinMsg] = useState(0);
   const [startChat] = useMutation(CREATE_CHATBOX_MUTATION);
   const [sendMessage, { error: errorSendMsg }] = useMutation(
     CREATE_MESSAGE_MUTATION
@@ -75,6 +75,7 @@ const ChatProvider = (props) => {
       if (chatBoxData) {
         setMessages(chatBoxData.chatbox.messages);
         setPinMsg(chatBoxData.chatbox.pinMsg);
+        console.log("set pinmsg:", chatBoxData.chatbox.pinMsg);
       }
     }
   }, [chatBoxData]);
@@ -82,6 +83,12 @@ const ChatProvider = (props) => {
   useEffect(() => {
     if (currentChat) {
       if (!allRooms.includes(currentChat)) {
+        console.log("pin before refetch:", pinMsg);
+        refetch({
+          name: currentChat,
+          courseID,
+          studentID: user.studentID,
+        });
         try {
           setAllRooms([...allRooms, currentChat]);
           // console.log("TEST");
@@ -95,17 +102,18 @@ const ChatProvider = (props) => {
               }
               // console.log(subscriptionData);
               const newMessage = subscriptionData.data.message;
-              // console.log(newMessage);
-              // console.log("prev: ", prev);
+              console.log(newMessage);
+              console.log(pinMsg);
+              console.log("prev: ", prev);
               return {
                 chatbox: {
                   name: currentChat,
                   messages: [...prev.chatbox.messages, newMessage],
-                  type: chatBoxData.chatbox.type,
-                  courseID: chatBoxData.chatbox.courseID,
-                  participants: chatBoxData.chatbox.participants,
-                  notAccess: chatBoxData.chatbox.notAccess,
-                  pinMsg: chatBoxData.chatbox.pinMsg,
+                  type: prev.chatbox.type,
+                  courseID: courseID,
+                  participants: prev.chatbox.participants,
+                  notAccess: prev.chatbox.notAccess,
+                  pinMsg: prev.chatbox.pinMsg,
                 },
               };
             },
@@ -116,7 +124,7 @@ const ChatProvider = (props) => {
         }
       }
     }
-  }, [subscribeToMore, currentChat, chatBoxLoading]);
+  }, [subscribeToMore, currentChat]);
 
   useEffect(() => {
     if (!listLoading) {

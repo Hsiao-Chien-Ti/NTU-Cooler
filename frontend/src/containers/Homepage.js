@@ -30,7 +30,6 @@ const Homepage = () => {
         <HomepageContent
           rawdata={syllabusData.syllabus}
         ></HomepageContent>
-
       ) : (
         <p>loading</p>
       )}
