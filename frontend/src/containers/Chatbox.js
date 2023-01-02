@@ -49,6 +49,7 @@ const ChatRoom = () => {
   } = theme.useToken();
   const msgFooter = useRef(null);
   const bodyRef = useRef(null);
+  const pinRef = useRef(null);
 
   const scrollToBottom = () => {
     msgFooter.current?.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -58,15 +59,10 @@ const ChatRoom = () => {
     setMsgSent(false);
   }, [msgSent]);
 
-  // useEffect(() => {
-  //   queryChat({
-  //     variables: {
-  //       name: currentChat,
-  //       courseID,
-  //       studentID: user.studentID,
-  //     },
-  //   });
-  // }, []);
+  const handlePinOnClick = () => {
+    if (pinMsg !== -1)
+      pinRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+  };
   const renderChat = () => {
     console.log("renderChat");
     console.log(messages);
@@ -74,16 +70,31 @@ const ChatRoom = () => {
       <p style={{ color: "#ccc" }}>No messages...</p>
     ) : (
       <>
-        {messages.map((mes, i) => (
-          <Message
-            isMe={mes.sender.studentID === user.studentID ? true : false}
-            sender={mes.sender}
-            message={mes.body}
-            key={i}
-            access={access}
-            hidden={mes.hidden}
-          />
-        ))}
+        {messages.map((mes, i) => {
+          console.log("message: ", i, mes.body);
+          return pinMsg === i ? (
+            <>
+              <div ref={pinRef} />
+              <Message
+                isMe={mes.sender.studentID === user.studentID ? true : false}
+                sender={mes.sender}
+                message={mes.body}
+                key={i}
+                access={access}
+                hidden={mes.hidden}
+              />
+            </>
+          ) : (
+            <Message
+              isMe={mes.sender.studentID === user.studentID ? true : false}
+              sender={mes.sender}
+              message={mes.body}
+              key={i}
+              access={access}
+              hidden={mes.hidden}
+            />
+          );
+        })}
         <FootRef ref={msgFooter} />
       </>
     );
@@ -199,6 +210,7 @@ const ChatRoom = () => {
                     chatBoxes.find((b) => b.key === currentChat)?.label
                   }
                   color={colorBgContainer}
+                  handlePinOnClick={handlePinOnClick}
                 />
 
                 <div style={{ height: "16px" }}></div>
