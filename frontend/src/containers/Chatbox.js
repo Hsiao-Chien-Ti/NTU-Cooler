@@ -89,7 +89,7 @@ const ChatRoom = () => {
     );
   }; //produce chat's DOM nodes
 
-  const createChatBox = async ({ name, participants }) => {
+  const createChatBox = async ({ name, participants, quiz }) => {
     let newName = name;
     if (participants.length === 2) {
       newName = participants.filter((p) => p !== user.studentID)[0];
@@ -106,6 +106,7 @@ const ChatRoom = () => {
             name,
             courseID,
             participants,
+            type: quiz,
           },
         });
         console.log("Mutation_createChatBox:", name);
@@ -219,11 +220,13 @@ const ChatRoom = () => {
                 <ChatModal
                   me={user.studentID}
                   open={modalOpen}
-                  onCreate={async ({ name, participants }) => {
+                  isTeacher={user.isTeacher}
+                  onCreate={async ({ name, participants, quiz }) => {
                     console.log(participants);
                     await createChatBox({
                       name,
                       participants,
+                      quiz,
                     });
                   }}
                   onCancel={() => {

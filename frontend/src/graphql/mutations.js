@@ -112,12 +112,14 @@ const CREATE_CHATBOX_MUTATION = gql`
   mutation createChatBox(
     $name: String!
     $courseID: String!
-    $participants: [String]
+    $participants: [String!]!
+    $type: Boolean!
   ) {
     createChatBox(
       name: $name
       courseID: $courseID
       participants: $participants
+      type: $type
     ) {
       name
       messages {

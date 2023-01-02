@@ -110,9 +110,10 @@ type Mutation {
     weight: Float
   ): Grade!
   createChatBox(
-    name: String
-    courseID: String
-    participants: [String]
+    name: String!
+    courseID: String!
+    participants: [String!]!
+    type: Boolean!
   ): ChatBox!
   createMessage(
     senderID: String!

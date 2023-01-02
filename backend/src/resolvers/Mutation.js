@@ -206,27 +206,32 @@ const Mutation = {
     if (!user) user = await new UserModel({ login: false }).save();
     return user;
   },
-  createChatBox: async (parent, { name, courseID, participants }) => {
+  createChatBox: async (parent, { name, courseID, participants, type }) => {
     console.log(name, participants);
+    let notAccess = type ? participants : [];
+
+    participants?.forEach(async (person) => {
+      const p = await UserModel.findOne({ studentID: person });
+      console.log(p);
+      if (p.isTeacher && type)
+        notAccess = notAccess.filter((pp) => pp != p.studentID);
+      let showName =
+        participants.length > 2
+          ? name
+          : participants.filter((p) => p.studentID !== person)[0];
+      p.chatbox.push({ name, courseID, showName });
+      console.log(p.chatbox);
+      await p.save();
+    });
     const box = await new ChatBoxModel({
       name,
       courseID,
       participants,
       messages: [],
-      type: false,
+      notAccess,
+      type,
       pinMsg: -1,
     }).save();
-    participants?.forEach(async (person) => {
-      const p = await UserModel.findOne({ studentID: person });
-      let showName =
-        participants.length > 2
-          ? name
-          : participants.filter((p) => p.studentID !== person)[0];
-
-      p.chatbox.push({ name, courseID, showName });
-      console.log(p.chatbox);
-      await p.save();
-    });
     return box;
   },
   createMessage: async (
