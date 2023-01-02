@@ -105,7 +105,7 @@ const AllProvider = (props) => {
                     const newSyllabus = subscriptionData.data.syllabus
                     return {
                         ...prev,
-                        syllabus: [newSyllabus, ...prev.syllabus],
+                        syllabus: [newSyllabus, ...prev.syllabus.filter((f)=>f.weekNum!=newSyllabus.weekNum)],
                     };
                 },
             });
@@ -118,12 +118,11 @@ const AllProvider = (props) => {
             announcementSubscribe({
                 document: ANNOUNCEMENT_SUBSCRIPTION,
                 updateQuery: (prev, { subscriptionData }) => {
-                    console.log(subscriptionData)
                     if (!subscriptionData.data) return prev;
                     const newAnnouncement = subscriptionData.data.announcement
                     return {
                         ...prev,
-                        announcement: [newAnnouncement, ...prev.announcement],
+                        announcement: [newAnnouncement, ...prev.announcement.filter((f)=>f.title!=newAnnouncement.title)],
                     };
                 },
             });
@@ -140,7 +139,7 @@ const AllProvider = (props) => {
                     const newFile = subscriptionData.data.file
                     return {
                         ...prev,
-                        file: [newFile, ...prev.file],
+                        file: [newFile, ...prev.file.filter((f)=>!(f.type===newFile.type&&f.info===newFile.info&&f.fileName===newFile.fileName))],
                     };
                 },
             });
@@ -164,12 +163,13 @@ const AllProvider = (props) => {
                     const newGrade = subscriptionData.data.grade
                     return {
                         ...prev,
-                        grade: [newGrade, ...prev.grade],
+                        // grade: [newGrade, ...prev.grade.filter((f)=>!(f.studentID===newGrade.studentID&&f.subject===newGrade.subject&&f.itemName===newGrade.itemName))],
+                        grade: [newGrade, ...prev.grade.filter((f)=>f.itemName!==newGrade.itemName)],
                     };
                 },
             });
         } catch (e) { }
-    }, [gradeSubscribe]);
+    }, [gradeSubscribe,user]);
     const [createAnnouncement] = useMutation(CREATE_ANNOUNCEMENT_MUTATION)
     const [createSyllabus] = useMutation(CREATE_SYLLABUS_MUTATION)
     const [createFile] = useMutation(CREATE_FILE_MUTATION)

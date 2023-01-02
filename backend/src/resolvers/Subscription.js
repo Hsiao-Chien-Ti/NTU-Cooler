@@ -19,7 +19,7 @@ const Subscription = {
     grade: {
         subscribe:(parent, {studentID, subject}, {pubsub})=>{
             console.log(studentID)
-            return pubsub.subscribe('GRADE')
+            return pubsub.subscribe(`GRADE ${studentID+subject}`)
         }
 	}
 }

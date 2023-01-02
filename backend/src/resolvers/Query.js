@@ -17,7 +17,7 @@ const Query = {
         return announcement
     },
     grade: async (parent,{studentID,subject}) => {
-        let grade= await GradeModel.find({studentID:studentID,subject:subject});
+        let grade= await GradeModel.find({$and:[{studentID:studentID},{subject:subject}]});
         return grade
     },
     file: async (parent) => {

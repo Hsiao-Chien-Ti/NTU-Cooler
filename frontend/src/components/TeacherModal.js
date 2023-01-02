@@ -2,15 +2,15 @@ import { Modal, Form, Input, Select, InputNumber, Upload, Button } from "antd";
 import { UploadOutlined } from '@ant-design/icons';
 import { createRef, useState } from "react";
 import * as XLSX from 'xlsx'
-const TeacherModal = ({ open, mode, onCreate, onCancel }) => {
+const TeacherModal = ({ open, onCreate, onCancel }) => {
     const [form] = Form.useForm();
     const [addType, setAddType] = useState('Announcement')
     const uploadRef=createRef()
     return (
         <Modal
             open={open}
-            title={mode === 'add' ? 'Add' : 'Update'}
-            okText={mode === 'add' ? 'Add' : 'Update'}
+            title='Modify'
+            okText='Modify'
             cancelText="Cancel"
             onCancel={onCancel}
             onOk={() => {

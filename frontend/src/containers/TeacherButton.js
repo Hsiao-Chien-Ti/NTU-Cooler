@@ -5,7 +5,6 @@ import TeacherModal from '../components/TeacherModal';
 import { useAll } from './hooks/useAll';
 const TeacherButton = () => {
     const [modalOpen, setModalOpen] = useState(false)
-    const [mode, setMode] = useState('')
     const { createAnnouncement, createSyllabus, createFile,createGrade,subject } = useAll()
     const handleCreate = (form) => {
         console.log(form)
@@ -30,7 +29,7 @@ const TeacherButton = () => {
     }
     return (
         <>
-            <FloatButton.Group
+            {/* <FloatButton.Group
                 trigger="hover"
                 type="primary"
                 style={{
@@ -41,10 +40,13 @@ const TeacherButton = () => {
             >
                 <FloatButton icon={<PlusOutlined />} onClick={() => { setModalOpen(true); setMode('add') }} />
                 <FloatButton icon={<EditOutlined />} />
-            </FloatButton.Group>
+            </FloatButton.Group> */}
+            <FloatButton icon={<EditOutlined />} onClick={() => { setModalOpen(true);}}                 style={{
+                    right: '2%',
+                    scale: '1.2'
+                }}/>
             <TeacherModal
                 open={modalOpen}
-                mode={mode}
                 onCreate={(form) => {
                     handleCreate(form)
                     setModalOpen(false);
