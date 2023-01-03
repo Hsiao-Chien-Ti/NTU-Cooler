@@ -57,7 +57,6 @@ const AllPages = [
 const Page = ({ current, content }) => {
   const { logout, user } = useAll();
   const navigate = useNavigate();
-
   useEffect(() => {
     if (!user.login) navigate("/");
   }, [user.login]);

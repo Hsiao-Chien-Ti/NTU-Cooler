@@ -23,6 +23,7 @@ const ChatContext = createContext({
   startChat: () => {},
   sendMessage: () => {},
   queryChat: () => {},
+  queryChatBox: () => {},
 });
 const ChatProvider = (props) => {
   const { user, courseID } = useAll();
@@ -37,7 +38,7 @@ const ChatProvider = (props) => {
     CREATE_MESSAGE_MUTATION
   );
 
-  const { data: listOfChatboxes, loading: listLoading } = useQuery(
+  const [queryChatBox, { data: listOfChatboxes, loading: listLoading }] = useLazyQuery(
     CHATBOX_OF_USER_QUERY,
     {
       variables: {
@@ -146,17 +147,20 @@ const ChatProvider = (props) => {
       // console.log("Query_listOfChatboxes:", listOfChatboxes);
       let newChatBoxes = [];
       // console.log(listOfChatboxes);
-      listOfChatboxes.userChatbox.forEach((room) => {
-        newChatBoxes.push({
-          key: room.name,
-          label: room.showName,
-          chat: [],
+      if(listOfChatboxes) {
+        listOfChatboxes.userChatbox.forEach((room) => {
+          newChatBoxes.push({
+            key: room.name,
+            label: room.showName,
+            chat: [],
+          });
+          // console.log(newChatBoxes);
         });
-        // console.log(newChatBoxes);
-      });
-      setChatBoxes(newChatBoxes);
+        setChatBoxes(newChatBoxes);
       if (currentChat === "")
         setCurrentChat(listOfChatboxes.userChatbox[0].name);
+      }
+      
     }
   }, [listOfChatboxes]);
 
@@ -178,6 +182,7 @@ const ChatProvider = (props) => {
         startChat,
         sendMessage,
         queryChat,
+        queryChatBox,
       }}
       {...props}
     />
