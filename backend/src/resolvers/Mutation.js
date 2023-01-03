@@ -163,14 +163,13 @@ const Mutation = {
     return user;
   },
   createChatBox: async (parent, { name, courseID, participants, type }) => {
-    console.log(name, participants);
+    console.log(name, participants, type);
     let notAccess = type ? participants : [];
-
     participants?.forEach(async (person) => {
       const p = await UserModel.findOne({ studentID: person });
-      console.log(p);
+      //console.log(p);
       if (p.isTeacher && type)
-        notAccess = notAccess.filter((pp) => pp != p.studentID);
+        notAccess = notAccess.filter((pp) => pp !== p.studentID);
       let showName =
         participants.length > 2
           ? name

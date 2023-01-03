@@ -1,5 +1,6 @@
-import { Modal, Form, Input, Button, Select, Checkbox } from "antd";
+import { Modal, Form, Input, Button, Select, Checkbox, Switch } from "antd";
 import { useState } from "react";
+
 const makeName = (name, to) => {
   return [name, to].sort().join("_");
 };
@@ -7,7 +8,6 @@ const ChatModal = ({ open, onCreate, onCancel, users, me, isTeacher }) => {
   const [form] = Form.useForm();
   const [isGroup, setIsGroup] = useState(false);
   //console.log("users:", users);
-
   const handleCreateGroup = () => {
     setIsGroup(!isGroup);
   };
@@ -24,10 +24,16 @@ const ChatModal = ({ open, onCreate, onCancel, users, me, isTeacher }) => {
           .validateFields()
           .then((values) => {
             form.resetFields();
+            // let member = [me]
+            // if(isGroup){
+
+            // }else{
+            //   member.push(values.name)
+            // }
             onCreate({
               name: isGroup ? values.chatRoomName : makeName(values.name, me),
               participants: isGroup ? [...values.users, me] : [values.name, me],
-              quiz: isTeacher ? (isGroup ? values.quiz : false) : false,
+              quiz: isTeacher ? (isGroup && values.quiz ? values.quiz : false) : false,
             });
             setIsGroup(false);
           })
@@ -79,10 +85,11 @@ const ChatModal = ({ open, onCreate, onCancel, users, me, isTeacher }) => {
           {isTeacher ? (
             <Form.Item
               name="quiz"
+              label="Make it a Quiz"
               valuePropName="checked"
               wrapperCol={{ offset: 8, span: 16 }}
             >
-              <Checkbox>Make it a quiz</Checkbox>
+              <Switch />
             </Form.Item>
           ) : (
             <></>

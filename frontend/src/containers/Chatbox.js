@@ -39,6 +39,7 @@ const ChatRoom = () => {
     startChat,
     sendMessage,
     queryChat,
+    queryChatBox,
   } = useChat();
   const { setStatus, attendants, user, courseID } = useAll();
 
@@ -58,7 +59,15 @@ const ChatRoom = () => {
     scrollToBottom();
     setMsgSent(false);
   }, [msgSent]);
-
+  useEffect(() => {
+    if(user.studentID)
+    queryChatBox({
+      variables: {
+        studentID: user.studentID,
+        courseID,
+      },
+    })
+  },[user.studentID, courseID] )
   const handlePinOnClick = () => {
     if (pinMsg !== -1)
       pinRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -111,7 +120,7 @@ const ChatRoom = () => {
       setModalOpen(false);
     } else {
       try {
-        console.log(name, participants);
+        console.log(name, participants, quiz, courseID);
         startChat({
           variables: {
             name,
@@ -234,7 +243,7 @@ const ChatRoom = () => {
                   open={modalOpen}
                   isTeacher={user.isTeacher}
                   onCreate={async ({ name, participants, quiz }) => {
-                    console.log(participants);
+                    console.log(participants, quiz, name);
                     await createChatBox({
                       name,
                       participants,

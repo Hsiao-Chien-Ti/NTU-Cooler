@@ -137,6 +137,7 @@ const testInfo = [
       { name: "KKK", studentID: "KKK" },
       { name: "q", studentID: "q" },
       { name: "yzl", studentID: "b09901042" },
+      { name: "t", studentID: "t"}
     ],
     name: "ICN",
     courseID: "EE1234",
