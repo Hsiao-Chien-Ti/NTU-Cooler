@@ -36,6 +36,7 @@ type Syllabus {
   file: [File]
 }
 type File {
+  id:ID!
   type: String!
   info: String!
   fileName: String!

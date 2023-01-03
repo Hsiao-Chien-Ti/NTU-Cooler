@@ -195,10 +195,11 @@ const TeacherModal = ({ open, onCreate, onCancel }) => {
                                     message: 'Error: Please enter the link of the file!',
                                 },
                             ]}
+                            // onChange={(value)=>uploadRef.current.setFieldsValue({upload:s})}
                         >
                             <Input />
                         </Form.Item>}
-                        {linkType&&<Form.Item name="upload">
+                        {linkType&&<Form.Item name="fileLink">
                             <Upload
                                 // accept=".txt, .csv"
                                 // showUploadList={false}
@@ -208,7 +209,7 @@ const TeacherModal = ({ open, onCreate, onCancel }) => {
                                     reader.onload = e => {
                                         let s=e.target.result
                                         console.log(s)
-                                        uploadRef.current.setFieldsValue({upload:s})
+                                        uploadRef.current.setFieldsValue({fileLink:s})
                                     };
                                     reader.readAsDataURL(file)
                                     return false;

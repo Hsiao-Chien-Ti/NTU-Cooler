@@ -12,7 +12,7 @@ const testUser = [
     name: "t",
     studentID: "t",
     chatbox: [{ name: "My Group", courseID: "EE1234", showName: "My Group" }],
-    passwd: bcrypt.hashSync("t",14),
+    passwd: bcrypt.hashSync("t", 14),
     groupNum: 7,
     isTeacher: true,
   },
@@ -23,7 +23,7 @@ const testUser = [
       { name: "My Group", courseID: "EE1234", showName: "My Group" },
       { name: "KKK_q", courseID: "EE1234", showName: "q" },
     ],
-    passwd: bcrypt.hashSync("7",14),
+    passwd: bcrypt.hashSync("7", 14),
     groupNum: 7,
     isTeacher: true,
   },
@@ -31,7 +31,7 @@ const testUser = [
     name: "yzl",
     studentID: "b09901042",
     chatbox: [{ name: "My Group", courseID: "EE1234", showName: "My Group" }],
-    passwd: bcrypt.hashSync("7",14),
+    passwd: bcrypt.hashSync("7", 14),
     groupNum: 7,
     isTeacher: false,
   },
@@ -42,7 +42,7 @@ const testUser = [
       { name: "My Group", courseID: "EE1234", showName: "My Group" },
       { name: "KKK_q", courseID: "EE1234", showName: "K" },
     ],
-    passwd: bcrypt.hashSync("7",14),
+    passwd: bcrypt.hashSync("7", 14),
     groupNum: 7,
     isTeacher: false,
   },
@@ -148,12 +148,12 @@ const testSyllabus = [
   {
     weekNum: "1",
     outline: "No class for week 1",
-    file: [{ fileName: "CPBL", fileLink: "https://www.cpbl.com.tw/", linkType: false }]
+    // file: [{ fileName: "CPBL", fileLink: "https://www.cpbl.com.tw/", linkType: false }]
   },
   {
     weekNum: "2",
     outline: "Field trip",
-    file: [{ fileName: "Taipei children's amusement park", fileLink: "https://www.tcap.taipei/", linkType: false }]
+    // file: [{ fileName: "Taipei children's amusement park", fileLink: "https://www.tcap.taipei/", linkType: false }]
   }
 ]
 const testFile = [
@@ -225,12 +225,20 @@ const dataInit = async () => {
   await SyllabusModel.insertMany(testSyllabus);
   await FileModel.deleteMany({});
   await FileModel.insertMany(testFile);
-  await AnnouncementModel.deleteMany({});
-  await AnnouncementModel.insertMany(testAnnouncement);
-  await GradeModel.deleteMany({});
-  await GradeModel.insertMany(testGrade);
+  const files = await FileModel.find({});
+  const asyncRes = await Promise.all(files.map(async (f) => {
+    if (f.type === 'weekNum') {
+      const syllabus = await SyllabusModel.findOne({ weekNum: f.info })
+      syllabus.file.push(f._id)
+      await syllabus.save()
+    }
+  }))
+await AnnouncementModel.deleteMany({});
+await AnnouncementModel.insertMany(testAnnouncement);
+await GradeModel.deleteMany({});
+await GradeModel.insertMany(testGrade);
 
-  console.log("Database initialized!");
+console.log("Database initialized!");
 };
 
 export { dataInit };
