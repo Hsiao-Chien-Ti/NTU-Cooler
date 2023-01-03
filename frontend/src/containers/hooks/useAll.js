@@ -202,7 +202,6 @@ const AllProvider = (props) => {
     fetchPolicy: "network-only",
   });
   useEffect(() => {
-    // console.log(gradeSubscribe);
     if (user.login) {
       try {
         gradeSubscribe({
@@ -228,10 +227,6 @@ const AllProvider = (props) => {
   const [createSyllabus] = useMutation(CREATE_SYLLABUS_MUTATION);
   const [createFile] = useMutation(CREATE_FILE_MUTATION);
   const [createGrade] = useMutation(CREATE_GRADE_MUTATION);
-
-  // window.onbeforeunload = () => {
-
-  // };
 
   useEffect(() => {
     if (user.login) {

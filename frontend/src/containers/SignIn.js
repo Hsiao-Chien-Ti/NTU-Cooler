@@ -34,28 +34,11 @@ const SignIn = () => {
     }
   };
   useEffect(() => {
-    if (user.login) navigate("/course/homepage");
+    if (user.login) {
+      getGrade({ variables: { studentID: user.studentID, subject: subject } });
+      navigate("/course/homepage");
+    }
   }, [user]);
-  // useEffect(()=>{
-  //     console.log(loginData)
-  //     if(loginData!=undefined)
-  //     {
-  //         setUser(loginData.login)
-  //         if(!loginData.login.login)
-  //         {
-  //             displayStatus({
-  //                 type: "error",
-  //                 msg: "Invalid student ID or password",
-  //                 duration:1
-  //             });
-  //         }
-  //         else
-  //         {
-  //             if(user.login)
-  //                 navigate('/homepage')
-  //         }
-  //     }
-  // },[loginData])
   return (
     <Wrapper>
       <Title />
