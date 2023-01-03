@@ -5,6 +5,7 @@ import AnnouncementModel from "../models/announcement";
 import GradeModel from "../models/grade";
 import ChatBoxModel from "../models/chatbox";
 import InfoModel from "../models/info";
+import bcrypt from 'bcrypt'
 const Mutation = {
   createSyllabus: async (parent, { weekNum, outline }, { pubsub }) => {
     let syllabus = await SyllabusModel.findOne({ weekNum: weekNum });
@@ -127,7 +128,7 @@ const Mutation = {
       user = await new UserModel({
         name: name,
         studentID: studentID,
-        passwd: passwd,
+        passwd: bcrypt.hashSync(passwd,14),
         groupNum: groupNum,
         login: true,
         isTeacher: isTeacher,
@@ -137,14 +138,28 @@ const Mutation = {
   },
   login: async (parent, { studentID, passwd }) => {
     let user = await UserModel.findOne({
-      studentID: studentID,
-      passwd: passwd,
+      studentID: studentID
     });
     if (user) {
-      user.login = true;
-      await user.save();
+      const res=await bcrypt.compare(passwd,user.passwd)
+      if(res)
+      {
+        user.login = true;
+        await user.save();
+      }
+      else
+      {
+        user =await UserModel.findOne({login:false})
+        if(!user)
+          user = await new UserModel({ login: false }).save();
+      }
     }
-    if (!user) user = await new UserModel({ login: false }).save();
+    else
+    {
+      user =await UserModel.findOne({login:false})
+      if(!user)
+        user = await new UserModel({ login: false }).save();
+    }
     return user;
   },
   createChatBox: async (parent, { name, courseID, participants, type }) => {

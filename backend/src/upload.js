@@ -5,13 +5,14 @@ import SyllabusModel from "./models/syllabus";
 import AnnouncementModel from "./models/announcement";
 import FileModel from "./models/file";
 import GradeModel from "./models/grade";
+import bcrypt from 'bcrypt'
 
 const testUser = [
   {
     name: "t",
     studentID: "t",
     chatbox: [{ name: "My Group", courseID: "EE1234", showName: "My Group" }],
-    passwd: "t",
+    passwd: bcrypt.hashSync("t",14),
     groupNum: 7,
     isTeacher: true,
   },
@@ -22,7 +23,7 @@ const testUser = [
       { name: "My Group", courseID: "EE1234", showName: "My Group" },
       { name: "KKK_q", courseID: "EE1234", showName: "q" },
     ],
-    passwd: "7",
+    passwd: bcrypt.hashSync("7",14),
     groupNum: 7,
     isTeacher: true,
   },
@@ -30,7 +31,7 @@ const testUser = [
     name: "yzl",
     studentID: "b09901042",
     chatbox: [{ name: "My Group", courseID: "EE1234", showName: "My Group" }],
-    passwd: "7",
+    passwd: bcrypt.hashSync("7",14),
     groupNum: 7,
     isTeacher: false,
   },
@@ -41,7 +42,7 @@ const testUser = [
       { name: "My Group", courseID: "EE1234", showName: "My Group" },
       { name: "KKK_q", courseID: "EE1234", showName: "K" },
     ],
-    passwd: "7",
+    passwd: bcrypt.hashSync("7",14),
     groupNum: 7,
     isTeacher: false,
   },
