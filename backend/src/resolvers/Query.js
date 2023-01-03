@@ -30,7 +30,7 @@ const Query = {
             : [];
     },
     syllabus: async (parent) => {
-        let syllabus = await SyllabusModel.find({});
+        let syllabus = await SyllabusModel.find({}).populate('file');
         return syllabus
     },
     announcement: async (parent) => {

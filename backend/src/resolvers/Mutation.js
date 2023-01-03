@@ -19,7 +19,7 @@ const Mutation = {
       syllabus: {
         weekNum: syllabus.weekNum,
         outline: syllabus.outline,
-        file: syllabus.file
+        file: await syllabus.populate("file")
       }
     })
     return syllabus
@@ -39,17 +39,17 @@ const Mutation = {
       let syllabus = await SyllabusModel.findOne({ weekNum: info });
       if (!syllabus)
         syllabus = await new SyllabusModel({ weekNum: info, outline: "", file: [] }).save();
-
-      let newFile = { type: type, info: info, fileName: fileName, fileLink: fileLink, linkType: linkType }
-      syllabus.file = syllabus.file.filter((f) => f.fileName !== fileName)
-      console.log(syllabus.file)
-      syllabus.file.push(newFile)
+      // console.log(file._id)
+      // let newFile = { type: type, info: info, fileName: fileName, fileLink: fileLink, linkType: linkType }
+      syllabus.file = syllabus.file.filter((f) => JSON.stringify(f)!==JSON.stringify(file._id))
+      syllabus.file.push(file)
       await syllabus.save()
+      const sf=await syllabus.populate('file')
       pubsub.publish('SYLLABUS', {
         syllabus: {
-          weekNum: syllabus.weekNum,
-          outline: syllabus.outline,
-          file: syllabus.file
+          weekNum: sf.weekNum,
+          outline: sf.outline,
+          file: sf.file
         }
       })
     }

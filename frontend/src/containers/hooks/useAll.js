@@ -242,7 +242,7 @@ const AllProvider = (props) => {
         var seconds = Math.floor((diffMs / 1000));
         var minute = Math.floor((seconds / 60));
         // console.log(seconds +' sec and '+minute+' min since last activity')
-        if (minute == 1) {
+        if (minute == 10) {
           console.log('No activity from last 10 minutes... Logging Out')
           clearInterval(timeInterval)
           setUser({ login: false });

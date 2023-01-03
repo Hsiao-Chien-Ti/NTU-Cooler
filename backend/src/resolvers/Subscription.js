@@ -1,6 +1,7 @@
 const Subscription = {
     syllabus: {
         subscribe: (parent, args, { pubsub }) => {
+            console.log(pubsub)
             return pubsub.subscribe('SYLLABUS')
         }
     },
@@ -11,13 +12,13 @@ const Subscription = {
     },
     file: {
         subscribe: (parent, args, { pubsub }) => {
-            console.log(pubsub)
+            // console.log(pubsub)
             return pubsub.subscribe('FILE')
         }
     },
     grade: {
         subscribe: (parent, { studentID, subject }, { pubsub }) => {
-            console.log(studentID)
+            // console.log(studentID)
             return pubsub.subscribe(`GRADE ${studentID + subject}`)
         }
     },
