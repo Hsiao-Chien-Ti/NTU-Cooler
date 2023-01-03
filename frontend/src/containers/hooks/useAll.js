@@ -28,8 +28,8 @@ const AllContext = createContext({
   courseID: "",
   signIn: [],
   status: {},
-  setStatus: () => {},
-  displayStatus: () => {},
+  setStatus: () => { },
+  displayStatus: () => { },
   loginData: {},
   syllabusData: [],
   syllabusLoading: false,
@@ -37,9 +37,9 @@ const AllContext = createContext({
   announcementLoading: false,
   gradeData: [],
   gradeLoading: false,
-  getGrade: () => {},
+  getGrade: () => { },
   subject: "",
-  logout: () => {},
+  logout: () => { },
   fileData: [],
   fileLoading: false,
   createAnnouncement: [],
@@ -136,7 +136,7 @@ const AllProvider = (props) => {
           };
         },
       });
-    } catch (e) {}
+    } catch (e) { }
   }, [syllabusSubscribe]);
   const {
     data: announcementData,
@@ -161,7 +161,7 @@ const AllProvider = (props) => {
           };
         },
       });
-    } catch (e) {}
+    } catch (e) { }
   }, [announcementSubscribe]);
   const {
     data: fileData,
@@ -192,7 +192,7 @@ const AllProvider = (props) => {
           };
         },
       });
-    } catch (e) {}
+    } catch (e) { }
   }, [fileSubscribe]);
   const [
     getGrade,
@@ -202,7 +202,7 @@ const AllProvider = (props) => {
     fetchPolicy: "network-only",
   });
   useEffect(() => {
-    console.log(gradeSubscribe);
+    // console.log(gradeSubscribe);
     if (user.login) {
       try {
         gradeSubscribe({
@@ -221,16 +221,42 @@ const AllProvider = (props) => {
             };
           },
         });
-      } catch (e) {}
+      } catch (e) { }
     }
   }, [gradeSubscribe, user]);
   const [createAnnouncement] = useMutation(CREATE_ANNOUNCEMENT_MUTATION);
   const [createSyllabus] = useMutation(CREATE_SYLLABUS_MUTATION);
   const [createFile] = useMutation(CREATE_FILE_MUTATION);
   const [createGrade] = useMutation(CREATE_GRADE_MUTATION);
-  window.onbeforeunload = () => {
-    setUser({ login: false });
-  };
+
+  // window.onbeforeunload = () => {
+
+  // };
+
+  useEffect(() => {
+    if (user.login) {
+      document.addEventListener("mousemove", () => {
+        localStorage.setItem('lastActvity', new Date())
+      });
+      document.addEventListener("click", () => {
+        localStorage.setItem('lastActvity', new Date())
+      });
+      let timeInterval = setInterval(() => {
+        let lastAcivity = localStorage.getItem('lastActvity')
+        var diffMs = Math.abs(new Date(lastAcivity) - new Date()); // milliseconds between now & last activity
+        var seconds = Math.floor((diffMs / 1000));
+        var minute = Math.floor((seconds / 60));
+        // console.log(seconds +' sec and '+minute+' min since last activity')
+        if (minute == 1) {
+          console.log('No activity from last 10 minutes... Logging Out')
+          clearInterval(timeInterval)
+          setUser({ login: false });
+        }
+      }, 1000)
+    }
+
+  }, [user])
+
   return (
     <AllContext.Provider
       value={{
