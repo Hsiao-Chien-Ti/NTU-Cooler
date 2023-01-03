@@ -5,6 +5,7 @@ import GradeModel from "../models/grade";
 import ChatBoxModel from "../models/chatbox";
 import FileModel from "../models/file";
 import InfoModel from "../models/info";
+import HWModel from "../models/hw";
 const Query = {
     info: async (parent, { courseID }) => {
         let course = await InfoModel.findOne({ courseID });
@@ -44,6 +45,11 @@ const Query = {
     file: async (parent) => {
         let file = await FileModel.find({});
         return file
+    },
+    hw: async (parent,{studentID}) => {
+        let hw = await HWModel.find({});
+        hw.map((h)=>(h.sFile=h.sFile.filter((f)=>f.studentID===studentID)))
+        return hw
     },
     chatbox: async (parent, { name, courseID, studentID }) => {
         let box = await ChatBoxModel.findOne({

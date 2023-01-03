@@ -11,6 +11,7 @@ import GradeModel from "./models/grade";
 import FileModel from "./models/file";
 import ChatBoxModel from "./models/chatbox";
 import InfoModel from "./models/info";
+import HWModel from "./models/hw";
 // graphql
 import Query from "./resolvers/Query";
 import Mutation from "./resolvers/Mutation";
@@ -34,6 +35,7 @@ const yoga = createYoga({
     GradeModel,
     FileModel,
     InfoModel,
+    HWModel,
     ChatBoxModel,
     pubsub,
   },

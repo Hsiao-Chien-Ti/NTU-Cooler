@@ -22,6 +22,11 @@ const Subscription = {
             return pubsub.subscribe(`GRADE ${studentID + subject}`)
         }
     },
+    hw: {
+        subscribe: (parent, { pubsub }) => {
+            return pubsub.subscribe('HW')
+        }
+    },
     message: {
         subscribe: (parent, { to, courseID }, { db, pubsub }) => {
             return pubsub.subscribe(`chatBox ${to} in class ${courseID}`);

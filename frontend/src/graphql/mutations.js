@@ -59,6 +59,7 @@ const CREATE_FILE_MUTATION = gql`
     $fileName: String!
     $fileLink: String!
     $linkType: Boolean!
+    $studentID: String
   ) {
     createFile(
       type: $type
@@ -66,6 +67,7 @@ const CREATE_FILE_MUTATION = gql`
       fileName: $fileName
       fileLink: $fileLink
       linkType: $linkType
+      studentID: $studentID
     ) {
       type
       info

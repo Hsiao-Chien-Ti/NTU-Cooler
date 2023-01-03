@@ -5,6 +5,7 @@ import AnnouncementModel from "../models/announcement";
 import GradeModel from "../models/grade";
 import ChatBoxModel from "../models/chatbox";
 import InfoModel from "../models/info";
+import HWModel from "../models/hw";
 import bcrypt from 'bcrypt'
 const Mutation = {
   createSyllabus: async (parent, { weekNum, outline }, { pubsub }) => {
@@ -24,7 +25,7 @@ const Mutation = {
     })
     return syllabus
   },
-  createFile: async (parent, { type, info, fileName, fileLink, linkType }, { pubsub }) => {
+  createFile: async (parent, { type, info, fileName, fileLink, linkType, studentID }, { pubsub }) => {
     // console.log(type)
     let file = await FileModel.findOne({ type: type, info: info, fileName: fileName })
     if (file) {
@@ -34,22 +35,55 @@ const Mutation = {
     else {
       file = await new FileModel({ type: type, info: info, fileName: fileName, fileLink: fileLink, linkType: linkType }).save()
     }
-    // console.log(file)
     if (type == "weekNum") {
       let syllabus = await SyllabusModel.findOne({ weekNum: info });
       if (!syllabus)
         syllabus = await new SyllabusModel({ weekNum: info, outline: "", file: [] }).save();
-      // console.log(file._id)
-      // let newFile = { type: type, info: info, fileName: fileName, fileLink: fileLink, linkType: linkType }
-      syllabus.file = syllabus.file.filter((f) => JSON.stringify(f)!==JSON.stringify(file._id))
+      syllabus.file = syllabus.file.filter((f) => JSON.stringify(f) !== JSON.stringify(file._id))
       syllabus.file.push(file)
       await syllabus.save()
-      const sf=await syllabus.populate('file')
+      const sf = await syllabus.populate('file')
       pubsub.publish('SYLLABUS', {
         syllabus: {
           weekNum: sf.weekNum,
           outline: sf.outline,
           file: sf.file
+        }
+      })
+    }
+    else if (type == "tHW") {
+      let hw = await HWModel.findOne({ title: info });
+      if (!hw)
+        hw = await new HWModel({ title: info, deadline: "not set", description: "", status: "Nsubmit", sfile: [], tFile: [] }).save();
+      hw.tFile = hw.tFile.filter((f) => JSON.stringify(f) !== JSON.stringify(file._id))
+      hw.tFile.push(file)
+      await hw.save()
+      const hf = await hw.populate(['tFile', 'sFile'])
+      pubsub.publish('HW', {
+        hw: {
+          title: hf.title,
+          deadline: hf.deadline,
+          description: hf.description,
+          status: hf.status,
+          tFile: hf.tFile,
+          sFile: hf.sFile
+        }
+      })
+    }
+    else if (type == "sHW") {
+      let hw = await HWModel.findOne({ title: info });
+      hw.sFile = hw.sFile.filter((f) => JSON.stringify(f) !== JSON.stringify(file._id))
+      hw.sFile.push({ studentID: studentID, file: file })
+      await hw.save()
+      const hf = await hw.populate(['tFile', 'sFile'])
+      pubsub.publish('HW', {
+        hw: {
+          title: hf.title,
+          deadline: hf.deadline,
+          description: hf.description,
+          status: hf.status,
+          tFile: hf.tFile,
+          sFile: hf.sFile
         }
       })
     }
@@ -82,6 +116,28 @@ const Mutation = {
       }
     })
     return announcement
+  },
+  createHW: async (parent, { title, deadline, description }, { pubsub }) => {
+    let hw = await HWModel.findOne({ title: title });
+    console.log(hw)
+    if (hw) {
+      await HWModel.updateOne({ title: title }, { $set: { deadline: deadline, description: description } });
+      hw = await HWModel.findOne({ title: title });
+    }
+    else
+      hw = await new HWModel({ title: title, deadline: deadline, description: description, tFile: [], sFile: [] }).save();
+    const hf = await hw.populate(['tFile', 'sFile'])
+    pubsub.publish('HW', {
+      hw: {
+        title: hf.title,
+        deadline: hf.deadline,
+        description: hf.description,
+        status: hf.status,
+        tFile: hf.tFile,
+        sFile: hf.sFile
+      }
+    })
+    return hw
   },
   createGrade: async (parent, { studentID, subject, itemName, score, weight }, { pubsub }) => {
     let grade = await GradeModel.findOne({ studentID: studentID, subject: subject, itemName: itemName });
@@ -128,7 +184,7 @@ const Mutation = {
       user = await new UserModel({
         name: name,
         studentID: studentID,
-        passwd: bcrypt.hashSync(passwd,14),
+        passwd: bcrypt.hashSync(passwd, 14),
         groupNum: groupNum,
         login: true,
         isTeacher: isTeacher,
@@ -141,23 +197,20 @@ const Mutation = {
       studentID: studentID
     });
     if (user) {
-      const res=await bcrypt.compare(passwd,user.passwd)
-      if(res)
-      {
+      const res = await bcrypt.compare(passwd, user.passwd)
+      if (res) {
         user.login = true;
         await user.save();
       }
-      else
-      {
-        user =await UserModel.findOne({login:false})
-        if(!user)
+      else {
+        user = await UserModel.findOne({ login: false })
+        if (!user)
           user = await new UserModel({ login: false }).save();
       }
     }
-    else
-    {
-      user =await UserModel.findOne({login:false})
-      if(!user)
+    else {
+      user = await UserModel.findOne({ login: false })
+      if (!user)
         user = await new UserModel({ login: false }).save();
     }
     return user;

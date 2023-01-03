@@ -6,6 +6,7 @@ type Query {
   announcement: [Announcement]
   grade(studentID: String!, subject: String!): [Grade]
   file: [File]
+  hw(studentID: String!): [HW]
   chatbox(name: String!, courseID: String!, studentID: String!): ChatBox!
 }
 
@@ -55,6 +56,17 @@ type Grade {
   score: Float!
   weight: Float
 }
+type SFile{
+  studentID: String
+  file:File
+}
+type HW {
+  title: String!
+  deadline: String!
+  description: String
+  tFile: [File]
+  sFile: [SFile]
+}
 
 type ChatBox {
   type: Boolean
@@ -98,13 +110,19 @@ type Mutation {
     info: String!,
     fileName: String!,
     fileLink: String!,
-    linkType: Boolean!
+    linkType: Boolean!,
+    studentID: String
   ): File!
   createAnnouncement(
     time: String!
     title: String!
     content: String
   ): Announcement!
+  createHW(
+    title:String!
+    deadline:String!
+    description:String
+  ):HW!
   createGrade(
     studentID: String!
     subject: String!
@@ -130,6 +148,7 @@ type Subscription {
   syllabus: Syllabus!
   announcement: Announcement!
   file: File!
+  hw(studentID:String!): HW!
   grade(studentID: String!, subject: String!): Grade!
   message(to: String!, courseID: String!): Message!
 }
