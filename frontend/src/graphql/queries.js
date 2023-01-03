@@ -7,6 +7,7 @@ export const INFO_QUERY = gql`
       attendants {
         name
         studentID
+        isTeacher
       }
       courseID
     }

@@ -135,10 +135,10 @@ const testChat = [
 const testInfo = [
   {
     attendants: [
-      { name: "KKK", studentID: "KKK" },
-      { name: "q", studentID: "q" },
-      { name: "yzl", studentID: "b09901042" },
-      { name: "t", studentID: "t"}
+      { name: "KKK", studentID: "KKK", isTeacher: true },
+      { name: "q", studentID: "q", isTeacher: false },
+      { name: "yzl", studentID: "b09901042", isTeacher: false },
+      { name: "t", studentID: "t", isTeacher: true },
     ],
     name: "ICN",
     courseID: "EE1234",

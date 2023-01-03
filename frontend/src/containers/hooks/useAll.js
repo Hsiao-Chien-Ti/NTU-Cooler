@@ -18,7 +18,7 @@ import {
   INFO_QUERY,
   HW_QUERY,
   HW_SUBSCRIPTION,
-  CREATE_HW_MUTATION
+  CREATE_HW_MUTATION,
 } from "../../graphql";
 import { message } from "antd";
 import { useNavigate } from "react-router-dom";
@@ -28,11 +28,12 @@ const savedMe = JSON.parse(localStorage.getItem(LOCALSTORAGE_KEY));
 const AllContext = createContext({
   user: { name: "", passwd: "", studentID: "", login: false },
   attendants: [],
+  allStudents: [],
   courseID: "",
   signIn: [],
   status: {},
-  setStatus: () => { },
-  displayStatus: () => { },
+  setStatus: () => {},
+  displayStatus: () => {},
   loginData: {},
   syllabusData: [],
   syllabusLoading: false,
@@ -40,25 +41,26 @@ const AllContext = createContext({
   announcementLoading: false,
   gradeData: [],
   gradeLoading: false,
-  getGrade: () => { },
+  getGrade: () => {},
   hwData: [],
   hwLoading: false,
-  getHW: () => { },
+  getHW: () => {},
   subject: "",
-  logout: () => { },
+  logout: () => {},
   fileData: [],
   fileLoading: false,
   createAnnouncement: [],
   createSyllabus: [],
   createFile: [],
   createGrade: [],
-  createHW: []
+  createHW: [],
 });
 const AllProvider = (props) => {
   const [user, setUser] = useState(savedMe || { login: false });
   const [subject, setSubject] = useState("Introduction to Computer Network");
   const [courseID, setCourseID] = useState("EE1234");
   const [attendants, setAttendants] = useState([]);
+  const [allStudents, setAllStudents] = useState([]);
   const [signIn, { data: loginData }] = useMutation(LOGIN_MUTATION);
   const { data: courseInfo, loading: infoLoading } = useQuery(INFO_QUERY, {
     variables: {
@@ -77,6 +79,16 @@ const AllProvider = (props) => {
         });
       console.log(users);
       setAttendants(users);
+      const student = courseInfo.info.attendants
+        .filter((person) => !person.isTeacher)
+        .map((person) => {
+          return {
+            value: person.studentID,
+            label: person.name + " (" + person.studentID + ") ",
+          };
+        });
+
+      setAllStudents(student);
       // console.log(courseInfo);
     }
   }, [courseInfo, user]);
@@ -143,7 +155,7 @@ const AllProvider = (props) => {
           };
         },
       });
-    } catch (e) { }
+    } catch (e) {}
   }, [syllabusSubscribe]);
   const {
     data: announcementData,
@@ -168,7 +180,7 @@ const AllProvider = (props) => {
           };
         },
       });
-    } catch (e) { }
+    } catch (e) {}
   }, [announcementSubscribe]);
   const {
     data: fileData,
@@ -199,7 +211,7 @@ const AllProvider = (props) => {
           };
         },
       });
-    } catch (e) { }
+    } catch (e) {}
   }, [fileSubscribe]);
   const [
     getGrade,
@@ -227,22 +239,22 @@ const AllProvider = (props) => {
             };
           },
         });
-      } catch (e) { }
+      } catch (e) {}
     }
   }, [gradeSubscribe, user]);
-  useEffect(()=>{
-    console.log(gradeData)
-  },[gradeData])
+  useEffect(() => {
+    console.log(gradeData);
+  }, [gradeData]);
   const [
     getHW,
     { data: hwData, loading: hwLoading, subscribeToMore: hwSubscribe },
   ] = useLazyQuery(HW_QUERY, {
-    variables: { studentID: user.studentID},
+    variables: { studentID: user.studentID },
     fetchPolicy: "network-only",
   });
-  useEffect(()=>{
-    console.log(hwData)
-  },[hwData])
+  useEffect(() => {
+    console.log(hwData);
+  }, [hwData]);
   useEffect(() => {
     if (user.login) {
       try {
@@ -253,48 +265,44 @@ const AllProvider = (props) => {
             console.log(prev);
             if (!subscriptionData.data) return prev;
             const newHW = subscriptionData.data.hw;
-            console.log(newHW)
+            console.log(newHW);
             return {
               ...prev,
-              hw: [
-                newHW,
-                ...prev.hw.filter((f) => f.title !== newHW.title),
-              ],
+              hw: [newHW, ...prev.hw.filter((f) => f.title !== newHW.title)],
             };
           },
         });
-      } catch (e) { }
+      } catch (e) {}
     }
   }, [hwSubscribe, user]);
   const [createAnnouncement] = useMutation(CREATE_ANNOUNCEMENT_MUTATION);
   const [createSyllabus] = useMutation(CREATE_SYLLABUS_MUTATION);
   const [createFile] = useMutation(CREATE_FILE_MUTATION);
   const [createGrade] = useMutation(CREATE_GRADE_MUTATION);
-  const [createHW] = useMutation(CREATE_HW_MUTATION)
+  const [createHW] = useMutation(CREATE_HW_MUTATION);
 
   useEffect(() => {
     if (user.login) {
       document.addEventListener("mousemove", () => {
-        localStorage.setItem('lastActvity', new Date())
+        localStorage.setItem("lastActvity", new Date());
       });
       document.addEventListener("click", () => {
-        localStorage.setItem('lastActvity', new Date())
+        localStorage.setItem("lastActvity", new Date());
       });
       let timeInterval = setInterval(() => {
-        let lastAcivity = localStorage.getItem('lastActvity')
+        let lastAcivity = localStorage.getItem("lastActvity");
         var diffMs = Math.abs(new Date(lastAcivity) - new Date()); // milliseconds between now & last activity
-        var seconds = Math.floor((diffMs / 1000));
-        var minute = Math.floor((seconds / 60));
+        var seconds = Math.floor(diffMs / 1000);
+        var minute = Math.floor(seconds / 60);
         // console.log(seconds +' sec and '+minute+' min since last activity')
         if (minute == 10) {
-          console.log('No activity from last 10 minutes... Logging Out')
-          clearInterval(timeInterval)
+          console.log("No activity from last 10 minutes... Logging Out");
+          clearInterval(timeInterval);
           setUser({ login: false });
         }
-      }, 1000)
+      }, 1000);
     }
-
-  }, [user])
+  }, [user]);
 
   return (
     <AllContext.Provider
@@ -302,6 +310,7 @@ const AllProvider = (props) => {
         subject,
         user,
         attendants,
+        allStudents,
         courseID,
         setUser,
         signIn,

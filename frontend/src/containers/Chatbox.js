@@ -234,6 +234,7 @@ const ChatRoom = () => {
           onClick={(e) => {
             if (e.key === "_add_") {
               setModalOpen(true);
+              console.log(user.isTeacher);
             } else handleOnChange(e.key);
           }}
           style={{ width: 128, justifyItems: "center" }}

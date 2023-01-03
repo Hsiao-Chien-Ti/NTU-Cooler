@@ -92,6 +92,7 @@ type MessageSender {
 type AttendantInfo {
   name: String!
   studentID: String!
+  isTeacher: Boolean!
 }
 type Mutation {
   createInfo(name: String, courseID: String!): Info!
