@@ -9,6 +9,7 @@ import { Layout, Menu, theme } from "antd";
 import React from "react";
 import { useAll } from "./hooks/useAll";
 import ChatboxHeader from "../components/Chatbox/ChatboxHeader";
+import { selectHttpOptionsAndBody } from "@apollo/client";
 const { Content, Footer } = Layout;
 
 const ChatBoxesWrapper = styled(Tabs)`
@@ -40,11 +41,13 @@ const ChatRoom = () => {
     sendMessage,
     queryChat,
     queryChatBox,
+    changePin,
   } = useChat();
   const { setStatus, attendants, user, courseID } = useAll();
 
   const [modalOpen, setModalOpen] = useState(false);
   const [msgSent, setMsgSent] = useState(false);
+  const [body, setBody] = useState("");
   const {
     token: { colorBgContainer },
   } = theme.useToken();
@@ -60,18 +63,19 @@ const ChatRoom = () => {
     setMsgSent(false);
   }, [msgSent]);
   useEffect(() => {
-    if(user.studentID)
-    queryChatBox({
-      variables: {
-        studentID: user.studentID,
-        courseID,
-      },
-    })
-  },[user.studentID, courseID] )
+    if (user.studentID)
+      queryChatBox({
+        variables: {
+          studentID: user.studentID,
+          courseID,
+        },
+      });
+  }, [user.studentID, courseID]);
   const handlePinOnClick = () => {
     if (pinMsg !== -1)
       pinRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
   };
+
   const renderChat = () => {
     console.log("renderChat");
     console.log(messages);
@@ -80,19 +84,32 @@ const ChatRoom = () => {
     ) : (
       <>
         {messages.map((mes, i) => {
-          console.log("message: ", i, mes.body);
           return pinMsg === i ? (
-            <>
+            <div key={i}>
               <div ref={pinRef} />
               <Message
                 isMe={mes.sender.studentID === user.studentID ? true : false}
                 sender={mes.sender}
                 message={mes.body}
-                key={i}
+                // key={i}
                 access={access}
                 hidden={mes.hidden}
+                handleOnClickMessage={(e) => {
+                  console.log("click", e);
+                  if (e.key === "1") {
+                    // pin message
+                    changePin({
+                      variables: {
+                        name: currentChat,
+                        courseID,
+                        pinMsg: i,
+                        studentID: user.studentID,
+                      },
+                    });
+                  }
+                }}
               />
-            </>
+            </div>
           ) : (
             <Message
               isMe={mes.sender.studentID === user.studentID ? true : false}
@@ -101,6 +118,21 @@ const ChatRoom = () => {
               key={i}
               access={access}
               hidden={mes.hidden}
+              handleOnClickMessage={(e) => {
+                console.log("click", e);
+                if (e.key === "1") {
+                  // pin message
+                  changePin({
+                    variables: {
+                      name: currentChat,
+                      courseID,
+                      pinMsg: i,
+                      studentID: user.studentID,
+                    },
+                  });
+                  setPinMsg(i);
+                }
+              }}
             />
           );
         })}
@@ -120,7 +152,6 @@ const ChatRoom = () => {
       setModalOpen(false);
     } else {
       try {
-        console.log(name, participants, quiz, courseID);
         startChat({
           variables: {
             name,
@@ -130,10 +161,10 @@ const ChatRoom = () => {
           },
         });
         console.log("Mutation_createChatBox:", name);
+        setCurrentChat(name);
       } catch (e) {
         throw new Error("Mutation_createChatBox_error", e);
       }
-      setCurrentChat(name);
       const chat = renderChat(); //turn msgs into DOM nodes
       setChatBoxes([
         ...chatBoxes,
@@ -150,6 +181,8 @@ const ChatRoom = () => {
     }
   };
   useEffect(() => {
+    console.log("messages use effect with messages:", messages);
+    console.log("current chat:", currentChat);
     const chat = renderChat();
     let newChatBoxes = chatBoxes;
     newChatBoxes.forEach((element, index) => {
@@ -159,7 +192,20 @@ const ChatRoom = () => {
     });
     setChatBoxes(newChatBoxes);
     setMsgSent(true);
-  }, [messages]);
+  }, [messages, pinMsg]);
+
+  useEffect(() => {
+    console.log("pinMsg use effect with pinChange:", pinMsg);
+    console.log("current chat:", currentChat);
+    const chat = renderChat();
+    let newChatBoxes = chatBoxes;
+    newChatBoxes.forEach((element, index) => {
+      if (element.key === currentChat) {
+        element.chat = chat;
+      }
+    });
+    setChatBoxes(newChatBoxes);
+  }, [pinMsg]);
 
   const handleOnChange = (key) => {
     if (key) {
@@ -182,8 +228,7 @@ const ChatRoom = () => {
         padding: 24,
         minHeight: 280,
         background: colorBgContainer,
-      }}
-    >
+      }}>
       <Layout style={{ flexDirection: "row" }}>
         <Menu
           onClick={(e) => {
@@ -206,8 +251,7 @@ const ChatRoom = () => {
             style={{
               maxHeight: "420px",
               flexDirection: "column",
-            }}
-          >
+            }}>
             {!chatBoxLoading ? (
               <div style={{ minHeight: "90%" }}>
                 <ChatboxHeader
@@ -229,8 +273,7 @@ const ChatRoom = () => {
                     overflow: "auto",
                     height: "300px",
                     background: colorBgContainer,
-                  }}
-                >
+                  }}>
                   {chatBoxes.find((b) => b.key === currentChat)
                     ? chatBoxes.find((b) => b.key === currentChat).chat !== {}
                       ? chatBoxes.find((b) => b.key === currentChat).chat
@@ -243,7 +286,6 @@ const ChatRoom = () => {
                   open={modalOpen}
                   isTeacher={user.isTeacher}
                   onCreate={async ({ name, participants, quiz }) => {
-                    console.log(participants, quiz, name);
                     await createChatBox({
                       name,
                       participants,
@@ -259,7 +301,11 @@ const ChatRoom = () => {
                   <Input.Search
                     ref={bodyRef}
                     enterButton="Send"
-                    placeholder="Type a message here..."
+                    value={body}
+                    placeholder="Type a message he re..."
+                    onChange={(e) => {
+                      setBody(e.target.value);
+                    }}
                     onSearch={(msg) => {
                       if (!msg) {
                         setStatus({
@@ -277,19 +323,11 @@ const ChatRoom = () => {
                           courseID,
                         },
                       });
+                      setBody("");
                       if (!access) {
                         console.log("finally", user.studentID, "can access!");
-                        // queryChat({
-                        //   variables: {
-                        //     name: currentChat,
-                        //     courseID,
-                        //     studentID: user.studentID,
-                        //   },
-                        // });
                       }
-                      //setBody("");
-                    }}
-                  ></Input.Search>
+                    }}></Input.Search>
                 </Footer>
               </div>
             ) : (
