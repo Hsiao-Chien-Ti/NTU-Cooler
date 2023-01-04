@@ -290,34 +290,41 @@ const Mutation = {
     { name, courseID, participants, type },
     { pubsub }
   ) => {
-    console.log(name, participants, type);
-    let notAccess = type ? participants : [];
-    participants?.forEach(async (person) => {
-      const p = await UserModel.findOne({ studentID: person });
-      //console.log(p);
-      if (p.isTeacher && type)
-        notAccess = notAccess.filter((pp) => pp !== p.studentID);
-      let showName =
-        participants.length > 2
-          ? name
-          : participants.filter((pp) => pp !== person)[0];
-      console.log(showName, name, person);
-      p.chatbox.push({ name, courseID, showName, type });
-      console.log(p.chatbox);
-      await p.save();
-    });
-    const box = await new ChatBoxModel({
-      name,
-      courseID,
-      participants,
-      messages: [],
-      notAccess,
-      type,
-      pinMsg: -1,
-    }).save();
-    pubsub.publish(`new chatbox in class ${courseID}`, { chatbox: box });
+    const findBox = await ChatBoxModel({ name, courseID, type }).findOne();
+    if (findBox) {
+      throw new Error(
+        `Box with name ${name} in class ${courseID} of type ${type} alreay exists!`
+      );
+    } else {
+      let notAccess = type ? participants : [];
+      participants?.forEach(async (person) => {
+        const p = await UserModel.findOne({ studentID: person });
+        //console.log(p);
+        if (p.isTeacher && type)
+          notAccess = notAccess.filter((pp) => pp !== p.studentID);
+        let showName =
+          participants.length > 2
+            ? name
+            : participants.filter((pp) => pp !== person)[0];
+        console.log(showName, name, person);
+        p.chatbox.push({ name, courseID, showName, type });
+        console.log(p.chatbox);
+        await p.save();
+      });
+      const box = await new ChatBoxModel({
+        name,
+        courseID,
+        participants,
+        messages: [],
+        notAccess,
+        type,
+        pinMsg: -1,
+      }).save();
+      pubsub.publish(`new chatbox in class ${courseID}`, { chatbox: box });
 
-    return box;
+      return box;
+    }
+    
   },
   createMessage: async (
     parent,

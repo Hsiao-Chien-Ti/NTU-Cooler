@@ -32,11 +32,17 @@ const ChatContext = createContext({
   changePin: () => {},
   setIsQuiz: () => {},
   createQuiz: () => {},
+  allBox: [],
+  setAllBox: () => {},
+  allQuiz: [],
+  setAllQuiz: () => {},
 });
 const ChatProvider = (props) => {
   const { user, courseID } = useAll();
   const [currentChat, setCurrentChat] = useState("");
   const [currentQuiz, setCurrentQuiz] = useState("");
+  const [allBox, setAllBox] = useState([]);
+  const [allQuiz, setAllQuiz] = useState([]);
   const [messages, setMessages] = useState([]);
   const [allRooms, setAllRooms] = useState([]);
   const [chatBoxes, setChatBoxes] = useState([]);
@@ -106,7 +112,7 @@ const ChatProvider = (props) => {
       throw new Error("Query_chatBoxData_error:", error);
     }
     if (!chatBoxLoading) {
-      // console.log("Query_chatBoxData:", chatBoxData);
+      console.log("Query_chatBoxData:", chatBoxData);
       if (chatBoxData) {
         setMessages(chatBoxData.chatbox.messages);
         setPinMsg(chatBoxData.chatbox.pinMsg);
@@ -120,7 +126,7 @@ const ChatProvider = (props) => {
         console.log("set pinmsg:", chatBoxData.chatbox.pinMsg);
       }
     }
-  }, [chatBoxData, chatBoxLoading]);
+  }, [chatBoxData, chatBoxLoading, isQuiz]);
 
   useEffect(() => {
     const current = isQuiz ? currentQuiz : currentChat;
@@ -196,36 +202,49 @@ const ChatProvider = (props) => {
     if (!listLoading) {
       // console.log("Query_listOfChatboxes:", listOfChatboxes);
       let newChatBoxes = [];
+      let newQuizBoxes = [];
       // console.log(listOfChatboxes);
       let newChat = "";
       let newQuiz = "";
       if (listOfChatboxes) {
         listOfChatboxes.userChatbox.forEach((room) => {
-          newChatBoxes.push({
-            key: room.name,
-            label: room.showName,
-            quiz: room.type ? "true" : "false",
-            chat: <p style={{ color: "#ccc" }}>No messages...</p>,
-          });
-          console.log("INSERT NEW CHATBOXES", newChatBoxes);
-          if (newChat === "" && !room.type) {
-            newChat = room.name;
-          }
-          if (newQuiz === "" && room.type) {
-            newQuiz = room.name;
+          if (room.type) {
+            newQuizBoxes.push({
+              key: room.name,
+              label: room.showName,
+              quiz: "true",
+              chat: <p style={{ color: "#ccc" }}>No messages...</p>,
+            });
+            console.log("INSERT NEW CHATBOXES", newQuizBoxes);
+            if (newQuiz === "") {
+              newQuiz = room.name;
+            }
+          } else {
+            newChatBoxes.push({
+              key: room.name,
+              label: room.showName,
+              quiz: "false",
+              chat: <p style={{ color: "#ccc" }}>No messages...</p>,
+            });
+            console.log("INSERT NEW CHATBOXES", newChatBoxes);
+            if (newChat === "") {
+              newChat = room.name;
+            }
           }
         });
-        setChatBoxes(newChatBoxes);
+        setAllBox(newChatBoxes);
+        setAllQuiz(newQuizBoxes);
         if (currentChat === "") setCurrentChat(newChat);
         if (currentQuiz === "") setCurrentQuiz(newQuiz);
       }
-      console.log("ChatBoxes: ", newChatBoxes);
+      // console.log("ChatBoxes: ", newChatBoxes);
     }
   }, [listOfChatboxes]);
 
   useEffect(() => {
     const current = isQuiz ? currentQuiz : currentChat;
     if (current && user.studentID) {
+      console.log("Change & Query! Current: ", current);
       queryChat({
         variables: {
           name: current,
@@ -246,8 +265,7 @@ const ChatProvider = (props) => {
           studentID: user.studentID,
         },
       });
-  }, [user, courseID]);
-  
+  }, [user, courseID, isQuiz]);
 
   return (
     <ChatContext.Provider
@@ -257,7 +275,7 @@ const ChatProvider = (props) => {
         currentChat,
         currentQuiz,
         messages,
-        chatBoxes,
+        setAllQuiz,
         chatBoxLoading,
         pinMsg,
         access,
@@ -272,6 +290,10 @@ const ChatProvider = (props) => {
         changePin,
         setIsQuiz,
         createQuiz,
+        allBox,
+        allQuiz,
+        setAllBox,
+        setAllQuiz,
       }}
       {...props}
     />

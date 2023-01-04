@@ -53,7 +53,7 @@ const router = createBrowserRouter([
       },
       {
         path: "/course/quizzes",
-        element: <Chatbox isQuiz={true} />,
+        element: <Quiz />,
       },
       {
         path: "/course/messages",

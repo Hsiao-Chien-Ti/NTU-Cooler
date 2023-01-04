@@ -17,6 +17,7 @@ const FootRef = styled.div`
 const ChatRoom = () => {
   const {
     messages,
+    isQuiz,
     currentChat,
     chatBoxes,
     chatBoxLoading,
@@ -30,6 +31,8 @@ const ChatRoom = () => {
     queryChatBox,
     setCurrentChat,
     changePin,
+    allBox,
+    setAllBox,
   } = useChat();
 
   const { setStatus, attendants, user, courseID } = useAll();
@@ -37,7 +40,6 @@ const ChatRoom = () => {
   const [modalOpen, setModalOpen] = useState(false);
   const [msgSent, setMsgSent] = useState(false);
   const [body, setBody] = useState("");
-  const [allBox, setAllBox] = useState([]);
 
   const {
     token: { colorBgContainer },
@@ -132,7 +134,7 @@ const ChatRoom = () => {
     if (participants.length === 2) {
       newName = participants.filter((p) => p !== user.studentID)[0];
     }
-    if (chatBoxes.some(({ key }) => key === name)) {
+    if (allBox.some(({ key }) => key === name)) {
       setCurrentChat(name);
       setStatus({ type: "error", msg: newName + " has exist" });
       setModalOpen(false);
@@ -149,16 +151,11 @@ const ChatRoom = () => {
         console.log("Mutation_createChatBox:", name);
 
         setCurrentChat(name);
-        const chat = renderChat(); //turn msgs into DOM nodes
-        setChatBoxes([
-          ...chatBoxes,
-          {
-            label: newName,
-            chat: chat,
-            key: name,
-            participants: participants,
-          },
-        ]);
+        let chat = [];
+        if (name === currentChat) {
+          chat = renderChat();
+        }
+
         setAllBox([
           ...allBox,
           {
@@ -178,39 +175,39 @@ const ChatRoom = () => {
   };
 
   useEffect(() => {
-    console.log("useEffect with messages/pinMsg");
-    const chat = renderChat();
-    let newChatBoxes = chatBoxes;
-    newChatBoxes.forEach((element, index) => {
-      if (element.key === currentChat) {
-        element.chat = chat;
-      }
-    });
-    setChatBoxes(newChatBoxes);
-    setAllBox(newChatBoxes.filter((e) => e.quiz === "false"));
-    setMsgSent(true);
-  }, [messages, pinMsg]);
+    if (!isQuiz) {
+      console.log("useEffect with messages/pinMsg");
+      const chat = renderChat();
+      let newChatBoxes = allBox;
+      newChatBoxes.forEach((element, index) => {
+        if (element.key === currentChat) {
+          element.chat = chat;
+        }
+      });
+      setChatBoxes(newChatBoxes);
+      setAllBox(newChatBoxes);
+      setMsgSent(true);
+    }
+  }, [messages, pinMsg, isQuiz]);
 
   const handleOnChange = (key) => {
     if (key) {
       setCurrentChat(key);
       console.log("HANDLEONCHANGE");
-      const chat = renderChat();
-      let newChatBoxes = chatBoxes;
+      let chat = [];
+      if (key === currentChat) {
+        chat = renderChat();
+      }
+      let newChatBoxes = allBox;
       newChatBoxes.forEach((element, index) => {
         if (element.key === key) {
           element.chat = chat;
         }
       });
       setChatBoxes(newChatBoxes);
-      setAllBox(newChatBoxes.filter((e) => e.quiz === "false"));
+      setAllBox(newChatBoxes);
     }
   };
-
-  useEffect(() => {
-    console.log("set all Box", ...chatBoxes.filter((c) => c.quiz === "false"));
-    setAllBox([...chatBoxes.filter((c) => c.quiz === "false")]);
-  }, [chatBoxes, user]);
 
   return (
     <Content

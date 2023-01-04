@@ -12,14 +12,16 @@ const { Content, Footer } = Layout;
 const FootRef = styled.div`
   height: 20px;
 `;
-const Chatbox = (isQuiz) => {
+const Chatbox = () => {
   const {
     chatBoxLoading,
     pinMsg,
     messages,
     chatBoxes,
     queryChatBox,
+    isQuiz,
     sendMessage,
+    startChat,
     access,
     currentQuiz,
     currentChat,
@@ -36,7 +38,8 @@ const Chatbox = (isQuiz) => {
   const [msgSent, setMsgSent] = useState(false);
   const [body, setBody] = useState("");
   const { allQuiz, createChatBox: createQuizBox, setAllQuiz } = useQuiz();
-
+  const [allBox, setAllBox] = useState([]);
+  const [current, setCurrent] = useState("");
   const {
     token: { colorBgContainer },
   } = theme.useToken();
@@ -59,6 +62,13 @@ const Chatbox = (isQuiz) => {
       pinRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
   };
 
+  useEffect(() => {
+    if (isQuiz) {
+      setCurrent(currentQuiz);
+    } else {
+      setCurrent(currentChat);
+    }
+  }, [isQuiz, currentChat, currentQuiz]);
   const renderChat = () => {
     console.log("renderChat: ");
     const current = isQuiz ? currentQuiz : currentChat;
@@ -127,40 +137,92 @@ const Chatbox = (isQuiz) => {
   const createChatBox = ({
     progress,
     groupShow,
-    courseID,
     students,
     teachers,
     name,
+    participants,
     question,
   }) => {
-    createQuizBox({
-      progress,
-      groupShow,
-      courseID,
-      students,
-      teachers,
-      name,
-      question,
-    });
-    const chat = renderChat(); //turn msgs into DOM nodes
-    setChatBoxes([
-      ...chatBoxes,
-      {
-        label: name,
-        chat: chat,
-        key: name,
-        participants: [...students, ...teachers],
-      },
-    ]);
-    setAllQuiz([
-      ...allQuiz,
-      {
-        label: name,
-        chat: chat,
-        key: name,
-        participants: [...students, ...teachers],
-      },
-    ]);
+    if (isQuiz) {
+      createQuizBox({
+        progress,
+        groupShow,
+        courseID,
+        students,
+        teachers,
+        name,
+        question,
+      });
+      const chat = renderChat(); //turn msgs into DOM nodes
+      setChatBoxes([
+        ...chatBoxes,
+        {
+          label: name,
+          chat: chat,
+          key: name,
+          quiz: "true",
+          participants: [...students, ...teachers],
+        },
+      ]);
+      setAllQuiz([
+        ...allQuiz,
+        {
+          label: name,
+          chat: chat,
+          key: name,
+          quiz: "true",
+          participants: [...students, ...teachers],
+        },
+      ]);
+    } else {
+      let newName = name;
+      if (participants.length === 2) {
+        newName = participants.filter((p) => p !== user.studentID)[0];
+      }
+      if (chatBoxes.some(({ key }) => key === name)) {
+        setCurrentChat(name);
+        setStatus({ type: "error", msg: newName + " has exist" });
+        setModalOpen(false);
+      } else {
+        try {
+          startChat({
+            variables: {
+              name,
+              courseID,
+              participants,
+              type: false,
+            },
+          });
+          console.log("Mutation_createChatBox:", name);
+
+          setCurrentChat(name);
+          const chat = renderChat(); //turn msgs into DOM nodes
+          setChatBoxes([
+            ...chatBoxes,
+            {
+              label: newName,
+              chat: chat,
+              key: name,
+              quiz: "false",
+              participants: participants,
+            },
+          ]);
+          setAllBox([
+            ...allBox,
+            {
+              label: newName,
+              chat: chat,
+              key: name,
+              quiz: "false",
+              participants: participants,
+            },
+          ]);
+          console.log("Start Chat with " + newName);
+        } catch (e) {
+          throw new Error("Mutation_createChatBox_error", e);
+        }
+      }
+    }
     setMsgSent(true);
     setModalOpen(false);
   };
@@ -176,6 +238,7 @@ const Chatbox = (isQuiz) => {
     });
     setChatBoxes(newChatBoxes);
     setAllQuiz(newChatBoxes.filter((e) => e.quiz === "true"));
+    setAllBox(newChatBoxes.filter((e) => e.quiz === "false"));
     setMsgSent(true);
   }, [messages, pinMsg]);
 
@@ -197,14 +260,20 @@ const Chatbox = (isQuiz) => {
       if (isQuiz) {
         setAllQuiz(newChatBoxes.filter((e) => e.quiz === "true"));
       } else {
-        // setAllBox(newChatBoxes.filter((e) => e.quiz === "true"));
+        setAllBox(newChatBoxes.filter((e) => e.quiz === "false"));
       }
     }
   };
   useEffect(() => {
     //console.log("set all Box", ...chatBoxes.filter((c) => c.quiz === "false"));
-    if (isQuiz) setAllQuiz([...chatBoxes.filter((c) => c.quiz === "true")]);
-  }, [chatBoxes, user]);
+    if (user.studentID) {
+      if (isQuiz) {
+        setAllQuiz(chatBoxes.filter((c) => c.quiz === "true"));
+      } else {
+        setAllBox(chatBoxes.filter((c) => c.quiz === "false"));
+      }
+    }
+  }, [chatBoxes, user, isQuiz]);
   return (
     <Content
       style={{
@@ -227,7 +296,13 @@ const Chatbox = (isQuiz) => {
           selectedKeys={[isQuiz ? currentQuiz : currentChat]}
           // defaultOpenKeys={[isQuiz? currentQuiz:currentChat]}
           mode="inline"
-          items={isQuiz ? [...allQuiz, { key: "_add_", label: "+" }] : []}
+          items={
+            isQuiz
+              ? user.isTeacher
+                ? [...allQuiz, { key: "_add_", label: "+" }]
+                : allQuiz
+              : [...allBox, { key: "_add_", label: "+" }]
+          }
           theme="light"
         />
         {/* </Sider> */}
@@ -245,10 +320,7 @@ const Chatbox = (isQuiz) => {
                   msg={
                     pinMsg === -1 ? "no pinned message" : messages[pinMsg]?.body
                   }
-                  groupName={
-                    allQuiz.find((b) => b.key === currentQuiz)?.label
-                    //   allBox.find((b) => b.key === currentChat)
-                  }
+                  groupName={current}
                   color={colorBgContainer}
                   handlePinOnClick={handlePinOnClick}
                 />
@@ -261,9 +333,18 @@ const Chatbox = (isQuiz) => {
                     background: colorBgContainer,
                   }}>
                   {isQuiz
-                    ? allQuiz.find((b) => b.key === currentQuiz)
-                      ? allQuiz?.find((b) => b.key === currentQuiz).chat !== {}
-                        ? allQuiz?.find((b) => b.key === currentQuiz).chat
+                    ? currentQuiz
+                      ? allQuiz.find((b) => b.key === currentQuiz)
+                        ? allQuiz?.find((b) => b.key === currentQuiz).chat !==
+                          {}
+                          ? allQuiz?.find((b) => b.key === currentQuiz).chat
+                          : "no messages"
+                        : "no messages"
+                      : "no messages"
+                    : currentChat
+                    ? allBox.find((b) => b.key === currentChat)
+                      ? allBox?.find((b) => b.key === currentChat).chat !== {}
+                        ? allBox?.find((b) => b.key === currentChat).chat
                         : "no messages"
                       : "no messages"
                     : "no messages"}
@@ -280,6 +361,7 @@ const Chatbox = (isQuiz) => {
                     progress,
                     teachers,
                     question,
+                    participants,
                   }) => {
                     console.log("students", students);
                     console.log("teachers", teachers);
@@ -290,6 +372,7 @@ const Chatbox = (isQuiz) => {
                       progress,
                       teachers,
                       question,
+                      participants,
                     });
                     setModalOpen(false);
                   }}
