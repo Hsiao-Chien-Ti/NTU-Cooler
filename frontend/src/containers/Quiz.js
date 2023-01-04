@@ -1,68 +1,77 @@
-import Message from "../components/Chatbox/Message";
-import { Breadcrumb } from "antd";
 import styled from "styled-components";
-import { useChat } from "./hooks/useChat";
-import { Input, Tabs } from "antd";
+import Message from "../components/Chatbox/Message";
 import ChatModal from "../components/Chatbox/ChatboxModal";
+import ChatboxHeader from "../components/Chatbox/ChatboxHeader";
+import { useChat } from "./hooks/useChat";
+import { Tabs } from "antd";
+import { Input } from "antd";
 import { useEffect, useState, useRef } from "react";
 import { Layout, Menu, theme } from "antd";
 import React from "react";
 import { useAll } from "./hooks/useAll";
-import ChatboxHeader from "../components/Chatbox/ChatboxHeader";
-import { selectHttpOptionsAndBody } from "@apollo/client";
 const { Content, Footer } = Layout;
-
 const FootRef = styled.div`
   height: 20px;
 `;
+
 const Quiz = () => {
+  const { setStatus, attendants, allStudents, user, courseID } = useAll();
   const {
-    currentChat,
     messages,
+    currentQuiz,
     chatBoxes,
     chatBoxLoading,
     pinMsg,
     access,
+    queryChat,
+    createQuiz,
     setPinMsg,
-    setCurrentChat,
-    setMessages,
     setChatBoxes,
     startChat,
     sendMessage,
-    queryChat,
     queryChatBox,
+    setCurrentQuiz,
     changePin,
   } = useChat();
-  const { setStatus, attendants, user, courseID } = useAll();
-
+  const [allBox, setAllBox] = useState([]);
+  const [body, setBody] = useState("");
   const [modalOpen, setModalOpen] = useState(false);
   const [msgSent, setMsgSent] = useState(false);
-  const [body, setBody] = useState("");
-  const [allChatBoxes, setAllChatBoxes] = useState([]);
-  const {
-    token: { colorBgContainer },
-  } = theme.useToken();
   const msgFooter = useRef(null);
   const bodyRef = useRef(null);
   const pinRef = useRef(null);
-
   const scrollToBottom = () => {
     msgFooter.current?.scrollIntoView({ behavior: "smooth", block: "start" });
   };
+  const {
+    token: { colorBgContainer },
+  } = theme.useToken();
   useEffect(() => {
     if (user.isTeacher) {
-      setAllChatBoxes([
+      setAllBox([
         ...chatBoxes.filter((c) => c.quiz === "true"),
         { key: "_add_", label: "+" },
       ]);
     } else {
-      setAllChatBoxes(chatBoxes.filter((c) => c.quiz === "true"));
+      setAllBox([...chatBoxes.filter((c) => c.quiz === "true")]);
     }
   }, [chatBoxes]);
   useEffect(() => {
     scrollToBottom();
     setMsgSent(false);
   }, [msgSent]);
+  useEffect(() => {
+    const chat = renderChat();
+    let newChatBoxes = chatBoxes;
+    newChatBoxes.forEach((element, index) => {
+      if (element.key === currentQuiz) {
+        element.chat = chat;
+      }
+    });
+
+    setChatBoxes(newChatBoxes);
+    setMsgSent(true);
+  }, [messages, pinMsg]);
   useEffect(() => {
     if (user.studentID) {
       console.log("QUERY in CHATBOX.js", user.studentID);
@@ -74,13 +83,27 @@ const Quiz = () => {
       });
     }
   }, [user.studentID, courseID]);
+  useEffect(() => {
+    const chat = renderChat();
+    let newChatBoxes = chatBoxes;
+    newChatBoxes.forEach((element, index) => {
+      if (element.key === currentQuiz) {
+        element.chat = chat;
+      }
+    });
+    setChatBoxes(newChatBoxes);
+  }, [pinMsg]);
   const handlePinOnClick = () => {
     if (pinMsg !== -1)
       pinRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
   };
-
+  const handleOnChange = (key) => {
+    if (key) {
+      setCurrentQuiz(key);
+    }
+  };
   const renderChat = () => {
-    console.log("renderChat");
+    console.log("renderChat: ", currentQuiz);
     console.log(messages);
     return messages.length === 0 ? (
       <p style={{ color: "#ccc" }}>No messages...</p>
@@ -103,7 +126,7 @@ const Quiz = () => {
                     // pin message
                     changePin({
                       variables: {
-                        name: currentChat,
+                        name: currentQuiz,
                         courseID,
                         pinMsg: i,
                         studentID: user.studentID,
@@ -127,7 +150,7 @@ const Quiz = () => {
                   // pin message
                   changePin({
                     variables: {
-                      name: currentChat,
+                      name: currentQuiz,
                       courseID,
                       pinMsg: i,
                       studentID: user.studentID,
@@ -144,86 +167,49 @@ const Quiz = () => {
     );
   }; //produce chat's DOM nodes
 
-  const createChatBox = async ({ name, participants, quiz }) => {
-    let newName = name;
-    if (participants.length === 2) {
-      newName = participants.filter((p) => p !== user.studentID)[0];
-    }
+  const createChatBox = async ({
+    name,
+    groupShow,
+    students,
+    progress,
+    teachers,
+    question,
+  }) => {
     if (chatBoxes.some(({ key }) => key === name)) {
-      setCurrentChat(name);
-      setStatus({ type: "error", msg: newName + "has exist" });
-      setModalOpen(false);
+      setStatus({ type: "error", msg: name + " has exist" });
     } else {
       try {
-        startChat({
+        createQuiz({
           variables: {
-            name,
+            progress,
+            groupShow,
             courseID,
-            participants,
-            type: quiz,
+            students,
+            teachers,
+            name,
+            question,
           },
         });
-        console.log("Mutation_createChatBox:", name);
-        setCurrentChat(name);
+        console.log("Mutation_createQuiz:", name);
+        setCurrentQuiz(name);
       } catch (e) {
         throw new Error("Mutation_createChatBox_error", e);
       }
-      const chat = renderChat(); //turn msgs into DOM nodes
+      const chat = renderChat(name); //turn msgs into DOM nodes
       setChatBoxes([
         ...chatBoxes,
         {
-          label: newName,
+          label: name,
           chat: chat,
           key: name,
-          participants: participants,
+          participants: [...students, ...teachers],
         },
       ]);
       setMsgSent(true);
       setModalOpen(false);
-      console.log("Start Chat with " + newName);
+      console.log("QUIZ" + name);
     }
   };
-  useEffect(() => {
-    console.log("messages use effect with messages:", messages);
-    console.log("current chat:", currentChat);
-    const chat = renderChat();
-    let newChatBoxes = chatBoxes;
-    newChatBoxes.forEach((element, index) => {
-      if (element.key === currentChat) {
-        element.chat = chat;
-      }
-    });
-    setChatBoxes(newChatBoxes);
-    setMsgSent(true);
-  }, [messages, pinMsg]);
-
-  useEffect(() => {
-    console.log("pinMsg use effect with pinChange:", pinMsg);
-    console.log("current chat:", currentChat);
-    const chat = renderChat();
-    let newChatBoxes = chatBoxes;
-    newChatBoxes.forEach((element, index) => {
-      if (element.key === currentChat) {
-        element.chat = chat;
-      }
-    });
-    setChatBoxes(newChatBoxes);
-  }, [pinMsg]);
-
-  const handleOnChange = (key) => {
-    if (key) {
-      setCurrentChat(key);
-      const chat = renderChat();
-      let newChatBoxes = chatBoxes;
-      newChatBoxes.forEach((element, index) => {
-        if (element.key === key) {
-          element.chat = chat;
-        }
-      });
-      setChatBoxes(newChatBoxes);
-    }
-  };
-
   return (
     <Content
       style={{
@@ -241,11 +227,11 @@ const Quiz = () => {
             } else handleOnChange(e.key);
           }}
           style={{ width: 128, justifyItems: "center" }}
-          defaultSelectedKeys={[currentChat]}
-          selectedKeys={[currentChat]}
-          // defaultOpenKeys={[currentChat]}
+          defaultSelectedKeys={[currentQuiz]}
+          selectedKeys={[currentQuiz]}
+          // defaultOpenKeys={[currentQuiz]}
           mode="inline"
-          items={allChatBoxes}
+          items={allBox}
           theme="light"
         />
         {/* </Sider> */}
@@ -263,9 +249,7 @@ const Quiz = () => {
                   msg={
                     pinMsg === -1 ? "no pinned message" : messages[pinMsg]?.body
                   }
-                  groupName={
-                    chatBoxes.find((b) => b.key === currentChat)?.label
-                  }
+                  groupName={currentQuiz}
                   color={colorBgContainer}
                   handlePinOnClick={handlePinOnClick}
                 />
@@ -278,9 +262,9 @@ const Quiz = () => {
                     height: "300px",
                     background: colorBgContainer,
                   }}>
-                  {chatBoxes.find((b) => b.key === currentChat)
-                    ? chatBoxes.find((b) => b.key === currentChat).chat !== {}
-                      ? chatBoxes.find((b) => b.key === currentChat).chat
+                  {allBox.find((b) => b.key === currentQuiz)
+                    ? allBox.find((b) => b.key === currentQuiz).chat !== {}
+                      ? allBox.find((b) => b.key === currentQuiz).chat
                       : "no messages"
                     : "no messages"}
                 </div>
@@ -289,17 +273,28 @@ const Quiz = () => {
                   me={user.studentID}
                   open={modalOpen}
                   isTeacher={user.isTeacher}
-                  onCreate={async ({ name, participants, quiz }) => {
+                  onCreate={async ({
+                    name,
+                    groupShow,
+                    students,
+                    progress,
+                    teachers,
+                    question,
+                  }) => {
                     await createChatBox({
                       name,
-                      participants,
-                      quiz,
+                      groupShow,
+                      students,
+                      progress,
+                      teachers,
+                      question,
                     });
                   }}
                   onCancel={() => {
                     setModalOpen(false);
                   }}
                   users={attendants}
+                  isQuiz={true}
                 />
                 <Footer style={{ justifySelf: "flex-end", padding: 0 }}>
                   <Input.Search
@@ -322,7 +317,7 @@ const Quiz = () => {
                         variables: {
                           senderID: user.studentID,
                           senderName: user.name,
-                          to: currentChat,
+                          to: currentQuiz,
                           body: msg,
                           courseID,
                         },

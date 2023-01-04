@@ -214,6 +214,32 @@ const PINMSG_MUTATION = gql`
   }
 `;
 
+const CREATE_QUIZ_MUTAION = gql`
+  mutation createQuiz(
+    $progress: String!
+    $groupShow: Boolean!
+    $courseID: String!
+    $students: [String!]!
+    $teachers: [String!]!
+    $name: String!
+    $question: String
+  ) {
+    createQuiz(
+      progress: $progress
+      groupShow: $groupShow
+      courseID: $courseID
+      students: $students
+      teachers: $teachers
+      name: $name
+      question: $question
+    ) {
+      chatbox
+      groupShow
+      progress
+    }
+  }
+`;
+
 export {
   CREATE_INFO_MUTATION,
   CREATE_MESSAGE_MUTATION,
@@ -225,5 +251,6 @@ export {
   LOGIN_MUTATION,
   CREATE_SYLLABUS_MUTATION,
   CREATE_HW_MUTATION,
+  CREATE_QUIZ_MUTAION,
   PINMSG_MUTATION,
 };

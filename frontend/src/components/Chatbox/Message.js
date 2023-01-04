@@ -19,14 +19,6 @@ const StyledMessage = styled.div`
     margin: auto 0;
   }
 `;
-
-const handleMenuClick = (e) => {
-  // message.info("Click on menu item.");
-  console.log("click", e);
-  if (e === "1") {
-    // pin message
-  }
-};
 const items = [
   {
     label: "pin message",

@@ -377,7 +377,7 @@ const Mutation = {
       messages: [],
       notAccess: students,
       type: true,
-      pinMsg: 0,
+      pinMsg: progress === "open" ? 0 : -1,
     }).save();
     if (question) {
       box.messages.push({

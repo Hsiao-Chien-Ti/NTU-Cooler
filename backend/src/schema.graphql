@@ -161,7 +161,7 @@ type Mutation {
     students: [String!]!
     teachers: [String!]!
     name: String!
-    question: String!
+    question: String
   ): Quiz!
 }
 type Subscription {
