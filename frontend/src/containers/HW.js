@@ -10,7 +10,7 @@ const HW = () => {
   const handleSubmit=(title,s)=>{
     console.log(s)
     s.map((ss,i)=>{
-        createFile({ variables: { type: "sHW", info: title, fileName: title+"_"+i.toString(), fileLink: ss, linkType:true,studentID:user.studentID, firstFlag:i===0 } })            
+        createFile({ variables: { type: "sHW", info: title, fileName: title+"_"+user.studentID+"_"+i.toString(), fileLink: ss, linkType:true,studentID:user.studentID, firstFlag:i===0 } })            
     }
 
     )

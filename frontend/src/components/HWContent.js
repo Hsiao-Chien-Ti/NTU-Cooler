@@ -10,22 +10,12 @@ const HWContent = ({ rawdata, handleSubmit }) => {
         return a.deadline > b.deadline ? 1 : -1
     })
     const [sList, setSList] = useState([])
-    // console.log(sList)
     const submitUpload = options => {
         const { onSuccess, onError, file, onProgress } = options;
         onSuccess("Ok");
     }
     const handleOnChange = ({ file, fileList, event }) => {
-        // console.log(file, fileList, event);
-        setDefaultFileList(fileList);         
-        // if(file.status==="done")
-        // {
-
-        // //Using Hooks to update the state to the current filelist
-           
-        // }
-
-        //filelist - [{uid: "-1",url:'Some url to image'}]
+        setDefaultFileList(fileList);
       };
     return (
         sorted.map(({ title, deadline, description, tFile, sFile }, i) => {
@@ -44,10 +34,10 @@ const HWContent = ({ rawdata, handleSubmit }) => {
                         {tFile.map(({ fileName, fileLink, linkType }, j) => {
                             const link = linkType ? dataURItoBlob(fileLink) : fileLink
                             return (
-                                <>
+                                <div key={j}>
                                     {linkType ? <PaperClipOutlined style={{ marginRight: '1%' }} /> : <LinkOutlined style={{ marginRight: '1%' }} />}
                                     < a href={link} > {fileName}</a>
-                                </>
+                                </div>
                             )
                         })}
                     </Card.Grid>}
@@ -57,7 +47,7 @@ const HWContent = ({ rawdata, handleSubmit }) => {
                         {sFile !== undefined && sFile.map(({ studentID, file }, j) => {
                             const link = file.linkType ? dataURItoBlob(file.fileLink) : file.fileLink
                             return (
-                                <div>
+                                <div key={j}>
                                     {file.linkType ? <PaperClipOutlined style={{ marginRight: '1%' }} /> : <LinkOutlined style={{ marginRight: '1%' }} />}
                                     <a href={link}>{file.fileName}</a>
                                 </div>

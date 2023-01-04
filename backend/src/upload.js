@@ -18,6 +18,14 @@ const testUser = [
     isTeacher: true,
   },
   {
+    name: "Adi",
+    studentID: "b09901008",
+    chatbox: [{ name: "My Group", courseID: "EE1234", showName: "My Group" }],
+    passwd: bcrypt.hashSync("t", 14),
+    groupNum: 7,
+    isTeacher: false,
+  },
+  {
     name: "KKK",
     studentID: "KKK",
     chatbox: [
@@ -125,7 +133,7 @@ const testChat = [
         hidden: true,
       },
     ],
-    participants: ["KKK", "q", "b09901042", "t"],
+    participants: ["KKK", "q", "b09901042", "t","b09901008"],
     type: true,
     courseID: "EE1234",
     pinMsg: 2,
@@ -139,6 +147,7 @@ const testInfo = [
       { name: "q", studentID: "q", isTeacher: false },
       { name: "yzl", studentID: "b09901042", isTeacher: false },
       { name: "t", studentID: "t", isTeacher: true },
+      { name: "Adi", studentID: "b09901008", isTeacher: false },
     ],
     name: "ICN",
     courseID: "EE1234",
@@ -162,7 +171,7 @@ const testFile = [
     fileName: "CPBL",
     fileLink: "https://www.cpbl.com.tw/",
     linkType: false,
-    studentID:""
+    studentID: ""
   },
   {
     type: "weekNum",
@@ -170,25 +179,37 @@ const testFile = [
     fileName: "Taipei children's amusement park",
     fileLink: "https://www.tcap.taipei/",
     linkType: false,
-    studentID:""
+    studentID: ""
   },
   {
-    type: "HW",
-    info: "1",
+    type: "tHW",
+    info: "hw1",
     fileName: "Leetcode",
     fileLink: "https://leetcode.com/problemset/all/",
     linkType: false,
-    studentID:""
+    studentID: ""
   },
 ];
+const testHW = [
+  {
+    title: "hw1",
+    deadline: "2023-01-06 01:01",
+    description: "This is your first homework"
+  },
+  {
+    title: "hw2",
+    deadline: "2023-01-07 01:01",
+    description: "This is your second homework"
+  }
+]
 const testAnnouncement = [
   {
-    time: "2023-1-1 0:0:0",
+    time: "2023-01-01 01:01",
     title: "Happy new year",
     content: "Firework!!!!!",
   },
   {
-    time: "2023-1-2 10:22:52",
+    time: "2023-01-05 01:01",
     title: "Good Morning",
     content: "I am hungry",
   },
@@ -227,21 +248,28 @@ const dataInit = async () => {
   await SyllabusModel.insertMany(testSyllabus);
   await FileModel.deleteMany({});
   await FileModel.insertMany(testFile);
+  await AnnouncementModel.deleteMany({});
+  await AnnouncementModel.insertMany(testAnnouncement);
+  await GradeModel.deleteMany({});
+  await GradeModel.insertMany(testGrade);
+  await HWModel.deleteMany({})
+  await HWModel.insertMany(testHW)
   const files = await FileModel.find({});
   const asyncRes = await Promise.all(files.map(async (f) => {
-    if (f.type === 'weekNum') {
+    if (f.type === "weekNum") {
       const syllabus = await SyllabusModel.findOne({ weekNum: f.info })
       syllabus.file.push(f._id)
       await syllabus.save()
     }
+    if (f.type==="tHW"){
+      const tHW=await HWModel.findOne({title:f.info})
+      tHW.tFile.push(f._id)
+      await tHW.save()
+    }
   }))
-await AnnouncementModel.deleteMany({});
-await AnnouncementModel.insertMany(testAnnouncement);
-await GradeModel.deleteMany({});
-await GradeModel.insertMany(testGrade);
-await HWModel.deleteMany({})
 
-console.log("Database initialized!");
+
+  console.log("Database initialized!");
 };
 
 export { dataInit };

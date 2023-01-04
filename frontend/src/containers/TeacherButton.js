@@ -4,6 +4,7 @@ import { EditOutlined, PlusOutlined, ToolOutlined } from '@ant-design/icons';
 import TeacherModal from '../components/TeacherModal';
 import { useAll } from './hooks/useAll';
 import { useChat } from "./hooks/useChat";
+import moment from 'moment';
 
 const TeacherButton = () => {
   const [modalOpen, setModalOpen] = useState(false);
@@ -12,6 +13,7 @@ const TeacherButton = () => {
     createSyllabus,
     createFile,
     createGrade,
+    createHW,
     subject,
     allStudents,
     courseID,
@@ -23,15 +25,7 @@ const TeacherButton = () => {
     console.log(form);
     if (form.addType === "Announcement") {
       let today = new Date();
-      let date =
-        today.getFullYear() +
-        "-" +
-        (today.getMonth() + 1) +
-        "-" +
-        today.getDate();
-      let time =
-        today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
-      let dateTime = date + " " + time;
+      let dateTime=moment(today).format("YYYY-MM-DD HH:mm")
       createAnnouncement({
         variables: {
           time: dateTime,
@@ -68,6 +62,14 @@ const TeacherButton = () => {
           },
         });
       });
+    } else if (form.addType === "HW") {
+      createHW({
+        variables: {
+          title: form.title,
+          deadline: moment(form.deadline).format("YYYY-MM-DD HH:mm"),
+          description: form.description
+        },
+      });
     } else if (form.addType === "Quiz") {
       startChat({
         variables: {
@@ -81,18 +83,6 @@ const TeacherButton = () => {
   };
   return (
     <>
-      {/* <FloatButton.Group
-                trigger="hover"
-                type="primary"
-                style={{
-                    right: '2%',
-                    scale: '1.2'
-                }}
-                icon={<ToolOutlined />}
-            >
-                <FloatButton icon={<PlusOutlined />} onClick={() => { setModalOpen(true); setMode('add') }} />
-                <FloatButton icon={<EditOutlined />} />
-            </FloatButton.Group> */}
       <FloatButton
         icon={<EditOutlined />}
         onClick={() => {

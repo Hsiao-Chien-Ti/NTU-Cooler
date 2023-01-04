@@ -151,7 +151,7 @@ const ChatProvider = (props) => {
     // if (currentChat) {
     //   if (!allRooms.includes(currentChat)) {
     //     console.log("pin before refetch:", pinMsg);
-    if (user)
+    if (user.login)
       try {
         // setAllRooms([...allRooms, currentChat]);
         subscribeChatBoxList({
@@ -172,7 +172,7 @@ const ChatProvider = (props) => {
       } catch (e) {
         throw new Error("subscribe error: " + e);
       }
-  }, [subscribeChatBoxList]);
+  }, [subscribeChatBoxList,user.login]);
 
   useEffect(() => {
     if (!listLoading) {

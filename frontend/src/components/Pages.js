@@ -44,15 +44,15 @@ const AllPages = [
     name: "Announcement",
     nav: "/course/announcement",
   },
-  { key: "4", icon: <SolutionOutlined />, name: "Grade", nav: "/course/grade" },
-  { key: "5", icon: <FileOutlined />, name: "Files", nav: "/course/files" },
   {
-    key: "6",
+    key: "4",
     icon: <FileTextOutlined />,
     name: "HW",
     nav: "/course/hw",
 
-  },  
+  },   
+  { key: "5", icon: <SolutionOutlined />, name: "Grade", nav: "/course/grade" },
+  { key: "6", icon: <FileOutlined />, name: "Files", nav: "/course/files" },
   {
     key: "7",
     icon: <WechatOutlined />,
