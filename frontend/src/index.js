@@ -16,14 +16,14 @@ import reportWebVitals from "./reportWebVitals";
 import { ChatProvider } from "./containers/hooks/useChat";
 const httpLink = new HttpLink({
   uri:   process.env.NODE_ENV === "production"
-  ? "https://ntu-cooler-production.up.railway.app/graphql"
+  ? "https://ntu-cooler.onrender.com/graphql"
   : "http://localhost:4000/graphql"
 ,
 });
 const wsLink = new GraphQLWsLink(
   createClient({
     url:   process.env.NODE_ENV === "production"
-    ? `wss://ntu-cooler-production.up.railway.app/graphql`
+    ? `wss://ntu-cooler.onrender.com/graphql`
     : "ws://localhost:4000/graphql",
     options: {
       lazy: true,
