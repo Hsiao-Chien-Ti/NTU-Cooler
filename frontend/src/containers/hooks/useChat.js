@@ -14,6 +14,7 @@ import { useAll } from "./useAll";
 
 const ChatContext = createContext({
   currentChat: "",
+  currentQuiz: "",
   messages: [],
   chatBoxes: [],
   chatBoxLoading: false,
@@ -21,7 +22,7 @@ const ChatContext = createContext({
   access: false,
   setPinMsg: () => {},
   setCurrentChat: () => {},
-  setMessages: () => {},
+  setCurrentQuiz: () => {},
   setChatBoxes: () => {},
   startChat: () => {},
   sendMessage: () => {},
@@ -32,6 +33,7 @@ const ChatContext = createContext({
 const ChatProvider = (props) => {
   const { user, courseID } = useAll();
   const [currentChat, setCurrentChat] = useState("");
+  const [currentQuiz, setCurrentQuiz] = useState("");
   const [messages, setMessages] = useState([]);
   const [allRooms, setAllRooms] = useState([]);
   const [chatBoxes, setChatBoxes] = useState([]);
@@ -193,6 +195,8 @@ const ChatProvider = (props) => {
       // console.log("Query_listOfChatboxes:", listOfChatboxes);
       let newChatBoxes = [];
       // console.log(listOfChatboxes);
+      let newChat = "";
+      let newQuiz = "";
       if (listOfChatboxes) {
         listOfChatboxes.userChatbox.forEach((room) => {
           newChatBoxes.push({
@@ -202,10 +206,16 @@ const ChatProvider = (props) => {
             chat: [],
           });
           // console.log(newChatBoxes);
+          if (newChat === "" && !room.type) {
+            newChat = room.name;
+          }
+          if (newQuiz === "" && room.type) {
+            newQuiz = room.name;
+          }
         });
         setChatBoxes(newChatBoxes);
-        if (currentChat === "")
-          setCurrentChat(listOfChatboxes.userChatbox[0].name);
+        if (currentChat === "") setCurrentChat(newChat);
+        if (currentQuiz === "") setCurrentQuiz(newQuiz);
       }
       console.log("ChatBoxes: ", newChatBoxes);
     }
@@ -224,7 +234,6 @@ const ChatProvider = (props) => {
         access,
         setPinMsg,
         setCurrentChat,
-        setMessages,
         setChatBoxes,
         startChat,
         sendMessage,

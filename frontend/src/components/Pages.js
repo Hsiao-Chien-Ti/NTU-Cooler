@@ -56,7 +56,7 @@ const AllPages = [
   {
     key: "7",
     icon: <FormOutlined />,
-    name: "Messages",
+    name: "Quizzes",
     nav: "/course/quizzes",
   },
   {
