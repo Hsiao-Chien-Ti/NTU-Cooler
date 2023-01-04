@@ -139,7 +139,7 @@ type Mutation {
     name: String!
     courseID: String!
     participants: [String!]!
-    type: Boolean!
+    type: Boolean
   ): ChatBox!
   createMessage(
     senderID: String!
@@ -159,7 +159,7 @@ type Mutation {
     groupShow: Boolean!
     courseID: String!
     students: [String!]!
-    teachers: [String!]!
+    teachers: [String]
     name: String!
     question: String
   ): Quiz!

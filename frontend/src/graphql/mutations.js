@@ -143,7 +143,7 @@ const CREATE_CHATBOX_MUTATION = gql`
     $name: String!
     $courseID: String!
     $participants: [String!]!
-    $type: Boolean!
+    $type: Boolean
   ) {
     createChatBox(
       name: $name
@@ -220,7 +220,7 @@ const CREATE_QUIZ_MUTAION = gql`
     $groupShow: Boolean!
     $courseID: String!
     $students: [String!]!
-    $teachers: [String!]!
+    $teachers: [String]
     $name: String!
     $question: String
   ) {

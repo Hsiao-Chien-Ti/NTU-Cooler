@@ -17,6 +17,7 @@ import {
 import { createBrowserRouter } from "react-router-dom";
 import Announcement from "./Announcement";
 import Page from "../components/Pages";
+import Chatbox from "../components/Chatbox/ChatboxContent";
 const router = createBrowserRouter([
   {
     path: "/",
@@ -52,7 +53,7 @@ const router = createBrowserRouter([
       },
       {
         path: "/course/quizzes",
-        element: <Quiz />,
+        element: <Chatbox isQuiz={true} />,
       },
       {
         path: "/course/messages",

@@ -360,10 +360,10 @@ const Mutation = {
       pubsub.subscribe(`chatBox ${name} in class ${courseID} be modified`, {
         chatbox: box,
       });
+      return box;
     } catch (e) {
       throw new Error("change pin error", e);
     }
-    return box;
   },
   createQuiz: async (
     parent,

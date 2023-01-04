@@ -14,6 +14,7 @@ import { AllProvider } from "./containers/hooks/useAll";
 import App from "./containers/App";
 import reportWebVitals from "./reportWebVitals";
 import { ChatProvider } from "./containers/hooks/useChat";
+import { QuizProvider } from "./containers/hooks/useQuiz";
 const httpLink = new HttpLink({
   uri: "http://localhost:4000/graphql",
 });
@@ -46,7 +47,9 @@ root.render(
     <ApolloProvider client={client}>
       <AllProvider>
         <ChatProvider>
-          <App />
+          <QuizProvider>
+            <App />
+          </QuizProvider>
         </ChatProvider>
       </AllProvider>
     </ApolloProvider>
