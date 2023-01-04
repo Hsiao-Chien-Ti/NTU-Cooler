@@ -7,6 +7,7 @@ import {
   CHATBOX_OF_USER_QUERY,
   CHATBOXLIST_SUBSCRIPTION,
   PINMSG_MUTATION,
+  QUIZ_QUERY,
 } from "../../graphql";
 import { useState, useEffect, useContext, createContext } from "react";
 import { useAll } from "./useAll";
@@ -74,6 +75,17 @@ const ChatProvider = (props) => {
     },
     fetchPolicy: "network-only",
   });
+
+  const [queryQuiz, { data: quizData, loading: quizLoading }] = useLazyQuery(
+    QUIZ_QUERY,
+    {
+      variables: {
+        name: currentChat,
+        studentID: user.studentID,
+        courseID,
+      },
+    }
+  );
   useEffect(() => {
     console.log("error sending msg: ", errorSendMsg);
   }, [errorSendMsg]);
@@ -151,7 +163,7 @@ const ChatProvider = (props) => {
     // if (currentChat) {
     //   if (!allRooms.includes(currentChat)) {
     //     console.log("pin before refetch:", pinMsg);
-    if (user)
+    if (user.studentID) {
       try {
         // setAllRooms([...allRooms, currentChat]);
         subscribeChatBoxList({
@@ -161,6 +173,7 @@ const ChatProvider = (props) => {
             if (!subscriptionData.data) {
               return prev;
             }
+            console.log("CHATBOXLIST_SUB");
             refetchChatBoxList({
               studentID: user.studentID,
               courseID,
@@ -172,6 +185,7 @@ const ChatProvider = (props) => {
       } catch (e) {
         throw new Error("subscribe error: " + e);
       }
+    }
   }, [subscribeChatBoxList]);
 
   useEffect(() => {
@@ -184,6 +198,7 @@ const ChatProvider = (props) => {
           newChatBoxes.push({
             key: room.name,
             label: room.showName,
+            quiz: room.type.toString(),
             chat: [],
           });
           // console.log(newChatBoxes);
@@ -192,6 +207,7 @@ const ChatProvider = (props) => {
         if (currentChat === "")
           setCurrentChat(listOfChatboxes.userChatbox[0].name);
       }
+      console.log("ChatBoxes: ", newChatBoxes);
     }
   }, [listOfChatboxes]);
 

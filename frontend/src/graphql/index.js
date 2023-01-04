@@ -7,6 +7,7 @@ export {
   CHATBOX_QUERY,
   CHATBOX_OF_USER_QUERY,
   HW_QUERY,
+  QUIZ_QUERY,
 } from "./queries";
 export {
   CREATE_INFO_MUTATION,

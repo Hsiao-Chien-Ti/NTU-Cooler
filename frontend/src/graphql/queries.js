@@ -1,5 +1,6 @@
 import { gql } from "@apollo/client";
 
+
 export const INFO_QUERY = gql`
   query info($courseID: String!) {
     info(courseID: $courseID) {
@@ -19,6 +20,7 @@ export const CHATBOX_OF_USER_QUERY = gql`
     userChatbox(studentID: $studentID, courseID: $courseID) {
       name
       showName
+      type
     }
   }
 `;
@@ -67,7 +69,7 @@ export const HW_QUERY = gql`
         fileLink
         linkType
       }
-      sFile{
+      sFile {
         studentID
         file {
           fileName
@@ -108,6 +110,16 @@ export const CHATBOX_QUERY = gql`
       notAccess
       pinMsg
       participants
+    }
+  }
+`;
+
+export const QUIZ_QUERY = gql`
+  query quiz($name: String!, $courseID: String!, $studentID: String!) {
+    quiz(name: $name, courseID: $courseID, studentID: $studentID) {
+      chatbox
+      groupShow
+      progress
     }
   }
 `;

@@ -12,6 +12,7 @@ import FileModel from "./models/file";
 import ChatBoxModel from "./models/chatbox";
 import InfoModel from "./models/info";
 import HWModel from "./models/hw";
+import QuizModel from "./models/quiz";
 // graphql
 import Query from "./resolvers/Query";
 import Mutation from "./resolvers/Mutation";
@@ -37,6 +38,7 @@ const yoga = createYoga({
     InfoModel,
     HWModel,
     ChatBoxModel,
+    QuizModel,
     pubsub,
   },
   // graphqlEndpoint: '/',   // uncomment this to send the app to: 4000/ otherwise: 4000/graphql

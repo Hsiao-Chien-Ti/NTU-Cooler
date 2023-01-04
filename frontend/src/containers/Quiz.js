@@ -12,20 +12,10 @@ import ChatboxHeader from "../components/Chatbox/ChatboxHeader";
 import { selectHttpOptionsAndBody } from "@apollo/client";
 const { Content, Footer } = Layout;
 
-const ChatBoxesWrapper = styled(Tabs)`
-  width: 100%;
-  height: 300px;
-  background: #eeeeee52;
-  border-radius: 10px;
-  margin: 20px;
-  padding: 20px;
-  overflow: auto;
-`;
-
 const FootRef = styled.div`
   height: 20px;
 `;
-const ChatRoom = () => {
+const Quiz = () => {
   const {
     currentChat,
     messages,
@@ -60,10 +50,14 @@ const ChatRoom = () => {
     msgFooter.current?.scrollIntoView({ behavior: "smooth", block: "start" });
   };
   useEffect(() => {
-    setAllChatBoxes([
-      ...chatBoxes.filter((c) => !c.quiz === "true"),
-      { key: "_add_", label: "+" },
-    ]);
+    if (user.isTeacher) {
+      setAllChatBoxes([
+        ...chatBoxes.filter((c) => c.quiz === "true"),
+        { key: "_add_", label: "+" },
+      ]);
+    } else {
+      setAllChatBoxes(chatBoxes.filter((c) => c.quiz === "true"));
+    }
   }, [chatBoxes]);
   useEffect(() => {
     scrollToBottom();
@@ -350,4 +344,4 @@ const ChatRoom = () => {
     </Content>
   );
 };
-export default ChatRoom;
+export default Quiz;

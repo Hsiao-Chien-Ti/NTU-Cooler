@@ -5,10 +5,11 @@ import {
   FileOutlined,
   ScheduleOutlined,
   NotificationOutlined,
-  WechatOutlined,
+  CommentOutlined,
   SolutionOutlined,
   LogoutOutlined,
-  FileTextOutlined
+  FileTextOutlined,
+  FormOutlined,
 } from "@ant-design/icons";
 import { Layout, Menu, theme, FloatButton } from "antd";
 import {
@@ -51,11 +52,16 @@ const AllPages = [
     icon: <FileTextOutlined />,
     name: "HW",
     nav: "/course/hw",
-
-  },  
+  },
   {
     key: "7",
-    icon: <WechatOutlined />,
+    icon: <FormOutlined />,
+    name: "Messages",
+    nav: "/course/quizzes",
+  },
+  {
+    key: "8",
+    icon: <CommentOutlined />,
     name: "Messages",
     nav: "/course/messages",
   },

@@ -12,6 +12,7 @@ const UserSchema = new Schema({
       name: { type: String },
       courseID: { type: String },
       showName: { type: String },
+      type: { type: Boolean },
     },
   ],
 });

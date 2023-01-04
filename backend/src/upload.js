@@ -7,12 +7,13 @@ import FileModel from "./models/file";
 import GradeModel from "./models/grade";
 import HWModel from "./models/hw";
 import bcrypt from 'bcrypt'
+import QuizModel from "./models/quiz";
 
 const testUser = [
   {
     name: "t",
     studentID: "t",
-    chatbox: [{ name: "My Group", courseID: "EE1234", showName: "My Group" }],
+    chatbox: [{ name: "quiz 1", courseID: "EE1234", showName: "quiz 1", type: true }],
     passwd: bcrypt.hashSync("t", 14),
     groupNum: 7,
     isTeacher: true,
@@ -21,8 +22,8 @@ const testUser = [
     name: "KKK",
     studentID: "KKK",
     chatbox: [
-      { name: "My Group", courseID: "EE1234", showName: "My Group" },
-      { name: "KKK_q", courseID: "EE1234", showName: "q" },
+      { name: "quiz 1", courseID: "EE1234", showName: "quiz 1", type: true },
+      { name: "KKK_q", courseID: "EE1234", showName: "q", type: false },
     ],
     passwd: bcrypt.hashSync("7", 14),
     groupNum: 7,
@@ -31,7 +32,7 @@ const testUser = [
   {
     name: "yzl",
     studentID: "b09901042",
-    chatbox: [{ name: "My Group", courseID: "EE1234", showName: "My Group" }],
+    chatbox: [{ name: "quiz 1", courseID: "EE1234", showName: "quiz 1", type: true }],
     passwd: bcrypt.hashSync("7", 14),
     groupNum: 7,
     isTeacher: false,
@@ -40,8 +41,8 @@ const testUser = [
     name: "q",
     studentID: "q",
     chatbox: [
-      { name: "My Group", courseID: "EE1234", showName: "My Group" },
-      { name: "KKK_q", courseID: "EE1234", showName: "K" },
+      { name: "quiz 1", courseID: "EE1234", showName: "quiz 1" , type: true},
+      { name: "KKK_q", courseID: "EE1234", showName: "K" , type: false},
     ],
     passwd: bcrypt.hashSync("7", 14),
     groupNum: 7,
@@ -50,6 +51,52 @@ const testUser = [
 ];
 
 const testChat = [
+  {
+    name: "quiz 1",
+    notAccess: ["b09901042"],
+    messages: [
+      {
+        sender: { studentID: "t", name: "t" },
+        groupNum: 0,
+        body: "problem: ur favorite number",
+        hidden: false,
+      },
+      {
+        sender: { studentID: "KKK", name: "KKK" },
+        groupNum: 7,
+        body: "ans: 1",
+        hidden: true,
+      },
+      {
+        sender: { studentID: "q", name: "q" },
+        groupNum: 7,
+        body: "ans: 2",
+        hidden: true,
+      },
+      {
+        sender: { studentID: "KKK", name: "KKK" },
+        groupNum: 7,
+        body: "ans: 3",
+        hidden: true,
+      },
+      {
+        sender: { studentID: "q", name: "q" },
+        groupNum: 7,
+        body: "ans: 4",
+        hidden: true,
+      },
+      {
+        sender: { studentID: "q", name: "q" },
+        groupNum: 7,
+        body: "ans: 5",
+        hidden: true,
+      },
+    ],
+    participants: ["KKK", "q", "b09901042", "t"],
+    type: true,
+    courseID: "EE1234",
+    pinMsg: 0,
+  },
   {
     name: "KKK_q",
     notAccess: [],
@@ -90,48 +137,14 @@ const testChat = [
     courseID: "EE1234",
     pinMsg: -1,
   },
-  {
-    name: "My Group",
-    notAccess: ["b09901042"],
-    messages: [
-      {
-        sender: { studentID: "KKK", name: "KKK" },
-        groupNum: 7,
-        body: "ans: 1",
-        hidden: true,
-      },
-      {
-        sender: { studentID: "q", name: "q" },
-        groupNum: 7,
-        body: "ans: 2",
-        hidden: true,
-      },
-      {
-        sender: { studentID: "KKK", name: "KKK" },
-        groupNum: 7,
-        body: "ans: 3",
-        hidden: true,
-      },
-      {
-        sender: { studentID: "q", name: "q" },
-        groupNum: 7,
-        body: "ans: 4",
-        hidden: true,
-      },
-      {
-        sender: { studentID: "q", name: "q" },
-        groupNum: 7,
-        body: "ans: 5",
-        hidden: true,
-      },
-    ],
-    participants: ["KKK", "q", "b09901042", "t"],
-    type: true,
-    courseID: "EE1234",
-    pinMsg: 2,
-  },
 ];
 
+const testQuiz = [
+  {
+    progress: "open",
+    groupShow: true,
+  },
+];
 const testInfo = [
   {
     attendants: [
@@ -153,8 +166,8 @@ const testSyllabus = [
   {
     weekNum: "2",
     outline: "Field trip",
-  }
-]
+  },
+];
 const testFile = [
   {
     type: "weekNum",
@@ -162,7 +175,7 @@ const testFile = [
     fileName: "CPBL",
     fileLink: "https://www.cpbl.com.tw/",
     linkType: false,
-    studentID:""
+    studentID: "",
   },
   {
     type: "weekNum",
@@ -170,7 +183,7 @@ const testFile = [
     fileName: "Taipei children's amusement park",
     fileLink: "https://www.tcap.taipei/",
     linkType: false,
-    studentID:""
+    studentID: "",
   },
   {
     type: "HW",
@@ -178,7 +191,7 @@ const testFile = [
     fileName: "Leetcode",
     fileLink: "https://leetcode.com/problemset/all/",
     linkType: false,
-    studentID:""
+    studentID: "",
   },
 ];
 const testAnnouncement = [
@@ -227,21 +240,29 @@ const dataInit = async () => {
   await SyllabusModel.insertMany(testSyllabus);
   await FileModel.deleteMany({});
   await FileModel.insertMany(testFile);
-  const files = await FileModel.find({});
-  const asyncRes = await Promise.all(files.map(async (f) => {
-    if (f.type === 'weekNum') {
-      const syllabus = await SyllabusModel.findOne({ weekNum: f.info })
-      syllabus.file.push(f._id)
-      await syllabus.save()
-    }
-  }))
-await AnnouncementModel.deleteMany({});
-await AnnouncementModel.insertMany(testAnnouncement);
-await GradeModel.deleteMany({});
-await GradeModel.insertMany(testGrade);
-await HWModel.deleteMany({})
 
-console.log("Database initialized!");
+  const files = await FileModel.find({});
+  const asyncRes = await Promise.all(
+    files.map(async (f) => {
+      if (f.type === "weekNum") {
+        const syllabus = await SyllabusModel.findOne({ weekNum: f.info });
+        syllabus.file.push(f._id);
+        await syllabus.save();
+      }
+    })
+  );
+
+  const quitChat = await ChatBoxModel.findOne({ name: "quiz 1" });
+  testQuiz[0][`chatbox`] = quitChat._id;
+  await AnnouncementModel.deleteMany({});
+  await AnnouncementModel.insertMany(testAnnouncement);
+  await GradeModel.deleteMany({});
+  await GradeModel.insertMany(testGrade);
+  await HWModel.deleteMany({});
+  await QuizModel.deleteMany({});
+  await QuizModel.insertMany(testQuiz);
+
+  console.log("Database initialized!");
 };
 
 export { dataInit };

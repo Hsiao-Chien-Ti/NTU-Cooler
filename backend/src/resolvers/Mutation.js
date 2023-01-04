@@ -7,6 +7,7 @@ import ChatBoxModel from "../models/chatbox";
 import InfoModel from "../models/info";
 import HWModel from "../models/hw";
 import bcrypt from "bcrypt";
+import QuizModel from "../models/quiz";
 const Mutation = {
   createSyllabus: async (parent, { weekNum, outline }, { pubsub }) => {
     let syllabus = await SyllabusModel.findOne({ weekNum: weekNum });
@@ -301,7 +302,7 @@ const Mutation = {
           ? name
           : participants.filter((pp) => pp !== person)[0];
       console.log(showName, name, person);
-      p.chatbox.push({ name, courseID, showName });
+      p.chatbox.push({ name, courseID, showName, type });
       console.log(p.chatbox);
       await p.save();
     });
@@ -363,6 +364,39 @@ const Mutation = {
       throw new Error("change pin error", e);
     }
     return box;
+  },
+  createQuiz: async (
+    parent,
+    { progress, groupShow, courseID, students, teachers, name, question },
+    { pubsub }
+  ) => {
+    const box = await new ChatBoxModel({
+      name,
+      courseID,
+      participants: [...students, ...teachers],
+      messages: [],
+      notAccess: students,
+      type: true,
+      pinMsg: 0,
+    }).save();
+    if (question) {
+      box.messages.push({
+        sender: { studentID: "QUESTION", name: "QUESTION" },
+        body: question,
+        groupnum: 0,
+        hidden: false,
+      });
+    }
+    await box.save();
+    const quiz = await new QuizModel({
+      chatbox: box._id,
+      groupShow,
+      progress,
+    }).save();
+    // pubsub.subscribe(`new quiz ${name} in class ${courseID} been created`, {
+
+    // },
+    return quiz;
   },
 };
 export default Mutation;
