@@ -15,11 +15,16 @@ import App from "./containers/App";
 import reportWebVitals from "./reportWebVitals";
 import { ChatProvider } from "./containers/hooks/useChat";
 const httpLink = new HttpLink({
-  uri: "http://localhost:4000/graphql",
+  uri:   process.env.NODE_ENV === "production"
+  ? "https://ntuniverse-production.up.railway.app/graphql"
+  : "http://localhost:4000/graphql"
+,
 });
 const wsLink = new GraphQLWsLink(
   createClient({
-    url: "ws://localhost:4000/graphql",
+    url:   process.env.NODE_ENV === "production"
+    ? `wss://ntuniverse-production.up.railway.app/graphql`
+    : "ws://localhost:4000/graphql",
     options: {
       lazy: true,
     },
