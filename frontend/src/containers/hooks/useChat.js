@@ -21,6 +21,7 @@ const ChatContext = createContext({
   chatBoxLoading: false,
   pinMsg: 0,
   access: false,
+  isQuiz: false,
   setPinMsg: () => {},
   setCurrentChat: () => {},
   setCurrentQuiz: () => {},
@@ -132,8 +133,6 @@ const ChatProvider = (props) => {
     const current = isQuiz ? currentQuiz : currentChat;
     if (current && user.studentID) {
       if (!allRooms.includes(current)) {
-        console.log("pin before refetch:", pinMsg, "in ", current);
-
         try {
           setAllRooms([...allRooms, current]);
           console.log("Add AllRoom: ", current);
@@ -142,10 +141,8 @@ const ChatProvider = (props) => {
             variables: { to: current, courseID: courseID },
             updateQuery: (prev, { subscriptionData }) => {
               if (!subscriptionData.data) {
-                // console.log("no data");
                 return prev;
               }
-              // console.log(subscriptionData);
               refetchChatBox({
                 name: current,
                 courseID,
@@ -237,9 +234,8 @@ const ChatProvider = (props) => {
         if (currentChat === "") setCurrentChat(newChat);
         if (currentQuiz === "") setCurrentQuiz(newQuiz);
       }
-      // console.log("ChatBoxes: ", newChatBoxes);
     }
-  }, [listOfChatboxes]);
+  }, [listOfChatboxes, user]);
 
   useEffect(() => {
     const current = isQuiz ? currentQuiz : currentChat;
@@ -255,7 +251,7 @@ const ChatProvider = (props) => {
     } else {
       setPinMsg(-1);
     }
-  }, [isQuiz, user, courseID]);
+  }, [isQuiz, user, courseID, currentChat, currentQuiz]);
 
   useEffect(() => {
     if (user.studentID)
@@ -294,6 +290,7 @@ const ChatProvider = (props) => {
         allQuiz,
         setAllBox,
         setAllQuiz,
+        isQuiz,
       }}
       {...props}
     />

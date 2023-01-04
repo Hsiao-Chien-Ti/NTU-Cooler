@@ -80,6 +80,7 @@ const ChatRoom = () => {
                 sender={mes.sender}
                 message={mes.body}
                 // key={i}
+                isPin={true}
                 access={access}
                 hidden={mes.hidden}
                 handleOnClickMessage={(e) => {
@@ -90,10 +91,11 @@ const ChatRoom = () => {
                       variables: {
                         name: currentChat,
                         courseID,
-                        pinMsg: i,
+                        pinMsg: -1,
                         studentID: user.studentID,
                       },
                     });
+                    setPinMsg(-1);
                   }
                 }}
               />
@@ -105,6 +107,7 @@ const ChatRoom = () => {
               message={mes.body}
               key={i}
               access={access}
+              isPin={false}
               hidden={mes.hidden}
               handleOnClickMessage={(e) => {
                 console.log("click", e);
@@ -175,6 +178,8 @@ const ChatRoom = () => {
   };
 
   useEffect(() => {
+    console.log("Message / pinMsg / isQuiz Changed!");
+
     if (!isQuiz) {
       console.log("useEffect with messages/pinMsg");
       const chat = renderChat();
@@ -194,18 +199,6 @@ const ChatRoom = () => {
     if (key) {
       setCurrentChat(key);
       console.log("HANDLEONCHANGE");
-      let chat = [];
-      if (key === currentChat) {
-        chat = renderChat();
-      }
-      let newChatBoxes = allBox;
-      newChatBoxes.forEach((element, index) => {
-        if (element.key === key) {
-          element.chat = chat;
-        }
-      });
-      setChatBoxes(newChatBoxes);
-      setAllBox(newChatBoxes);
     }
   };
 

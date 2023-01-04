@@ -80,6 +80,7 @@ const Quiz = () => {
                 sender={mes.sender}
                 message={mes.body}
                 // key={i}
+                isPin={true}
                 access={access}
                 hidden={mes.hidden}
                 handleOnClickMessage={(e) => {
@@ -90,10 +91,11 @@ const Quiz = () => {
                       variables: {
                         name: currentQuiz,
                         courseID,
-                        pinMsg: i,
+                        pinMsg: -1,
                         studentID: user.studentID,
                       },
                     });
+                    setPinMsg(-1);
                   }
                 }}
               />
@@ -102,6 +104,7 @@ const Quiz = () => {
             <Message
               isMe={mes.sender.studentID === user.studentID ? true : false}
               sender={mes.sender}
+              isPin={false}
               message={mes.body}
               key={i}
               access={access}
@@ -180,9 +183,12 @@ const Quiz = () => {
   };
 
   useEffect(() => {
+    console.log("Message / pinMsg / isQuiz Changed!");
+    console.log(isQuiz);
     if (isQuiz) {
       console.log("useEffect with messages/pinMsg");
       const chat = renderChat();
+      console.log(chat);
       let newChatBoxes = allQuiz;
       newChatBoxes.forEach((element, index) => {
         if (element.key === currentQuiz) {

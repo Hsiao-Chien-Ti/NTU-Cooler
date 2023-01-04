@@ -19,29 +19,13 @@ const StyledMessage = styled.div`
     margin: auto 0;
   }
 `;
-const items = [
-  {
-    label: "pin message",
-    key: "1",
-  },
-  {
-    label: "retrieve message",
-    key: "2",
-    disabled: true,
-  },
-  {
-    label: "reply",
-    key: "3",
-    disabled: true,
-    // danger: true,
-  },
+
   // {
   //   label: "4rd menu item",
   //   key: "4",
   //   danger: true,
   //   disabled: true,
   // },
-];
 
 const Message = ({
   isMe,
@@ -50,7 +34,24 @@ const Message = ({
   access,
   hidden,
   handleOnClickMessage,
+  isPin
 }) => {
+  const items = [
+    {
+      label: isPin? "unpin message" : "pin message",
+      key: "1",
+    },
+    {
+      label: "retrieve message",
+      key: "2",
+      disabled: true,
+    },
+    {
+      label: "reply",
+      key: "3",
+      disabled: true,
+      // danger: true,
+    }];
   return (
     <Dropdown
       menu={{

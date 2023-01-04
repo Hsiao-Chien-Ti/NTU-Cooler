@@ -290,7 +290,7 @@ const Mutation = {
     { name, courseID, participants, type },
     { pubsub }
   ) => {
-    const findBox = await ChatBoxModel({ name, courseID, type }).findOne();
+    const findBox = await ChatBoxModel.findOne({ name, courseID, type });
     if (findBox) {
       throw new Error(
         `Box with name ${name} in class ${courseID} of type ${type} alreay exists!`
@@ -377,33 +377,44 @@ const Mutation = {
     { progress, groupShow, courseID, students, teachers, name, question },
     { pubsub }
   ) => {
-    const box = await new ChatBoxModel({
-      name,
-      courseID,
-      participants: [...students, ...teachers],
-      messages: [],
-      notAccess: students,
-      type: true,
-      pinMsg: progress === "open" ? 0 : -1,
-    }).save();
-    if (question) {
-      box.messages.push({
-        sender: { studentID: "QUESTION", name: "QUESTION" },
-        body: question,
-        groupnum: 0,
-        hidden: false,
+    let box = await ChatBoxModel.findOne({name, courseID, type: true})
+    if(box){
+      throw new Error(`quiz ${name} existed in class ${courseID}`)
+    }else{
+      const participants = [...students, ...teachers];
+      box = await new ChatBoxModel({
+        name,
+        courseID,
+        participants,
+        messages: [],
+        notAccess: students,
+        type: true,
+        pinMsg: progress === "open" ? 0 : -1,
+      }).save();
+      participants?.forEach(async (person) => {
+        const p = await UserModel.findOne({ studentID: person });
+        p.chatbox.push({ name, courseID, showName: name, type: true });
+        await p.save();
       });
-    }
-    await box.save();
-    const quiz = await new QuizModel({
-      chatbox: box._id,
-      groupShow,
-      progress,
-    }).save();
-    // pubsub.subscribe(`new quiz ${name} in class ${courseID} been created`, {
+      if (question) {
+        box.messages.push({
+          sender: { studentID: "QUESTION", name: "QUESTION" },
+          body: question,
+          groupnum: 0,
+          hidden: false,
+        });
+      }
+      await box.save();
+      const quiz = await new QuizModel({
+        chatbox: box._id,
+        groupShow,
+        progress,
+      }).save();
+      // pubsub.subscribe(`new quiz ${name} in class ${courseID} been created`, {
 
-    // },
-    return quiz;
+      // },
+      return quiz;
+    }
   },
 };
 export default Mutation;
