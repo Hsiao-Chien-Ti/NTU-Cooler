@@ -398,7 +398,7 @@ const Mutation = {
       });
       if (question) {
         box.messages.push({
-          sender: { studentID: "QUESTION", name: "QUESTION" },
+          sender: { studentID: "QUESTION", name: "Q:" },
           body: question,
           groupnum: 0,
           hidden: false,
