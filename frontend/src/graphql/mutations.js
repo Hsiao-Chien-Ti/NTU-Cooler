@@ -156,6 +156,7 @@ const CREATE_CHATBOX_MUTATION = gql`
         sender {
           name
           studentID
+          groupNum
         }
         body
         hidden
@@ -177,6 +178,7 @@ const CREATE_MESSAGE_MUTATION = gql`
     $to: String!
     $body: String!
     $courseID: String!
+    $groupNum: Int
   ) {
     createMessage(
       senderID: $senderID
@@ -184,6 +186,7 @@ const CREATE_MESSAGE_MUTATION = gql`
       to: $to
       body: $body
       courseID: $courseID
+      groupNum: $groupNum
     ) {
       sender {
         name
@@ -191,7 +194,6 @@ const CREATE_MESSAGE_MUTATION = gql`
       }
       body
       hidden
-      groupNum
     }
   }
 `;

@@ -85,6 +85,7 @@ const AllProvider = (props) => {
           return {
             value: person.studentID,
             label: person.name + " (" + person.studentID + ") ",
+            group: person.groupNum,
           };
         });
 

@@ -324,18 +324,17 @@ const Mutation = {
 
       return box;
     }
-    
   },
   createMessage: async (
     parent,
-    { senderID, senderName, to, body, courseID },
+    { senderID, senderName, to, body, courseID, groupNum },
     { pubsub }
   ) => {
     const chatBox = await ChatBoxModel.findOne({ name: to, courseID });
     const newMsg = {
       sender: { studentID: senderID, name: senderName },
       body,
-      groupnum: -1,
+      groupNum: groupNum ? groupNum : -1,
       hidden: chatBox.type,
     };
     chatBox.messages.push(newMsg);
@@ -377,10 +376,10 @@ const Mutation = {
     { progress, groupShow, courseID, students, teachers, name, question },
     { pubsub }
   ) => {
-    let box = await ChatBoxModel.findOne({name, courseID, type: true})
-    if(box){
-      throw new Error(`quiz ${name} existed in class ${courseID}`)
-    }else{
+    let box = await ChatBoxModel.findOne({ name, courseID, type: true });
+    if (box) {
+      throw new Error(`quiz ${name} existed in class ${courseID}`);
+    } else {
       const participants = [...students, ...teachers];
       box = await new ChatBoxModel({
         name,

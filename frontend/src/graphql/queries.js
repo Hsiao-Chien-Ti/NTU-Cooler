@@ -100,10 +100,10 @@ export const CHATBOX_QUERY = gql`
         sender {
           name
           studentID
+          groupNum
         }
         body
         hidden
-        groupNum
       }
       type
       courseID

@@ -13,9 +13,11 @@ const testUser = [
   {
     name: "t",
     studentID: "t",
-    chatbox: [{ name: "quiz 1", courseID: "EE1234", showName: "quiz 1", type: true }],
+    chatbox: [
+      { name: "quiz 1", courseID: "EE1234", showName: "quiz 1", type: true },
+    ],
     passwd: bcrypt.hashSync("t", 14),
-    groupNum: 7,
+    groupNum: 0,
     isTeacher: true,
   },
   {
@@ -26,13 +28,15 @@ const testUser = [
       { name: "KKK_q", courseID: "EE1234", showName: "q", type: false },
     ],
     passwd: bcrypt.hashSync("7", 14),
-    groupNum: 7,
+    groupNum: 0,
     isTeacher: true,
   },
   {
     name: "yzl",
     studentID: "b09901042",
-    chatbox: [{ name: "quiz 1", courseID: "EE1234", showName: "quiz 1", type: true }],
+    chatbox: [
+      { name: "quiz 1", courseID: "EE1234", showName: "quiz 1", type: true },
+    ],
     passwd: bcrypt.hashSync("7", 14),
     groupNum: 7,
     isTeacher: false,
@@ -41,8 +45,8 @@ const testUser = [
     name: "q",
     studentID: "q",
     chatbox: [
-      { name: "quiz 1", courseID: "EE1234", showName: "quiz 1" , type: true},
-      { name: "KKK_q", courseID: "EE1234", showName: "K" , type: false},
+      { name: "quiz 1", courseID: "EE1234", showName: "quiz 1", type: true },
+      { name: "KKK_q", courseID: "EE1234", showName: "K", type: false },
     ],
     passwd: bcrypt.hashSync("7", 14),
     groupNum: 7,
@@ -56,37 +60,33 @@ const testChat = [
     notAccess: ["b09901042"],
     messages: [
       {
-        sender: { studentID: "t", name: "t" },
-        groupNum: 0,
+        sender: { studentID: "t", name: "t", groupNum: 0 },
         body: "problem: ur favorite number",
         hidden: false,
       },
       {
-        sender: { studentID: "KKK", name: "KKK" },
-        groupNum: 7,
+        sender: { studentID: "KKK", name: "KKK", groupNum: 0 },
         body: "ans: 1",
         hidden: true,
       },
       {
-        sender: { studentID: "q", name: "q" },
-        groupNum: 7,
+        sender: { studentID: "q", name: "q", groupNum: 7 },
         body: "ans: 2",
         hidden: true,
       },
       {
-        sender: { studentID: "KKK", name: "KKK" },
-        groupNum: 7,
+        sender: { studentID: "KKK", name: "KKK", groupNum: 0 },
+
         body: "ans: 3",
         hidden: true,
       },
       {
-        sender: { studentID: "q", name: "q" },
-        groupNum: 7,
+        sender: { studentID: "q", name: "q", groupNum: 7 },
         body: "ans: 4",
         hidden: true,
       },
       {
-        sender: { studentID: "q", name: "q" },
+        sender: { studentID: "q", name: "q", groupNum: 7 },
         groupNum: 7,
         body: "ans: 5",
         hidden: true,
@@ -102,32 +102,27 @@ const testChat = [
     notAccess: [],
     messages: [
       {
-        sender: { studentID: "KKK", name: "KKK" },
-        groupNum: 7,
+        sender: { studentID: "KKK", groupNum: -1, name: "KKK" },
         body: "hi q",
         hidden: false,
       },
       {
-        sender: { studentID: "q", name: "q" },
-        groupMum: 7,
+        sender: { studentID: "q", groupNum: -1, name: "q" },
         body: "hi buddy",
         hidden: false,
       },
       {
-        sender: { studentID: "KKK", name: "KKK" },
-        groupNum: 7,
+        sender: { studentID: "KKK", groupNum: -1, name: "KKK" },
         body: "how's your day",
         hidden: false,
       },
       {
-        sender: { studentID: "q", name: "q" },
-        groupNum: 7,
+        sender: { studentID: "q", groupNum: -1, name: "q" },
         body: "so fucked",
         hidden: false,
       },
       {
-        sender: { studentID: "q", name: "q" },
-        groupNum: 7,
+        sender: { studentID: "q", groupNum: -1, name: "q" },
         body: "but finally it's all finished",
         hidden: false,
       },
