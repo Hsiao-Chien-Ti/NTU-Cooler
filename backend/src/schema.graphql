@@ -37,7 +37,7 @@ type Syllabus {
   file: [File]
 }
 type File {
-  id:ID!
+  id: ID!
   type: String!
   info: String!
   fileName: String!
@@ -56,9 +56,9 @@ type Grade {
   score: Float!
   weight: Float
 }
-type SFile{
+type SFile {
   studentID: String
-  file:File
+  file: File
 }
 type HW {
   title: String!
@@ -92,6 +92,7 @@ type MessageSender {
 type AttendantInfo {
   name: String!
   studentID: String!
+  isTeacher: Boolean!
 }
 type Mutation {
   createInfo(name: String, courseID: String!): Info!
@@ -106,24 +107,20 @@ type Mutation {
   addUserToCourse(studentID: String!, courseID: String!): [AttendantInfo!]!
   createSyllabus(weekNum: String, outline: String): Syllabus!
   createFile(
-    type: String!,
-    info: String!,
-    fileName: String!,
-    fileLink: String!,
-    linkType: Boolean!,
-    studentID: String,
-    firstFlag:Boolean
+    type: String!
+    info: String!
+    fileName: String!
+    fileLink: String!
+    linkType: Boolean!
+    studentID: String
+    firstFlag: Boolean
   ): File!
   createAnnouncement(
     time: String!
     title: String!
     content: String
   ): Announcement!
-  createHW(
-    title:String!
-    deadline:String!
-    description:String
-  ):HW!
+  createHW(title: String!, deadline: String!, description: String): HW!
   createGrade(
     studentID: String!
     subject: String!
@@ -144,12 +141,20 @@ type Mutation {
     body: String!
     courseID: String!
   ): Message!
+  changePin(
+    name: String!
+    courseID: String!
+    pinMsg: Int!
+    studentID: String!
+  ): ChatBox!
 }
 type Subscription {
   syllabus: Syllabus!
   announcement: Announcement!
   file: File!
-  hw(studentID:String!): HW!
+  hw(studentID: String!): HW!
   grade(studentID: String!, subject: String!): Grade!
   message(to: String!, courseID: String!): Message!
+  chatbox(courseID: String!): ChatBox!
+  chatboxChange(name: String!, courseID: String!): ChatBox!
 }

@@ -80,3 +80,10 @@ export const MESSAGE_SUBSCRIPTION = gql`
     }
   }
 `;
+ export const CHATBOXLIST_SUBSCRIPTION = gql`
+   subscription chatbox($courseID: String!) {
+     chatbox(courseID: $courseID) {
+       name
+     }
+   }
+ `;

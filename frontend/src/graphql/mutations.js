@@ -93,12 +93,8 @@ const CREATE_ANNOUNCEMENT_MUTATION = gql`
   }
 `;
 const CREATE_HW_MUTATION = gql`
-  mutation createHW(
-    $title: String!
-    $deadline: String!
-    $description: String
-  ) {
-    createHW(title:$title, deadline:$deadline, description:$description) {
+  mutation createHW($title: String!, $deadline: String!, $description: String) {
+    createHW(title: $title, deadline: $deadline, description: $description) {
       title
       deadline
       description
@@ -107,7 +103,7 @@ const CREATE_HW_MUTATION = gql`
         fileLink
         linkType
       }
-      sFile{
+      sFile {
         studentID
         file {
           fileName
@@ -200,6 +196,24 @@ const CREATE_MESSAGE_MUTATION = gql`
   }
 `;
 
+const PINMSG_MUTATION = gql`
+  mutation changePin(
+    $name: String!
+    $courseID: String!
+    $pinMsg: Int!
+    $studentID: String!
+  ) {
+    changePin(
+      name: $name
+      courseID: $courseID
+      pinMsg: $pinMsg
+      studentID: $studentID
+    ) {
+      pinMsg
+    }
+  }
+`;
+
 export {
   CREATE_INFO_MUTATION,
   CREATE_MESSAGE_MUTATION,
@@ -210,5 +224,6 @@ export {
   CREATE_USER_MUTATION,
   LOGIN_MUTATION,
   CREATE_SYLLABUS_MUTATION,
-  CREATE_HW_MUTATION
+  CREATE_HW_MUTATION,
+  PINMSG_MUTATION,
 };

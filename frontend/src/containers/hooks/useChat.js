@@ -5,6 +5,8 @@ import {
   MESSAGE_SUBSCRIPTION,
   CREATE_MESSAGE_MUTATION,
   CHATBOX_OF_USER_QUERY,
+  CHATBOXLIST_SUBSCRIPTION,
+  PINMSG_MUTATION,
 } from "../../graphql";
 import { useState, useEffect, useContext, createContext } from "react";
 import { useAll } from "./useAll";
@@ -24,6 +26,7 @@ const ChatContext = createContext({
   sendMessage: () => {},
   queryChat: () => {},
   queryChatBox: () => {},
+  changePin: () => {},
 });
 const ChatProvider = (props) => {
   const { user, courseID } = useAll();
@@ -37,23 +40,29 @@ const ChatProvider = (props) => {
   const [sendMessage, { error: errorSendMsg }] = useMutation(
     CREATE_MESSAGE_MUTATION
   );
+  const [changePin] = useMutation(PINMSG_MUTATION);
 
-  const [queryChatBox, { data: listOfChatboxes, loading: listLoading }] = useLazyQuery(
-    CHATBOX_OF_USER_QUERY,
+  const [
+    queryChatBox,
     {
-      variables: {
-        studentID: user.studentID,
-        courseID,
-      },
-    }
-  );
+      data: listOfChatboxes,
+      loading: listLoading,
+      subscribeToMore: subscribeChatBoxList,
+      refetch: refetchChatBoxList,
+    },
+  ] = useLazyQuery(CHATBOX_OF_USER_QUERY, {
+    variables: {
+      studentID: user.studentID,
+      courseID,
+    },
+  });
 
   const [
     queryChat,
     {
       data: chatBoxData,
       loading: chatBoxLoading,
-      subscribeToMore,
+      subscribeToMore: subscribeNewMessage,
       error,
       refetch,
     },
@@ -66,11 +75,11 @@ const ChatProvider = (props) => {
     fetchPolicy: "network-only",
   });
   useEffect(() => {
-    // console.log("error sending msg: ", errorSendMsg);
+    console.log("error sending msg: ", errorSendMsg);
   }, [errorSendMsg]);
-  useEffect(() => {
-    console.log(access);
-  }, [access]);
+  // useEffect(() => {
+  //   console.log(access);
+  // }, [access]);
 
   useEffect(() => {
     if (error) {
@@ -97,12 +106,12 @@ const ChatProvider = (props) => {
   useEffect(() => {
     if (currentChat) {
       if (!allRooms.includes(currentChat)) {
-        console.log("pin before refetch:", pinMsg);
+        console.log("pin before refetch:", pinMsg, "in ", currentChat);
 
         try {
           setAllRooms([...allRooms, currentChat]);
           // console.log("TEST");
-          subscribeToMore({
+          subscribeNewMessage({
             document: MESSAGE_SUBSCRIPTION,
             variables: { to: currentChat, courseID: courseID },
             updateQuery: (prev, { subscriptionData }) => {
@@ -117,10 +126,6 @@ const ChatProvider = (props) => {
                 studentID: user.studentID,
               });
               const newMessage = subscriptionData.data.message;
-              console.log(newMessage);
-              console.log(pinMsg);
-              console.log();
-              console.log("prev: ", prev);
               return {
                 chatbox: {
                   name: currentChat,
@@ -140,14 +145,41 @@ const ChatProvider = (props) => {
         }
       }
     }
-  }, [subscribeToMore, currentChat]);
+  }, [subscribeNewMessage, currentChat]);
+
+  useEffect(() => {
+    // if (currentChat) {
+    //   if (!allRooms.includes(currentChat)) {
+    //     console.log("pin before refetch:", pinMsg);
+    if (user)
+      try {
+        // setAllRooms([...allRooms, currentChat]);
+        subscribeChatBoxList({
+          document: CHATBOXLIST_SUBSCRIPTION,
+          variables: { courseID },
+          updateQuery: (prev, { subscriptionData }) => {
+            if (!subscriptionData.data) {
+              return prev;
+            }
+            refetchChatBoxList({
+              studentID: user.studentID,
+              courseID,
+            });
+          },
+        });
+        console.log("New Chat!");
+        // console.log("AllRoom: ", allRooms);
+      } catch (e) {
+        throw new Error("subscribe error: " + e);
+      }
+  }, [subscribeChatBoxList]);
 
   useEffect(() => {
     if (!listLoading) {
       // console.log("Query_listOfChatboxes:", listOfChatboxes);
       let newChatBoxes = [];
       // console.log(listOfChatboxes);
-      if(listOfChatboxes) {
+      if (listOfChatboxes) {
         listOfChatboxes.userChatbox.forEach((room) => {
           newChatBoxes.push({
             key: room.name,
@@ -157,10 +189,9 @@ const ChatProvider = (props) => {
           // console.log(newChatBoxes);
         });
         setChatBoxes(newChatBoxes);
-      if (currentChat === "")
-        setCurrentChat(listOfChatboxes.userChatbox[0].name);
+        if (currentChat === "")
+          setCurrentChat(listOfChatboxes.userChatbox[0].name);
       }
-      
     }
   }, [listOfChatboxes]);
 
@@ -183,6 +214,7 @@ const ChatProvider = (props) => {
         sendMessage,
         queryChat,
         queryChatBox,
+        changePin,
       }}
       {...props}
     />

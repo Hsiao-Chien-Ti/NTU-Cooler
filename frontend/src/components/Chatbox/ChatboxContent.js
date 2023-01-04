@@ -18,38 +18,37 @@ const ChatModal = ({ open, onCreate, onCancel, users, me, isTeacher }) => {
       title="Create a new chat room"
       okText="Create"
       cancelText="Cancel"
-      onCancel={onCancel}
+      onCancel={() => {
+        onCancel();
+        setIsGroup(false);
+      }}
       onOk={() => {
         form
           .validateFields()
           .then((values) => {
             form.resetFields();
-            // let member = [me]
-            // if(isGroup){
-
-            // }else{
-            //   member.push(values.name)
-            // }
             onCreate({
               name: isGroup ? values.chatRoomName : makeName(values.name, me),
               participants: isGroup ? [...values.users, me] : [values.name, me],
-              quiz: isTeacher ? (isGroup && values.quiz ? values.quiz : false) : false,
+              quiz: isTeacher
+                ? isGroup && values.quiz
+                  ? values.quiz
+                  : false
+                : false,
             });
             setIsGroup(false);
           })
           .catch((e) => {
             window.alert(e);
           });
-      }}
-    >
+      }}>
       {isGroup ? (
         <Form
           form={form}
           layout="vertical"
           name="form_in_modal"
           labelCol={{ span: 8 }}
-          wrapperCol={{ span: 16 }}
-        >
+          wrapperCol={{ span: 16 }}>
           <Form.Item
             name="chatRoomName"
             label="Enter Chat Room Name"
@@ -58,8 +57,7 @@ const ChatModal = ({ open, onCreate, onCancel, users, me, isTeacher }) => {
                 required: true,
                 message: "Error: Please enter the name of the chat room!",
               },
-            ]}
-          >
+            ]}>
             <Input />
           </Form.Item>
           <Form.Item
@@ -70,8 +68,7 @@ const ChatModal = ({ open, onCreate, onCancel, users, me, isTeacher }) => {
                 required: true,
                 message: "Error: Please enter the name of the person to chat!",
               },
-            ]}
-          >
+            ]}>
             <Select
               mode="multiple"
               allowClear
@@ -87,12 +84,11 @@ const ChatModal = ({ open, onCreate, onCancel, users, me, isTeacher }) => {
               name="quiz"
               label="Make it a Quiz"
               valuePropName="checked"
-              wrapperCol={{ offset: 8, span: 16 }}
-            >
+              wrapperCol={{ offset: 8, span: 16 }}>
               <Switch />
             </Form.Item>
           ) : (
-            <></>
+            <div>test</div>
           )}
 
           <Button onClick={handleCreateGroup}>Single Chat</Button>
@@ -107,8 +103,7 @@ const ChatModal = ({ open, onCreate, onCancel, users, me, isTeacher }) => {
                 required: true,
                 message: "Error: Please enter the name of the person to chat!",
               },
-            ]}
-          >
+            ]}>
             <Select
               showSearch
               placeholder="Select a person"
