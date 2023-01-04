@@ -134,7 +134,6 @@ const ChatRoom = () => {
     }
     if (chatBoxes.some(({ key }) => key === name)) {
       setCurrentChat(name);
-
       setStatus({ type: "error", msg: newName + " has exist" });
       setModalOpen(false);
     } else {
@@ -234,7 +233,7 @@ const ChatRoom = () => {
           selectedKeys={[currentChat]}
           // defaultOpenKeys={[isQuiz? currentQuiz: currentChat]}
           mode="inline"
-          items={[...allBox, , { key: "_add_", label: "+" }]}
+          items={[...allBox, { key: "_add_", label: "+" }]}
           theme="light"
         />
         {/* </Sider> */}

@@ -11,7 +11,7 @@ const QuizProvider = (props) => {
   const [allQuiz, setAllQuiz] = useState([]);
   const { user, courseID, setStatus } = useAll();
   const { chatBoxes, setCurrentQuiz, createQuiz } = useChat();
-  const createChatBox = async ({
+  const createChatBox = ({
     name,
     groupShow,
     students,
@@ -42,16 +42,7 @@ const QuizProvider = (props) => {
       console.log("QUIZ" + name);
     }
   };
-  useEffect(() => {
-    if (user.isTeacher) {
-      setAllQuiz([
-        ...chatBoxes.filter((c) => c.quiz === "true"),
-        { key: "_add_", label: "+" },
-      ]);
-    } else {
-      setAllQuiz([...chatBoxes.filter((c) => c.quiz === "true")]);
-    }
-  }, [chatBoxes]);
+
   return (
     <QuizContext.Provider
       value={{ allQuiz, setAllQuiz, createChatBox }}

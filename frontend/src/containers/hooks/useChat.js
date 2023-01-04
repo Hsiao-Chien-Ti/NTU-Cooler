@@ -87,7 +87,7 @@ const ChatProvider = (props) => {
     QUIZ_QUERY,
     {
       variables: {
-        name: currentChat,
+        name: currentQuiz,
         studentID: user.studentID,
         courseID,
       },
@@ -102,6 +102,7 @@ const ChatProvider = (props) => {
 
   useEffect(() => {
     if (error) {
+      console.log("query chatbox error", error);
       throw new Error("Query_chatBoxData_error:", error);
     }
     if (!chatBoxLoading) {
@@ -123,7 +124,7 @@ const ChatProvider = (props) => {
 
   useEffect(() => {
     const current = isQuiz ? currentQuiz : currentChat;
-    if (current) {
+    if (current && user.studentID) {
       if (!allRooms.includes(current)) {
         console.log("pin before refetch:", pinMsg, "in ", current);
 
@@ -224,7 +225,7 @@ const ChatProvider = (props) => {
 
   useEffect(() => {
     const current = isQuiz ? currentQuiz : currentChat;
-    if (current) {
+    if (current && user.studentID) {
       queryChat({
         variables: {
           name: current,

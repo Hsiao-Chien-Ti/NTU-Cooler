@@ -63,9 +63,13 @@ const ChatModal = ({
               participants: isGroup ? [...values.users, me] : [values.name, me],
               quiz: isQuiz,
               groupShow,
-              students: values.students,
+              students: values.students ? values.students : [],
               progress: start ? "open" : "before",
-              teachers: values.teachers,
+              teachers: isQuiz
+                ? values.teacher
+                  ? [...values.teachers, me]
+                  : []
+                : [],
               question: values.question,
             });
             setIsGroup(false);
@@ -92,27 +96,27 @@ const ChatModal = ({
             ]}>
             <Input />
           </Form.Item>
-          <Form.Item
-            name={isQuiz ? "students" : "users"}
-            label="Choose Students"
-            rules={[
-              {
-                required: true,
-                message: "Error: Please enter the name of the person to chat!",
-              },
-            ]}>
-            <Select
-              mode="multiple"
-              allowClear
-              style={{ width: "100%" }}
-              placeholder="Please select"
-              //defaultValue={["a10", "c12"]}
-              //onChange={handleChange}
-              options={isQuiz ? allStudents : users}
-            />
-          </Form.Item>
           {isQuiz ? (
             <>
+              <Form.Item
+                name={"students"}
+                label={"Choose Students"}
+                rules={[
+                  {
+                    required: true,
+                    message: "Error: Please enter the name of the students!",
+                  },
+                ]}>
+                <Select
+                  mode="multiple"
+                  allowClear
+                  style={{ width: "100%" }}
+                  placeholder="Please select"
+                  //defaultValue={["a10", "c12"]}
+                  //onChange={handleChange}
+                  options={allStudents}
+                />
+              </Form.Item>
               <Form.Item name="teachers" label="Choose Teacher">
                 <Select
                   mode="multiple"
@@ -174,7 +178,29 @@ const ChatModal = ({
               </Form.Item>
             </>
           ) : (
-            <Button onClick={handleCreateGroup}>Single Chat</Button>
+            <>
+              <Form.Item
+                name={"users"}
+                label={"Choose Users"}
+                rules={[
+                  {
+                    required: true,
+                    message:
+                      "Error: Please enter the name of the person to chat!",
+                  },
+                ]}>
+                <Select
+                  mode="multiple"
+                  allowClear
+                  style={{ width: "100%" }}
+                  placeholder="Please select"
+                  //defaultValue={["a10", "c12"]}
+                  //onChange={handleChange}
+                  options={users}
+                />
+              </Form.Item>
+              <Button onClick={handleCreateGroup}>Single Chat</Button>
+            </>
           )}
         </Form>
       ) : (
