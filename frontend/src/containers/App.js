@@ -5,7 +5,7 @@ import Homepage from "./Homepage";
 import Syllabus from "./Syllabus";
 import Grade from "./Grade";
 import Files from "./Files";
-import ChatRoom from "./Chatbox";
+import ChatRoom from "./Chatroom";
 import HW from "./HW";
 import Quiz from "./Quiz";
 import {

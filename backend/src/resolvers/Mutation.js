@@ -164,7 +164,7 @@ const Mutation = {
   },
   createHW: async (parent, { title, deadline, description }, { pubsub }) => {
     let hw = await HWModel.findOne({ title: title });
-
+    console.log(hw);
     if (hw) {
       await HWModel.updateOne(
         { title: title },
