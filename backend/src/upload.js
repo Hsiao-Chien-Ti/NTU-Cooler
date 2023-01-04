@@ -5,6 +5,7 @@ import SyllabusModel from "./models/syllabus";
 import AnnouncementModel from "./models/announcement";
 import FileModel from "./models/file";
 import GradeModel from "./models/grade";
+import HWModel from "./models/hw";
 import bcrypt from 'bcrypt'
 
 const testUser = [
@@ -238,6 +239,7 @@ await AnnouncementModel.deleteMany({});
 await AnnouncementModel.insertMany(testAnnouncement);
 await GradeModel.deleteMany({});
 await GradeModel.insertMany(testGrade);
+await HWModel.deleteMany({})
 
 console.log("Database initialized!");
 };

@@ -33,6 +33,28 @@ export const ANNOUNCEMENT_SUBSCRIPTION = gql`
     }
   }
 `;
+export const HW_SUBSCRIPTION = gql`
+  subscription hw($studentID: String!) {
+    hw(studentID: $studentID) {
+      title
+      deadline
+      description
+      tFile {
+        fileName
+        fileLink
+        linkType
+      }
+      sFile{
+        studentID
+        file {
+          fileName
+          fileLink
+          linkType
+        }
+      }
+    }
+  }
+`;
 export const GRADE_SUBSCRIPTION = gql`
   subscription grade($studentID: String!, $subject: String!) {
     grade(studentID: $studentID, subject: $subject) {

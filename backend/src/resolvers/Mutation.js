@@ -25,7 +25,7 @@ const Mutation = {
     })
     return syllabus
   },
-  createFile: async (parent, { type, info, fileName, fileLink, linkType, studentID }, { pubsub }) => {
+  createFile: async (parent, { type, info, fileName, fileLink, linkType, studentID, firstFlag }, { pubsub }) => {
     // console.log(type)
     let file = await FileModel.findOne({ type: type, info: info, fileName: fileName })
     if (file) {
@@ -54,17 +54,16 @@ const Mutation = {
     else if (type == "tHW") {
       let hw = await HWModel.findOne({ title: info });
       if (!hw)
-        hw = await new HWModel({ title: info, deadline: "not set", description: "", status: "Nsubmit", sfile: [], tFile: [] }).save();
+        hw = await new HWModel({ title: info, deadline: "not set", description: "", sfile: [], tFile: [] }).save();
       hw.tFile = hw.tFile.filter((f) => JSON.stringify(f) !== JSON.stringify(file._id))
       hw.tFile.push(file)
       await hw.save()
-      const hf = await hw.populate(['tFile', 'sFile'])
+      const hf = await hw.populate(['tFile', 'sFile.file'])
       pubsub.publish('HW', {
         hw: {
           title: hf.title,
           deadline: hf.deadline,
           description: hf.description,
-          status: hf.status,
           tFile: hf.tFile,
           sFile: hf.sFile
         }
@@ -72,16 +71,17 @@ const Mutation = {
     }
     else if (type == "sHW") {
       let hw = await HWModel.findOne({ title: info });
-      hw.sFile = hw.sFile.filter((f) => JSON.stringify(f) !== JSON.stringify(file._id))
-      hw.sFile.push({ studentID: studentID, file: file })
+      if(firstFlag)
+        hw.sFile = hw.sFile.filter((f) => f.studentID !== studentID)
+      hw.sFile.push({ studentID: studentID, file: file})
       await hw.save()
-      const hf = await hw.populate(['tFile', 'sFile'])
+      const hf = await hw.populate(['tFile', 'sFile.file'])
+      console.log("cf"+hf)
       pubsub.publish('HW', {
         hw: {
           title: hf.title,
           deadline: hf.deadline,
           description: hf.description,
-          status: hf.status,
           tFile: hf.tFile,
           sFile: hf.sFile
         }
@@ -119,20 +119,21 @@ const Mutation = {
   },
   createHW: async (parent, { title, deadline, description }, { pubsub }) => {
     let hw = await HWModel.findOne({ title: title });
-    console.log(hw)
+    
     if (hw) {
       await HWModel.updateOne({ title: title }, { $set: { deadline: deadline, description: description } });
       hw = await HWModel.findOne({ title: title });
     }
     else
       hw = await new HWModel({ title: title, deadline: deadline, description: description, tFile: [], sFile: [] }).save();
-    const hf = await hw.populate(['tFile', 'sFile'])
+    console.log("chw"+hw)
+      const hf = await hw.populate(['tFile', ['sFile','file']])
+    // console.log(hf)
     pubsub.publish('HW', {
       hw: {
         title: hf.title,
         deadline: hf.deadline,
         description: hf.description,
-        status: hf.status,
         tFile: hf.tFile,
         sFile: hf.sFile
       }

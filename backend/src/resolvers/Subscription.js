@@ -23,7 +23,7 @@ const Subscription = {
         }
     },
     hw: {
-        subscribe: (parent, { pubsub }) => {
+        subscribe: (parent, {studentID},{ pubsub }) => {
             return pubsub.subscribe('HW')
         }
     },

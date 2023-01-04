@@ -55,6 +55,28 @@ export const GRADE_QUERY = gql`
     }
   }
 `;
+export const HW_QUERY = gql`
+  query hw($studentID: String!) {
+    hw(studentID: $studentID) {
+      title
+      deadline
+      description
+      tFile {
+        fileName
+        fileLink
+        linkType
+      }
+      sFile{
+        studentID
+        file {
+          fileName
+          fileLink
+          linkType
+        }
+      }
+    }
+  }
+`;
 export const FILE_QUERY = gql`
   query {
     file {

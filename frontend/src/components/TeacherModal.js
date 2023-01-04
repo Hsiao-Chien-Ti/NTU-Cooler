@@ -124,8 +124,12 @@ const TeacherModal = ({ open, onCreate, onCancel }) => {
                                         label: 'Week',
                                     },
                                     {
-                                        value: 'HW',
-                                        label: 'HW',
+                                        value: 'tHW',
+                                        label: "teacher's HW",
+                                    },
+                                    {
+                                        value: 'sHW',
+                                        label: "student's HW",
                                     },
                                     {
                                         value: 'Quiz',
@@ -252,8 +256,7 @@ const TeacherModal = ({ open, onCreate, onCancel }) => {
                         </Form.Item>
                         <Form.Item name="upload">
                             <Upload
-                                // accept=".txt, .csv"
-                                // showUploadList={false}
+                                accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
                                 beforeUpload={file => {
                                     const reader = new FileReader();
 

@@ -60,6 +60,7 @@ const CREATE_FILE_MUTATION = gql`
     $fileLink: String!
     $linkType: Boolean!
     $studentID: String
+    $firstFlag: Boolean
   ) {
     createFile(
       type: $type
@@ -68,6 +69,7 @@ const CREATE_FILE_MUTATION = gql`
       fileLink: $fileLink
       linkType: $linkType
       studentID: $studentID
+      firstFlag: $firstFlag
     ) {
       type
       info
@@ -87,6 +89,32 @@ const CREATE_ANNOUNCEMENT_MUTATION = gql`
       time
       title
       content
+    }
+  }
+`;
+const CREATE_HW_MUTATION = gql`
+  mutation createHW(
+    $title: String!
+    $deadline: String!
+    $description: String
+  ) {
+    createHW(title:$title, deadline:$deadline, description:$description) {
+      title
+      deadline
+      description
+      tFile {
+        fileName
+        fileLink
+        linkType
+      }
+      sFile{
+        studentID
+        file {
+          fileName
+          fileLink
+          linkType
+        }
+      }
     }
   }
 `;
@@ -182,4 +210,5 @@ export {
   CREATE_USER_MUTATION,
   LOGIN_MUTATION,
   CREATE_SYLLABUS_MUTATION,
+  CREATE_HW_MUTATION
 };

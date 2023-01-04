@@ -14,7 +14,7 @@ const Wrapper = styled.div`
   margin: auto;
 `;
 const SignIn = () => {
-  const { user, setUser, displayStatus, signIn, loginData, getGrade, subject } =
+  const { user, setUser, displayStatus, signIn, getGrade, getHW, subject } =
     useAll();
   const navigate = useNavigate();
   const handleLogin = async (s) => {
@@ -33,9 +33,14 @@ const SignIn = () => {
       await signIn({ variables: { studentID: studentID, passwd: passwd } });
     }
   };
+  const init=async()=>{
+      await getGrade({ variables: { studentID: user.studentID, subject: subject } });
+      await getHW({ variables: { studentID: user.studentID } });    
+  }
   useEffect(() => {
     if (user.login) {
-      getGrade({ variables: { studentID: user.studentID, subject: subject } });
+      console.log(user.login)
+      init()
       navigate("/course/homepage");
     }
   }, [user]);

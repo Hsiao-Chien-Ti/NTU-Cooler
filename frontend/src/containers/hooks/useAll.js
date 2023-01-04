@@ -16,6 +16,9 @@ import {
   CREATE_GRADE_MUTATION,
   GRADE_SUBSCRIPTION,
   INFO_QUERY,
+  HW_QUERY,
+  HW_SUBSCRIPTION,
+  CREATE_HW_MUTATION
 } from "../../graphql";
 import { message } from "antd";
 import { useNavigate } from "react-router-dom";
@@ -38,6 +41,9 @@ const AllContext = createContext({
   gradeData: [],
   gradeLoading: false,
   getGrade: () => { },
+  hwData: [],
+  hwLoading: false,
+  getHW: () => { },
   subject: "",
   logout: () => { },
   fileData: [],
@@ -46,6 +52,7 @@ const AllContext = createContext({
   createSyllabus: [],
   createFile: [],
   createGrade: [],
+  createHW: []
 });
 const AllProvider = (props) => {
   const [user, setUser] = useState(savedMe || { login: false });
@@ -208,7 +215,7 @@ const AllProvider = (props) => {
           document: GRADE_SUBSCRIPTION,
           variables: { studentID: user.studentID, subject: subject },
           updateQuery: (prev, { subscriptionData }) => {
-            console.log(prev);
+            // console.log(prev);
             if (!subscriptionData.data) return prev;
             const newGrade = subscriptionData.data.grade;
             return {
@@ -223,10 +230,47 @@ const AllProvider = (props) => {
       } catch (e) { }
     }
   }, [gradeSubscribe, user]);
+  useEffect(()=>{
+    console.log(gradeData)
+  },[gradeData])
+  const [
+    getHW,
+    { data: hwData, loading: hwLoading, subscribeToMore: hwSubscribe },
+  ] = useLazyQuery(HW_QUERY, {
+    variables: { studentID: user.studentID},
+    fetchPolicy: "network-only",
+  });
+  useEffect(()=>{
+    console.log(hwData)
+  },[hwData])
+  useEffect(() => {
+    if (user.login) {
+      try {
+        hwSubscribe({
+          document: HW_SUBSCRIPTION,
+          variables: { studentID: user.studentID },
+          updateQuery: (prev, { subscriptionData }) => {
+            console.log(prev);
+            if (!subscriptionData.data) return prev;
+            const newHW = subscriptionData.data.hw;
+            console.log(newHW)
+            return {
+              ...prev,
+              hw: [
+                newHW,
+                ...prev.hw.filter((f) => f.title !== newHW.title),
+              ],
+            };
+          },
+        });
+      } catch (e) { }
+    }
+  }, [hwSubscribe, user]);
   const [createAnnouncement] = useMutation(CREATE_ANNOUNCEMENT_MUTATION);
   const [createSyllabus] = useMutation(CREATE_SYLLABUS_MUTATION);
   const [createFile] = useMutation(CREATE_FILE_MUTATION);
   const [createGrade] = useMutation(CREATE_GRADE_MUTATION);
+  const [createHW] = useMutation(CREATE_HW_MUTATION)
 
   useEffect(() => {
     if (user.login) {
@@ -275,10 +319,14 @@ const AllProvider = (props) => {
         logout,
         fileData,
         fileLoading,
+        hwData,
+        hwLoading,
+        getHW,
         createAnnouncement,
         createSyllabus,
         createFile,
         createGrade,
+        createHW,
       }}
       {...props}
     />

@@ -8,6 +8,7 @@ import {
   WechatOutlined,
   SolutionOutlined,
   LogoutOutlined,
+  FileTextOutlined
 } from "@ant-design/icons";
 import { Layout, Menu, theme, FloatButton } from "antd";
 import {
@@ -47,10 +48,18 @@ const AllPages = [
   { key: "5", icon: <FileOutlined />, name: "Files", nav: "/course/files" },
   {
     key: "6",
+    icon: <FileTextOutlined />,
+    name: "HW",
+    nav: "/course/hw",
+
+  },  
+  {
+    key: "7",
     icon: <WechatOutlined />,
     name: "Messages",
     nav: "/course/messages",
   },
+
   { key: "_logout_", icon: <LogoutOutlined />, name: "Logout", nav: "/" },
 ];
 

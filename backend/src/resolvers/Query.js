@@ -47,8 +47,10 @@ const Query = {
         return file
     },
     hw: async (parent,{studentID}) => {
-        let hw = await HWModel.find({});
+        let hw = await HWModel.find().populate(['tFile', 'sFile.file'])
+        console.log("qhw"+hw)
         hw.map((h)=>(h.sFile=h.sFile.filter((f)=>f.studentID===studentID)))
+        
         return hw
     },
     chatbox: async (parent, { name, courseID, studentID }) => {
