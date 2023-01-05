@@ -87,18 +87,17 @@ const Message = ({
               }}>
               {sender.name}
             </div>
-          </div>
-        )}
-        {access ? (
-          <p>{message}</p>
-        ) : hidden ? (
-          <p>reply to access</p>
-        ) : (
-          <p>{message}</p>
-        )}
-      </StyledMessage>
+          )}
+          {access ? (
+            <p>{message}</p>
+          ) : hidden ? (
+            <p>reply to access</p>
+          ) : (
+            <p>{message}</p>
+          )}
+        </StyledMessage>
+      </>
     </Dropdown>
   );
 };
-
 export default Message;

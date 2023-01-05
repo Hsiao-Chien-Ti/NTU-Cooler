@@ -185,7 +185,7 @@ const Page = ({ current, content }) => {
               justifyItem: "center",
               overflow: "hidden",
             }}>
-            <h1 className="title">WebProgramming</h1>
+            <h1 className="title">Introduction to Computer Networks</h1>
           </div>
         </Header>
         <Outlet />
