@@ -45,49 +45,75 @@ const yoga = createYoga({
     pubsub,
   },
   // graphqlEndpoint: '/',   // uncomment this to send the app to: 4000/ otherwise: 4000/graphql
-  graphiql: {
-    subscriptionsProtocol: "WS",
-  },
-  graphqlEndpoint: "/graphql"
+  // graphiql: {
+  //   subscriptionsProtocol: "WS",
+  // },
+  // graphqlEndpoint: "/graphql"
 });
-const httpServer = createServer(yoga);
+// const httpServer = createServer(yoga);
 
-const wsServer = new WebSocketServer({
-  server: httpServer,
-  path: yoga.graphqlEndpoint,
-});
+// const wsServer = new WebSocketServer({
+//   server: httpServer,
+//   path: yoga.graphqlEndpoint,
+// });
+// const server = express();
 
-useServer(
-  {
-    execute: (args) => args.rootValue.execute(args),
-    subscribe: (args) => args.rootValue.subscribe(args),
-    onSubscribe: async (ctx, msg) => {
-      const { schema, execute, subscribe, contextFactory, parse, validate } =
-        yoga.getEnveloped({
-          ...ctx,
-          req: ctx.extra.request,
-          socket: ctx.extra.socket,
-          params: msg.payload,
-        });
+// if (process.env.NODE_ENV === 'production') {
+//   const __dirname = path.resolve();
+//   console.log(express.static(path.join(__dirname, "../frontend", "build")));
+//   server.use(express.static(path.join(__dirname, "../frontend", "build")));
+//   server.get('*', (req, res) =>
+//     res.sendFile(path.join(__dirname, '../../frontend/build/index.html')))
+// }
+// else {
+//   server.use(cors());
+// }
+const server = express();
 
-      const args = {
-        schema,
-        operationName: msg.payload.operationName,
-        document: parse(msg.payload.query),
-        variableValues: msg.payload.variables,
-        contextValue: await contextFactory(),
-        rootValue: {
-          execute,
-          subscribe,
-        },
-      };
+if (process.env.NODE_ENV === 'production') {
+  const __dirname = path.resolve();
+  console.log(express.static(path.join(__dirname, "../frontend", "build")));
+  server.use(express.static(path.join(__dirname, "../frontend", "build")));
+  server.get('*', (req, res) =>
+    res.sendFile(path.join(__dirname, '../frontend/build/index.html')))
+}
+else {
+  server.use(cors());
+}
 
-      const errors = validate(args.schema, args.document);
-      if (errors.length) return errors;
-      return args;
-    },
-  },
-  wsServer
-);
+server.use('/graphql', yoga);
 
-export default httpServer;
+// useServer(
+//   {
+//     execute: (args) => args.rootValue.execute(args),
+//     subscribe: (args) => args.rootValue.subscribe(args),
+//     onSubscribe: async (ctx, msg) => {
+//       const { schema, execute, subscribe, contextFactory, parse, validate } =
+//         yoga.getEnveloped({
+//           ...ctx,
+//           req: ctx.extra.request,
+//           socket: ctx.extra.socket,
+//           params: msg.payload,
+//         });
+
+//       const args = {
+//         schema,
+//         operationName: msg.payload.operationName,
+//         document: parse(msg.payload.query),
+//         variableValues: msg.payload.variables,
+//         contextValue: await contextFactory(),
+//         rootValue: {
+//           execute,
+//           subscribe,
+//         },
+//       };
+
+//       const errors = validate(args.schema, args.document);
+//       if (errors.length) return errors;
+//       return args;
+//     },
+//   },
+//   wsServer
+// );
+
+export default server;
