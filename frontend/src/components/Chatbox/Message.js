@@ -52,28 +52,26 @@ const Message = ({
       // danger: true,
     },
   ];
-  return (
-    <Dropdown
+  return (<>
+  <StyledMessage isMe={isMe} style={{ marginTop: "2em" }}>
+    {sender.groupNum > 0 ? (
+    <Tag
+    color = "#0A2647"
+      style={{
+        alignSelf: isMe ? "flex-end" : "flex-start",
+        border: 0,
+      }}>
+      GROUP {sender.groupNum}
+    </Tag>
+  ) : (
+    <></>
+  )}
+</StyledMessage><Dropdown
       menu={{
         items,
         onClick: handleOnClickMessage,
       }}
-      trigger={["contextMenu"]}>
-      <>
-        <StyledMessage isMe={isMe} style={{ marginTop: "3em" }}>
-          {sender.groupNum > 0 ? (
-            <Tag
-              style={{
-                alignSelf: isMe ? "flex-end" : "flex-start",
-                color: "blueviolet",
-                border: 0,
-              }}>
-              GROUP {sender.groupNum}
-            </Tag>
-          ) : (
-            <></>
-          )}
-        </StyledMessage>
+      trigger={["contextMenu"]}>        
 
         <StyledMessage isMe={isMe}>
           {isMe ? (
@@ -96,8 +94,8 @@ const Message = ({
             <p>{message}</p>
           )}
         </StyledMessage>
-      </>
-    </Dropdown>
+    </Dropdown></>
+    
   );
 };
 export default Message;
