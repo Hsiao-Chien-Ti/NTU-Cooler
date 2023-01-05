@@ -41,21 +41,10 @@ const splitLink = split(
   wsLink,
   httpLink
 );
-// const client = new ApolloClient({
-//   link: splitLink,
-//   cache: new InMemoryCache(),
-// });
-
-const { YogaLink } = require("@graphql-yoga/apollo-link");
-
 const client = new ApolloClient({
-  link: new YogaLink({
-    endpoint: process.env.NODE_ENV === 'production' 
-      ? '/graphql'
-      : 'http://localhost:4000/graphql'
-  }),
+  link: splitLink,
   cache: new InMemoryCache(),
-})
+});
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <React.StrictMode>
