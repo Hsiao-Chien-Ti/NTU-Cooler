@@ -16,6 +16,7 @@ import HWModel from "./models/hw";
 import Query from "./resolvers/Query";
 import Mutation from "./resolvers/Mutation";
 import Subscription from "./resolvers/Subscription";
+import { defaultMaxListeners } from "node:events";
 
 const pubsub = createPubSub();
 
@@ -40,9 +41,9 @@ const yoga = createYoga({
     pubsub,
   },
   // graphqlEndpoint: '/',   // uncomment this to send the app to: 4000/ otherwise: 4000/graphql
-  graphiql: {
-    subscriptionsProtocol: "WS",
-  },
+  // graphiql: {
+  //   subscriptionsProtocol: "WS",
+  // },
 });
 
 const httpServer = createServer(yoga);
@@ -84,5 +85,16 @@ useServer(
   },
   wsServer
 );
+const server = express();
 
-export default httpServer;
+if (process.env.NODE_ENV === "production") {
+  const __dirname = path.resolve();
+  console.log(express.static(path.join(__dirname, "../frontend", "build")));
+  server.use(express.static(path.join(__dirname, "../frontend", "build")));
+} else {
+  server.use(cors());
+}
+
+server.use("/graphql", yoga);
+// export default httpServer;
+export default server;

@@ -1,3 +1,6 @@
+const { buildSchema } = require("graphql");
+
+const schema = buildSchema(`
 type Query {
   info(courseID: String!): Info!
   user(name: String!, studentID: String!, passwd: String!, groupNum: Int): User!
@@ -157,4 +160,6 @@ type Subscription {
   message(to: String!, courseID: String!): Message!
   chatbox(courseID: String!): ChatBox!
   chatboxChange(name: String!, courseID: String!): ChatBox!
-}
+}`);
+
+export default schema;
