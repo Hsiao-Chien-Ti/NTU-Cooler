@@ -5,8 +5,9 @@ import Homepage from "./Homepage";
 import Syllabus from "./Syllabus";
 import Grade from "./Grade";
 import Files from "./Files";
-import ChatRoom from "./Chatbox";
+import ChatRoom from "./Chatroom";
 import HW from "./HW";
+import Quiz from "./Quiz";
 import {
   BrowserRouter as Router,
   Route,
@@ -16,6 +17,7 @@ import {
 import { createBrowserRouter } from "react-router-dom";
 import Announcement from "./Announcement";
 import Page from "../components/Pages";
+import Chatbox from "../components/Chatbox/ChatboxContent";
 const router = createBrowserRouter([
   {
     path: "/",
@@ -48,6 +50,10 @@ const router = createBrowserRouter([
       {
         path: "/course/hw",
         element: <HW />,
+      },
+      {
+        path: "/course/quizzes",
+        element: <Quiz />,
       },
       {
         path: "/course/messages",

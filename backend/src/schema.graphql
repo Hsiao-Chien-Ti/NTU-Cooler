@@ -8,6 +8,7 @@ type Query {
   file: [File]
   hw(studentID: String!): [HW]
   chatbox(name: String!, courseID: String!, studentID: String!): ChatBox!
+  quiz(name: String!, courseID: String!, studentID: String!): Quiz!
 }
 
 type Info {
@@ -30,6 +31,7 @@ type ChatInfo {
   name: String
   courseID: String
   showName: String
+  type: Boolean
 }
 type Syllabus {
   weekNum: String
@@ -55,6 +57,11 @@ type Grade {
   itemName: String!
   score: Float!
   weight: Float
+}
+type Quiz {
+  chatbox: ID!
+  groupShow: Boolean!
+  progress: String!
 }
 type SFile {
   studentID: String
@@ -132,7 +139,7 @@ type Mutation {
     name: String!
     courseID: String!
     participants: [String!]!
-    type: Boolean!
+    type: Boolean
   ): ChatBox!
   createMessage(
     senderID: String!
@@ -147,6 +154,15 @@ type Mutation {
     pinMsg: Int!
     studentID: String!
   ): ChatBox!
+  createQuiz(
+    progress: String!
+    groupShow: Boolean!
+    courseID: String!
+    students: [String!]!
+    teachers: [String]
+    name: String!
+    question: String
+  ): Quiz!
 }
 type Subscription {
   syllabus: Syllabus!

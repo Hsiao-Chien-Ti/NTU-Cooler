@@ -5,10 +5,11 @@ import {
   FileOutlined,
   ScheduleOutlined,
   NotificationOutlined,
-  WechatOutlined,
+  CommentOutlined,
   SolutionOutlined,
   LogoutOutlined,
-  FileTextOutlined
+  FileTextOutlined,
+  FormOutlined,
 } from "@ant-design/icons";
 import { Layout, Menu, theme, FloatButton } from "antd";
 import {
@@ -25,6 +26,7 @@ import { useNavigate } from "react-router-dom";
 import TeacherButton from "../containers/TeacherButton";
 import Sider from "antd/es/layout/Sider";
 import { Header } from "antd/es/layout/layout";
+import { useChat } from "../containers/hooks/useChat";
 const AllPages = [
   {
     key: "1",
@@ -49,13 +51,18 @@ const AllPages = [
     icon: <FileTextOutlined />,
     name: "HW",
     nav: "/course/hw",
-
   },   
   { key: "5", icon: <SolutionOutlined />, name: "Grade", nav: "/course/grade" },
   { key: "6", icon: <FileOutlined />, name: "Files", nav: "/course/files" },
   {
     key: "7",
-    icon: <WechatOutlined />,
+    icon: <FormOutlined />,
+    name: "Quizzes",
+    nav: "/course/quizzes",
+  },
+  {
+    key: "8",
+    icon: <CommentOutlined />,
     name: "Messages",
     nav: "/course/messages",
   },
@@ -65,6 +72,7 @@ const AllPages = [
 
 const Page = ({ current, content }) => {
   const { logout, user } = useAll();
+  const { setIsQuiz } = useChat();
   const navigate = useNavigate();
   useEffect(() => {
     if (!user.login) navigate("/");
@@ -81,10 +89,17 @@ const Page = ({ current, content }) => {
           theme="dark"
           mode="inline"
           defaultSelectedKeys={[current]}
-          onClick={logout}
-        >
+          onClick={logout}>
           {AllPages.map((page) => (
-            <Menu.Item key={page.key}>
+            <Menu.Item
+              key={page.key}
+              onClick={(e) => {
+                if (e.key === "7") {
+                  setIsQuiz(true);
+                } else if (e.key === "8") {
+                  setIsQuiz(false);
+                }
+              }}>
               {page.icon}
               <span>{page.name}</span>
               <Link to={page.nav} />

@@ -7,6 +7,7 @@ import ChatBoxModel from "../models/chatbox";
 import InfoModel from "../models/info";
 import HWModel from "../models/hw";
 import bcrypt from "bcrypt";
+import QuizModel from "../models/quiz";
 const Mutation = {
   createSyllabus: async (parent, { weekNum, outline }, { pubsub }) => {
     let syllabus = await SyllabusModel.findOne({ weekNum: weekNum });
@@ -163,7 +164,7 @@ const Mutation = {
   },
   createHW: async (parent, { title, deadline, description }, { pubsub }) => {
     let hw = await HWModel.findOne({ title: title });
-
+    console.log(hw);
     if (hw) {
       await HWModel.updateOne(
         { title: title },
@@ -289,34 +290,41 @@ const Mutation = {
     { name, courseID, participants, type },
     { pubsub }
   ) => {
-    console.log(name, participants, type);
-    let notAccess = type ? participants : [];
-    participants?.forEach(async (person) => {
-      const p = await UserModel.findOne({ studentID: person });
-      //console.log(p);
-      if (p.isTeacher && type)
-        notAccess = notAccess.filter((pp) => pp !== p.studentID);
-      let showName =
-        participants.length > 2
-          ? name
-          : participants.filter((pp) => pp !== person)[0];
-      console.log(showName, name, person);
-      p.chatbox.push({ name, courseID, showName });
-      console.log(p.chatbox);
-      await p.save();
-    });
-    const box = await new ChatBoxModel({
-      name,
-      courseID,
-      participants,
-      messages: [],
-      notAccess,
-      type,
-      pinMsg: -1,
-    }).save();
-    pubsub.publish(`new chatbox in class ${courseID}`, { chatbox: box });
+    const findBox = await ChatBoxModel.findOne({ name, courseID, type });
+    if (findBox) {
+      throw new Error(
+        `Box with name ${name} in class ${courseID} of type ${type} alreay exists!`
+      );
+    } else {
+      let notAccess = type ? participants : [];
+      participants?.forEach(async (person) => {
+        const p = await UserModel.findOne({ studentID: person });
+        //console.log(p);
+        if (p.isTeacher && type)
+          notAccess = notAccess.filter((pp) => pp !== p.studentID);
+        let showName =
+          participants.length > 2
+            ? name
+            : participants.filter((pp) => pp !== person)[0];
+        console.log(showName, name, person);
+        p.chatbox.push({ name, courseID, showName, type });
+        console.log(p.chatbox);
+        await p.save();
+      });
+      const box = await new ChatBoxModel({
+        name,
+        courseID,
+        participants,
+        messages: [],
+        notAccess,
+        type,
+        pinMsg: -1,
+      }).save();
+      pubsub.publish(`new chatbox in class ${courseID}`, { chatbox: box });
 
-    return box;
+      return box;
+    }
+    
   },
   createMessage: async (
     parent,
@@ -359,9 +367,53 @@ const Mutation = {
       pubsub.subscribe(`chatBox ${name} in class ${courseID} be modified`, {
         chatbox: box,
       });
-          return box;
+      return box;
     } catch (e) {
       throw new Error("change pin error", e);
+    }
+  },
+  createQuiz: async (
+    parent,
+    { progress, groupShow, courseID, students, teachers, name, question },
+    { pubsub }
+  ) => {
+    let box = await ChatBoxModel.findOne({name, courseID, type: true})
+    if(box){
+      throw new Error(`quiz ${name} existed in class ${courseID}`)
+    }else{
+      const participants = [...students, ...teachers];
+      box = await new ChatBoxModel({
+        name,
+        courseID,
+        participants,
+        messages: [],
+        notAccess: students,
+        type: true,
+        pinMsg: progress === "open" ? 0 : -1,
+      }).save();
+      participants?.forEach(async (person) => {
+        const p = await UserModel.findOne({ studentID: person });
+        p.chatbox.push({ name, courseID, showName: name, type: true });
+        await p.save();
+      });
+      if (question) {
+        box.messages.push({
+          sender: { studentID: "QUESTION", name: "Q:" },
+          body: question,
+          groupnum: 0,
+          hidden: false,
+        });
+      }
+      await box.save();
+      const quiz = await new QuizModel({
+        chatbox: box._id,
+        groupShow,
+        progress,
+      }).save();
+      // pubsub.subscribe(`new quiz ${name} in class ${courseID} been created`, {
+
+      // },
+      return quiz;
     }
 
   },

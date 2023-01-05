@@ -7,41 +7,55 @@ import {
   CHATBOX_OF_USER_QUERY,
   CHATBOXLIST_SUBSCRIPTION,
   PINMSG_MUTATION,
+  QUIZ_QUERY,
+  CREATE_QUIZ_MUTAION,
 } from "../../graphql";
 import { useState, useEffect, useContext, createContext } from "react";
 import { useAll } from "./useAll";
 
 const ChatContext = createContext({
   currentChat: "",
+  currentQuiz: "",
   messages: [],
   chatBoxes: [],
   chatBoxLoading: false,
   pinMsg: 0,
   access: false,
+  isQuiz: false,
   setPinMsg: () => {},
   setCurrentChat: () => {},
-  setMessages: () => {},
+  setCurrentQuiz: () => {},
   setChatBoxes: () => {},
   startChat: () => {},
   sendMessage: () => {},
   queryChat: () => {},
   queryChatBox: () => {},
   changePin: () => {},
+  setIsQuiz: () => {},
+  createQuiz: () => {},
+  allBox: [],
+  setAllBox: () => {},
+  allQuiz: [],
+  setAllQuiz: () => {},
 });
 const ChatProvider = (props) => {
   const { user, courseID } = useAll();
   const [currentChat, setCurrentChat] = useState("");
+  const [currentQuiz, setCurrentQuiz] = useState("");
+  const [allBox, setAllBox] = useState([]);
+  const [allQuiz, setAllQuiz] = useState([]);
   const [messages, setMessages] = useState([]);
   const [allRooms, setAllRooms] = useState([]);
   const [chatBoxes, setChatBoxes] = useState([]);
   const [pinMsg, setPinMsg] = useState(0);
   const [access, setAccess] = useState(false);
+  const [isQuiz, setIsQuiz] = useState(false);
   const [startChat] = useMutation(CREATE_CHATBOX_MUTATION);
   const [sendMessage, { error: errorSendMsg }] = useMutation(
     CREATE_MESSAGE_MUTATION
   );
   const [changePin] = useMutation(PINMSG_MUTATION);
-
+  const [createQuiz] = useMutation(CREATE_QUIZ_MUTAION);
   const [
     queryChatBox,
     {
@@ -55,6 +69,7 @@ const ChatProvider = (props) => {
       studentID: user.studentID,
       courseID,
     },
+    fetchPolicy: "network-only",
   });
 
   const [
@@ -64,16 +79,27 @@ const ChatProvider = (props) => {
       loading: chatBoxLoading,
       subscribeToMore: subscribeNewMessage,
       error,
-      refetch,
+      refetch: refetchChatBox,
     },
   ] = useLazyQuery(CHATBOX_QUERY, {
     variables: {
-      name: currentChat,
+      name: isQuiz ? currentQuiz : currentChat,
       courseID,
       studentID: user.studentID,
     },
     fetchPolicy: "network-only",
   });
+
+  const [queryQuiz, { data: quizData, loading: quizLoading }] = useLazyQuery(
+    QUIZ_QUERY,
+    {
+      variables: {
+        name: currentQuiz,
+        studentID: user.studentID,
+        courseID,
+      },
+    }
+  );
   useEffect(() => {
     console.log("error sending msg: ", errorSendMsg);
   }, [errorSendMsg]);
@@ -83,14 +109,14 @@ const ChatProvider = (props) => {
 
   useEffect(() => {
     if (error) {
+      console.log("query chatbox error", error);
       throw new Error("Query_chatBoxData_error:", error);
     }
     if (!chatBoxLoading) {
-      // console.log("Query_chatBoxData:", chatBoxData);
+      console.log("Query_chatBoxData:", chatBoxData);
       if (chatBoxData) {
         setMessages(chatBoxData.chatbox.messages);
         setPinMsg(chatBoxData.chatbox.pinMsg);
-        console.log(user.studentID, chatBoxData.chatbox);
         if (chatBoxData.chatbox.notAccess.includes(user.studentID)) {
           setAccess(false);
           console.log("not accessible!");
@@ -101,34 +127,31 @@ const ChatProvider = (props) => {
         console.log("set pinmsg:", chatBoxData.chatbox.pinMsg);
       }
     }
-  }, [chatBoxData]);
+  }, [chatBoxData, chatBoxLoading, isQuiz]);
 
   useEffect(() => {
-    if (currentChat) {
-      if (!allRooms.includes(currentChat)) {
-        console.log("pin before refetch:", pinMsg, "in ", currentChat);
-
+    const current = isQuiz ? currentQuiz : currentChat;
+    if (current && user.studentID) {
+      if (!allRooms.includes(current)) {
         try {
-          setAllRooms([...allRooms, currentChat]);
-          // console.log("TEST");
+          setAllRooms([...allRooms, current]);
+          console.log("Add AllRoom: ", current);
           subscribeNewMessage({
             document: MESSAGE_SUBSCRIPTION,
-            variables: { to: currentChat, courseID: courseID },
+            variables: { to: current, courseID: courseID },
             updateQuery: (prev, { subscriptionData }) => {
               if (!subscriptionData.data) {
-                // console.log("no data");
                 return prev;
               }
-              // console.log(subscriptionData);
-              refetch({
-                name: currentChat,
+              refetchChatBox({
+                name: current,
                 courseID,
                 studentID: user.studentID,
               });
               const newMessage = subscriptionData.data.message;
               return {
                 chatbox: {
-                  name: currentChat,
+                  name: current,
                   messages: [...prev.chatbox.messages, newMessage],
                   type: prev.chatbox.type,
                   courseID: courseID,
@@ -145,15 +168,11 @@ const ChatProvider = (props) => {
         }
       }
     }
-  }, [subscribeNewMessage, currentChat]);
+  }, [subscribeNewMessage, currentChat, currentQuiz]);
 
   useEffect(() => {
-    // if (currentChat) {
-    //   if (!allRooms.includes(currentChat)) {
-    //     console.log("pin before refetch:", pinMsg);
-    if (user.login)
+    if (user.studentID) {
       try {
-        // setAllRooms([...allRooms, currentChat]);
         subscribeChatBoxList({
           document: CHATBOXLIST_SUBSCRIPTION,
           variables: { courseID },
@@ -161,6 +180,7 @@ const ChatProvider = (props) => {
             if (!subscriptionData.data) {
               return prev;
             }
+            console.log("CHATBOXLIST_UPDATED");
             refetchChatBoxList({
               studentID: user.studentID,
               courseID,
@@ -172,28 +192,76 @@ const ChatProvider = (props) => {
       } catch (e) {
         throw new Error("subscribe error: " + e);
       }
-  }, [subscribeChatBoxList,user.login]);
+    }
+  }, [subscribeChatBoxList, user]);
 
   useEffect(() => {
     if (!listLoading) {
       // console.log("Query_listOfChatboxes:", listOfChatboxes);
       let newChatBoxes = [];
+      let newQuizBoxes = [];
       // console.log(listOfChatboxes);
+      let newChat = "";
+      let newQuiz = "";
       if (listOfChatboxes) {
         listOfChatboxes.userChatbox.forEach((room) => {
-          newChatBoxes.push({
-            key: room.name,
-            label: room.showName,
-            chat: [],
-          });
-          // console.log(newChatBoxes);
+          if (room.type) {
+            newQuizBoxes.push({
+              key: room.name,
+              label: room.showName,
+              quiz: "true",
+              chat: <p style={{ color: "#ccc" }}>No messages...</p>,
+            });
+            console.log("INSERT NEW CHATBOXES", newQuizBoxes);
+            if (newQuiz === "") {
+              newQuiz = room.name;
+            }
+          } else {
+            newChatBoxes.push({
+              key: room.name,
+              label: room.showName,
+              quiz: "false",
+              chat: <p style={{ color: "#ccc" }}>No messages...</p>,
+            });
+            console.log("INSERT NEW CHATBOXES", newChatBoxes);
+            if (newChat === "") {
+              newChat = room.name;
+            }
+          }
         });
-        setChatBoxes(newChatBoxes);
-        if (currentChat === "")
-          setCurrentChat(listOfChatboxes.userChatbox[0].name);
+        setAllBox(newChatBoxes);
+        setAllQuiz(newQuizBoxes);
+        if (currentChat === "") setCurrentChat(newChat);
+        if (currentQuiz === "") setCurrentQuiz(newQuiz);
       }
     }
-  }, [listOfChatboxes]);
+  }, [listOfChatboxes, user]);
+
+  useEffect(() => {
+    const current = isQuiz ? currentQuiz : currentChat;
+    if (current && user.studentID) {
+      console.log("Change & Query! Current: ", current);
+      queryChat({
+        variables: {
+          name: current,
+          courseID,
+          studentID: user.studentID,
+        },
+      });
+    } else {
+      setPinMsg(-1);
+    }
+  }, [isQuiz, user, courseID, currentChat, currentQuiz]);
+
+  useEffect(() => {
+    if (user.studentID)
+      queryChatBox({
+        variables: {
+          courseID,
+          studentID: user.studentID,
+        },
+      });
+  }, [user, courseID, isQuiz]);
 
   return (
     <ChatContext.Provider
@@ -201,20 +269,28 @@ const ChatProvider = (props) => {
         //status,
         chatBoxLoading,
         currentChat,
+        currentQuiz,
         messages,
-        chatBoxes,
+        setAllQuiz,
         chatBoxLoading,
         pinMsg,
         access,
         setPinMsg,
         setCurrentChat,
-        setMessages,
+        setCurrentQuiz,
         setChatBoxes,
         startChat,
         sendMessage,
         queryChat,
         queryChatBox,
         changePin,
+        setIsQuiz,
+        createQuiz,
+        allBox,
+        allQuiz,
+        setAllBox,
+        setAllQuiz,
+        isQuiz,
       }}
       {...props}
     />
