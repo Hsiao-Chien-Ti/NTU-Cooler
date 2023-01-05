@@ -25,14 +25,14 @@ const { YogaLink } = require("@graphql-yoga/apollo-link");
 //   cache: new InMemoryCache(),
 // })
 const httpLink = new HttpLink({
-  uri:   process.env.NODE_ENV !== "production"
+  uri:   process.env.NODE_ENV === "production"
   ? "https://ntu-cooler-production-99b5.up.railway.app/graphql"
   : "http://localhost:4000/graphql"
 ,
 });
 const wsLink = new GraphQLWsLink(
   createClient({
-    url:   process.env.NODE_ENV !== "production"
+    url:   process.env.NODE_ENV === "production"
     ? window.location.origin.replace("http", "ws")
     : "ws://localhost:4000/graphql",
     options: {
