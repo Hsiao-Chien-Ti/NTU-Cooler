@@ -27,6 +27,7 @@ import TeacherButton from "../containers/TeacherButton";
 import Sider from "antd/es/layout/Sider";
 import { Header } from "antd/es/layout/layout";
 import { useChat } from "../containers/hooks/useChat";
+import logo from "./logo.png";
 import "./Pages.css";
 const AllPages = [
   {
@@ -101,7 +102,7 @@ const Page = ({ current, content }) => {
           padding: 0,
         }}
         className="sider">
-        <div style={{ height: "3.5em" }}></div>
+        <div style={{ height: "2em" }}></div>
         <div
           style={{
             fontFamily: "Arial",
@@ -113,10 +114,11 @@ const Page = ({ current, content }) => {
             alignItems: "center",
             justifyItems: "center",
           }}>
-          Web
+          <img src={logo} style={{ height: "4em" }} alt="WEB"></img>
         </div>
         <div
           style={{
+            marginTop: "2em",
             width: "3.5em",
             height: "3em",
             display: "flex",
