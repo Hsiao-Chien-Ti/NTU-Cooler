@@ -87,16 +87,16 @@ const Message = ({
               }}>
               {sender.name}
             </div>
-          )}
-          {access ? (
-            <p>{message}</p>
-          ) : hidden ? (
-            <p>reply to access</p>
-          ) : (
-            <p>{message}</p>
-          )}
-        </StyledMessage>
-      </>
+          </div>
+        )}
+        {access ? (
+          <p>{message}</p>
+        ) : hidden ? (
+          <p>reply to access</p>
+        ) : (
+          <p>{message}</p>
+        )}
+      </StyledMessage>
     </Dropdown>
   );
 };

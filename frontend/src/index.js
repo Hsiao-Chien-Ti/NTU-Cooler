@@ -14,13 +14,27 @@ import { AllProvider } from "./containers/hooks/useAll";
 import App from "./containers/App";
 import reportWebVitals from "./reportWebVitals";
 import { ChatProvider } from "./containers/hooks/useChat";
-import { QuizProvider } from "./containers/hooks/useQuiz";
+const { YogaLink } = require("@graphql-yoga/apollo-link");
+
+// const client = new ApolloClient({
+//   link: new YogaLink({
+//     endpoint: process.env.NODE_ENV === 'production' 
+//       ? '/graphql'
+//       : 'http://localhost:4000/graphql'
+//   }),
+//   cache: new InMemoryCache(),
+// })
 const httpLink = new HttpLink({
-  uri: "http://localhost:4000/graphql",
+  uri:   process.env.NODE_ENV === "production"
+  ? "https://ntu-cooler-production-99b5.up.railway.app/graphql"
+  : "http://localhost:4000/graphql"
+,
 });
 const wsLink = new GraphQLWsLink(
   createClient({
-    url: "ws://localhost:4000/graphql",
+    url:   process.env.NODE_ENV === "production"
+    ? window.location.origin.replace("http", "ws")
+    : "ws://localhost:4000/graphql",
     options: {
       lazy: true,
     },
@@ -41,15 +55,15 @@ const client = new ApolloClient({
   link: splitLink,
   cache: new InMemoryCache(),
 });
-const root = ReactDOM.createRoot(document.getElementById("root"));
-root.render(
+
+ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
-    <ApolloProvider client={client}>
+    <ApolloProvider
+      client={client}
+      style={{ margin: 0, backgroundImage: "./imgs/Backround.png" }}>
       <AllProvider>
         <ChatProvider>
-          <QuizProvider>
-            <App />
-          </QuizProvider>
+          <App className="body" />
         </ChatProvider>
       </AllProvider>
     </ApolloProvider>

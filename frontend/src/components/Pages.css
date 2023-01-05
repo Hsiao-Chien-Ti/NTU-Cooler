@@ -1,0 +1,38 @@
+
+.Page{
+    height: 50em;
+    margin: 0;
+    border: 0;
+    padding: 0;
+    font-family: "Times New Roman", Times, serif;
+    color: rgb(112, 163, 202)
+}
+
+.logo{
+    height: 8em;
+    margin: 0;
+    border: 0;
+    padding: 0;
+    /* background-image: url("../imgs/logo.png"); */
+}
+
+.menuItem:focus{
+    background-color: #ffe38e
+}
+
+.title{
+    align-self: center;
+    justify-self: center;
+    font-size: 3em;
+    color: white;
+    border: 0;
+    padding: 0;
+}
+
+.table-row-light {
+    background-color:#ffe38e;
+    color: #3e3b44;
+}
+.table-row-dark {
+    background-color: #fbfbfb;
+}

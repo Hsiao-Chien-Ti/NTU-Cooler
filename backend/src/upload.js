@@ -6,7 +6,7 @@ import AnnouncementModel from "./models/announcement";
 import FileModel from "./models/file";
 import GradeModel from "./models/grade";
 import HWModel from "./models/hw";
-import bcrypt from 'bcrypt'
+import bcrypt from "bcrypt";
 import QuizModel from "./models/quiz";
 
 const testUser = [
@@ -19,6 +19,14 @@ const testUser = [
     passwd: bcrypt.hashSync("t", 14),
     groupNum: 0,
     isTeacher: true,
+  },
+  {
+    name: "Adi",
+    studentID: "b09901008",
+    chatbox: [],
+    passwd: bcrypt.hashSync("t", 14),
+    groupNum: 7,
+    isTeacher: false,
   },
   {
     name: "KKK",
@@ -147,6 +155,7 @@ const testInfo = [
       { name: "q", studentID: "q", isTeacher: false },
       { name: "yzl", studentID: "b09901042", isTeacher: false },
       { name: "t", studentID: "t", isTeacher: true },
+      { name: "Adi", studentID: "b09901008", isTeacher: false },
     ],
     name: "ICN",
     courseID: "EE1234",
@@ -181,22 +190,34 @@ const testFile = [
     studentID: "",
   },
   {
-    type: "HW",
-    info: "1",
+    type: "tHW",
+    info: "hw1",
     fileName: "Leetcode",
     fileLink: "https://leetcode.com/problemset/all/",
     linkType: false,
     studentID: "",
   },
 ];
+const testHW = [
+  {
+    title: "hw1",
+    deadline: "2023-01-06 01:01",
+    description: "This is your first homework",
+  },
+  {
+    title: "hw2",
+    deadline: "2023-01-07 01:01",
+    description: "This is your second homework",
+  },
+];
 const testAnnouncement = [
   {
-    time: "2023-1-1 0:0:0",
+    time: "2023-01-01 01:01",
     title: "Happy new year",
     content: "Firework!!!!!",
   },
   {
-    time: "2023-1-2 10:22:52",
+    time: "2023-01-05 01:01",
     title: "Good Morning",
     content: "I am hungry",
   },
@@ -235,7 +256,16 @@ const dataInit = async () => {
   await SyllabusModel.insertMany(testSyllabus);
   await FileModel.deleteMany({});
   await FileModel.insertMany(testFile);
-
+  const quitChat = await ChatBoxModel.findOne({ name: "quiz 1" });
+  testQuiz[0][`chatbox`] = quitChat._id;
+  await QuizModel.deleteMany({});
+  await QuizModel.insertMany(testQuiz);
+  await AnnouncementModel.deleteMany({});
+  await AnnouncementModel.insertMany(testAnnouncement);
+  await GradeModel.deleteMany({});
+  await GradeModel.insertMany(testGrade);
+  await HWModel.deleteMany({});
+  await HWModel.insertMany(testHW);
   const files = await FileModel.find({});
   const asyncRes = await Promise.all(
     files.map(async (f) => {
@@ -244,18 +274,13 @@ const dataInit = async () => {
         syllabus.file.push(f._id);
         await syllabus.save();
       }
+      if (f.type === "tHW") {
+        const tHW = await HWModel.findOne({ title: f.info });
+        tHW.tFile.push(f._id);
+        await tHW.save();
+      }
     })
   );
-
-  const quitChat = await ChatBoxModel.findOne({ name: "quiz 1" });
-  testQuiz[0][`chatbox`] = quitChat._id;
-  await AnnouncementModel.deleteMany({});
-  await AnnouncementModel.insertMany(testAnnouncement);
-  await GradeModel.deleteMany({});
-  await GradeModel.insertMany(testGrade);
-  await HWModel.deleteMany({});
-  await QuizModel.deleteMany({});
-  await QuizModel.insertMany(testQuiz);
 
   console.log("Database initialized!");
 };

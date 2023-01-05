@@ -32,14 +32,14 @@ const Files = () => {
   return (
     <Content
       style={{
-        margin: "24px 16px",
         padding: 24,
         minHeight: 280,
-        background: colorBgContainer,
-      }}
-    >
+        overflow: "auto",
+      }}>
       {!fileLoading ? (
-        <FileContent rawdata={fileData.file}></FileContent>
+        <FileContent
+          rawdata={fileData.file}
+          isTeacher={user.isTeacher}></FileContent>
       ) : (
         <p>loading</p>
       )}
