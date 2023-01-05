@@ -17,14 +17,14 @@ import { ChatProvider } from "./containers/hooks/useChat";
 import { QuizProvider } from "./containers/hooks/useQuiz";
 const httpLink = new HttpLink({
   uri:   process.env.NODE_ENV === "production"
-  ? "/graphql"
+  ? "https://ntu-cooler-production-99b5.up.railway.app/graphql"
   : "http://localhost:4000/graphql"
 ,
 });
 const wsLink = new GraphQLWsLink(
   createClient({
     url:   process.env.NODE_ENV === "production"
-    ? "/graphql"
+    ? "wss://ntu-cooler-production-99b5.up.railway.app/graphql"
     : "ws://localhost:4000/graphql",
     options: {
       lazy: true,
