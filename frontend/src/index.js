@@ -24,7 +24,7 @@ const httpLink = new HttpLink({
 const wsLink = new GraphQLWsLink(
   createClient({
     url:   process.env.NODE_ENV === "production"
-    ? `wss://ntu-cooler.onrender.com/graphql`
+    ? "wss://ntu-cooler.onrender.com/graphql"
     : "ws://localhost:4000/graphql",
     options: {
       lazy: true,
