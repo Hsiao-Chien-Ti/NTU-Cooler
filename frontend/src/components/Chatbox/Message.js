@@ -60,16 +60,20 @@ const Message = ({
       }}
       trigger={["contextMenu"]}>
       <>
-        {sender.groupNum > 0 ? (
-          <Tag
-            style={{
-              flexDirection: isMe ? "row-reverse" : "row",
-            }}>
-            GROUP {sender.groupNum}
-          </Tag>
-        ) : (
-          <></>
-        )}
+        <StyledMessage isMe={isMe} style={{ marginTop: "3em" }}>
+          {sender.groupNum > 0 ? (
+            <Tag
+              style={{
+                alignSelf: isMe ? "flex-end" : "flex-start",
+                color: "blueviolet",
+                border: 0,
+              }}>
+              GROUP {sender.groupNum}
+            </Tag>
+          ) : (
+            <></>
+          )}
+        </StyledMessage>
 
         <StyledMessage isMe={isMe}>
           {isMe ? (
