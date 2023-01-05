@@ -5,8 +5,7 @@ const StyledMessage = styled.div`
   display: flex;
   align-items: center;
   flex-direction: ${({ isMe }) => (isMe ? "row-reverse" : "row")};
-  margin: 8px 10px;
-
+  margin: 15px 10px;
   & p:first-child {
     margin: 0 5px;
   }
@@ -20,12 +19,12 @@ const StyledMessage = styled.div`
   }
 `;
 
-  // {
-  //   label: "4rd menu item",
-  //   key: "4",
-  //   danger: true,
-  //   disabled: true,
-  // },
+// {
+//   label: "4rd menu item",
+//   key: "4",
+//   danger: true,
+//   disabled: true,
+// },
 
 const Message = ({
   isMe,
@@ -34,11 +33,11 @@ const Message = ({
   access,
   hidden,
   handleOnClickMessage,
-  isPin
+  isPin,
 }) => {
   const items = [
     {
-      label: isPin? "unpin message" : "pin message",
+      label: isPin ? "unpin message" : "pin message",
       key: "1",
     },
     {
@@ -51,7 +50,8 @@ const Message = ({
       key: "3",
       disabled: true,
       // danger: true,
-    }];
+    },
+  ];
   return (
     <Dropdown
       menu={{
@@ -59,16 +59,40 @@ const Message = ({
         onClick: handleOnClickMessage,
       }}
       trigger={["contextMenu"]}>
-      <StyledMessage isMe={isMe}>
-        <p style={{ color: "#9DC2F5", width: "45px" }}>{sender.name}</p>
-        {access ? (
-          <p>{message}</p>
-        ) : hidden ? (
-          <p>reply to access</p>
+      <>
+        {sender.groupNum > 0 ? (
+          <Tag
+            style={{
+              flexDirection: isMe ? "row-reverse" : "row",
+            }}>
+            GROUP {sender.groupNum}
+          </Tag>
         ) : (
-          <p>{message}</p>
+          <></>
         )}
-      </StyledMessage>
+
+        <StyledMessage isMe={isMe}>
+          {isMe ? (
+            ""
+          ) : (
+            <div
+              style={{
+                color: "#9DC2F5",
+                width: "45px",
+                alignContent: "center",
+              }}>
+              {sender.name}
+            </div>
+          )}
+          {access ? (
+            <p>{message}</p>
+          ) : hidden ? (
+            <p>reply to access</p>
+          ) : (
+            <p>{message}</p>
+          )}
+        </StyledMessage>
+      </>
     </Dropdown>
   );
 };

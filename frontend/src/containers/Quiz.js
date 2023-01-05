@@ -29,6 +29,10 @@ const Quiz = () => {
     setAllQuiz,
     setCurrentQuiz,
     changePin,
+    quiz,
+    setQuiz,
+    groupShow,
+    setGroupShow,
   } = useChat();
 
   const { setStatus, attendants, user, courseID } = useAll();
@@ -328,6 +332,7 @@ const Quiz = () => {
                           to: currentQuiz,
                           body: msg,
                           courseID,
+                          groupNum: groupShow ? user.groupNum : -1,
                         },
                       });
                       setBody("");

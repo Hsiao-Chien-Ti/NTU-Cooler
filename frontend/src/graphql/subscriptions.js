@@ -73,10 +73,10 @@ export const MESSAGE_SUBSCRIPTION = gql`
       sender {
         name
         studentID
+        groupNum
       }
       body
       hidden
-      groupNum
     }
   }
 `;
