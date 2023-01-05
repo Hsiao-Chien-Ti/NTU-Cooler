@@ -59,40 +59,50 @@ const Message = ({
         onClick: handleOnClickMessage,
       }}
       trigger={["contextMenu"]}>
-      <>
-        {sender.groupNum > 0 ? (
-          <Tag
-            style={{
-              flexDirection: isMe ? "row-reverse" : "row",
-            }}>
-            GROUP {sender.groupNum}
-          </Tag>
+      <StyledMessage isMe={isMe}>
+        {isMe ? (
+          <>
+            {sender.groupNum > 0 ? (
+              <Tag
+                tagtyle={{
+                  flexDirection: isMe ? "row-reverse" : "row",
+                }}>
+                GROUP {sender.groupNum}
+              </Tag>
+            ) : (
+              <></>
+            )}
+          </>
         ) : (
-          <></>
-        )}
-
-        <StyledMessage isMe={isMe}>
-          {isMe ? (
-            ""
-          ) : (
-            <div
-              style={{
-                color: "#9DC2F5",
-                width: "45px",
-                alignContent: "center",
-              }}>
+          <div
+            style={{
+              color: "#9DC2F5",
+              width: "45px",
+              alignContent: "center",
+            }}>
+            <div style={{ flexDirection: "colum" }}>
+              {sender.groupNum > 0 ? (
+                <Tag
+                  tagtyle={{
+                    flexDirection: isMe ? "row-reverse" : "row",
+                  }}>
+                  GROUP {sender.groupNum}
+                </Tag>
+              ) : (
+                <></>
+              )}
               {sender.name}
             </div>
-          )}
-          {access ? (
-            <p>{message}</p>
-          ) : hidden ? (
-            <p>reply to access</p>
-          ) : (
-            <p>{message}</p>
-          )}
-        </StyledMessage>
-      </>
+          </div>
+        )}
+        {access ? (
+          <p>{message}</p>
+        ) : hidden ? (
+          <p>reply to access</p>
+        ) : (
+          <p>{message}</p>
+        )}
+      </StyledMessage>
     </Dropdown>
   );
 };

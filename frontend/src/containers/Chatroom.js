@@ -283,6 +283,7 @@ const ChatRoom = () => {
                     onChange={(e) => {
                       setBody(e.target.value);
                     }}
+                    disabled={currentChat ? false : true}
                     onSearch={(msg) => {
                       if (!msg) {
                         setStatus({

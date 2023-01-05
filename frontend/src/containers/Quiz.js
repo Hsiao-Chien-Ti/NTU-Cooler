@@ -317,6 +317,7 @@ const Quiz = () => {
                     onChange={(e) => {
                       setBody(e.target.value);
                     }}
+                    disabled={currentQuiz ? false : true}
                     onSearch={(msg) => {
                       if (!msg) {
                         setStatus({

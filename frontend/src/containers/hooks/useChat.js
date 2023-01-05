@@ -187,6 +187,13 @@ const ChatProvider = (props) => {
               studentID: user.studentID,
               courseID,
             });
+            return {
+              userChatbox: {
+                studentID: user.studentID,
+                courseID,
+                type: isQuiz,
+              },
+            };
           },
         });
         console.log("New Chat!");
@@ -237,7 +244,7 @@ const ChatProvider = (props) => {
         if (currentQuiz === "") setCurrentQuiz(newQuiz);
       }
     }
-  }, [listOfChatboxes, user]);
+  }, [listOfChatboxes, listLoading, user]);
 
   useEffect(() => {
     if (!quizLoading) {
