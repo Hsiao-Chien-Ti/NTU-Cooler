@@ -20,7 +20,11 @@ const SyllabusContent = ({ rawdata }) => {
     const data=sorted.map((item,i)=>({key:i,weekNum:item.weekNum,outline:item.outline}))
     // console.log(data)
     return (
-        <Table dataSource={data} columns={column} pagination={false} ></Table>
-    )
+      <Table
+        dataSource={data}
+        columns={column}
+        pagination={false}
+        style={{ background: "#ffe38e", color: "#3e3b44" }}></Table>
+    );
 }
 export default SyllabusContent

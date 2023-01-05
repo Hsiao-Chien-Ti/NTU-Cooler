@@ -48,10 +48,12 @@ const client = new ApolloClient({
 });
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
-    <ApolloProvider client={client}>
+    <ApolloProvider
+      client={client}
+      style={{ margin: 0, backgroundImage: "./imgs/Backround.png" }}>
       <AllProvider>
         <ChatProvider>
-          <App />
+          <App className="body" />
         </ChatProvider>
       </AllProvider>
     </ApolloProvider>

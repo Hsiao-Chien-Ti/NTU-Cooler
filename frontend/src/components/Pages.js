@@ -27,47 +27,53 @@ import TeacherButton from "../containers/TeacherButton";
 import Sider from "antd/es/layout/Sider";
 import { Header } from "antd/es/layout/layout";
 import { useChat } from "../containers/hooks/useChat";
+import "./Pages.css";
 const AllPages = [
   {
     key: "1",
     icon: <HomeOutlined />,
-    name: "Homepage",
+    name: "課程首頁",
     nav: "/course/homepage",
   },
   {
     key: "2",
     icon: <ScheduleOutlined />,
-    name: "Syllabus",
+    name: "課堂大綱",
     nav: "/course/syllabus",
   },
   {
     key: "3",
     icon: <NotificationOutlined />,
-    name: "Announcement",
+    name: "課程公告",
     nav: "/course/announcement",
   },
   {
     key: "4",
     icon: <FileTextOutlined />,
-    name: "HW",
+    name: "回家作業",
     nav: "/course/hw",
-  },   
-  { key: "5", icon: <SolutionOutlined />, name: "Grade", nav: "/course/grade" },
-  { key: "6", icon: <FileOutlined />, name: "Files", nav: "/course/files" },
+  },
+  {
+    key: "5",
+    icon: <SolutionOutlined />,
+    name: "學習成績",
+    nav: "/course/grade",
+  },
+  { key: "6", icon: <FileOutlined />, name: "資料文件", nav: "/course/files" },
   {
     key: "7",
     icon: <FormOutlined />,
-    name: "Quizzes",
+    name: "隨堂小考",
     nav: "/course/quizzes",
   },
   {
     key: "8",
     icon: <CommentOutlined />,
-    name: "Messages",
+    name: "傳送訊息",
     nav: "/course/messages",
   },
 
-  { key: "_logout_", icon: <LogoutOutlined />, name: "Logout", nav: "/" },
+  { key: "_logout_", icon: <LogoutOutlined />, name: "登出帳號", nav: "/" },
 ];
 
 const Page = ({ current, content }) => {
@@ -82,16 +88,65 @@ const Page = ({ current, content }) => {
     token: { colorBgContainer },
   } = theme.useToken();
   return (
-    <Layout>
-      <Sider trigger={null} collapsible collapsed={collapsed}>
-        <div className="logo" />
+    <Layout className="Page">
+      <Sider
+        trigger={null}
+        collapsible
+        collapsed={collapsed}
+        style={{
+          opacity: 1,
+          flexdirection: "column",
+          alignItems: "center",
+          justifyContent: "center",
+          padding: 0,
+        }}
+        className="sider">
+        <div style={{ height: "3.5em" }}></div>
+        <div
+          style={{
+            fontFamily: "Arial",
+            fontWeight: "bold",
+            color: "#a2afc9",
+            height: "3.5em",
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            justifyItems: "center",
+          }}>
+          Web
+        </div>
+        <div
+          style={{
+            width: "3.5em",
+            height: "3em",
+            display: "flex",
+            justifyItems: "center",
+            flexDirection: "column",
+            alignItems: "center",
+          }}>
+          {React.createElement(
+            collapsed ? MenuUnfoldOutlined : MenuFoldOutlined,
+            {
+              className: "trigger",
+              onClick: () => setCollapsed(!collapsed),
+              style: {
+                color: "#a2afc9",
+                fontSize: "1.5em",
+                alignSelf: "flex-end",
+              },
+            }
+          )}
+        </div>
+
         <Menu
+          className="menu"
           theme="dark"
           mode="inline"
           defaultSelectedKeys={[current]}
           onClick={logout}>
           {AllPages.map((page) => (
             <Menu.Item
+              className="menuItem"
               key={page.key}
               onClick={(e) => {
                 if (e.key === "7") {
@@ -99,6 +154,12 @@ const Page = ({ current, content }) => {
                 } else if (e.key === "8") {
                   setIsQuiz(false);
                 }
+              }}
+              style={{
+                height: "3em",
+                fontSize: "large",
+                alignItems: "flex-end",
+                justifyItems: "flex-end",
               }}>
               {page.icon}
               <span>{page.name}</span>
@@ -109,14 +170,21 @@ const Page = ({ current, content }) => {
         {user.isTeacher && <TeacherButton />}
       </Sider>
       <Layout className="site-layout">
-        <Header style={{ padding: 5, background: colorBgContainer }}>
-          {React.createElement(
-            collapsed ? MenuUnfoldOutlined : MenuFoldOutlined,
-            {
-              className: "trigger",
-              onClick: () => setCollapsed(!collapsed),
-            }
-          )}
+        <Header
+          style={{
+            backgroundColor: "rgb(112, 163, 202)",
+            height: "10em",
+          }}>
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              alignSelf: "center",
+              justifyItem: "center",
+              overflow: "hidden",
+            }}>
+            <h1 className="title">WebProgramming</h1>
+          </div>
         </Header>
         <Outlet />
       </Layout>

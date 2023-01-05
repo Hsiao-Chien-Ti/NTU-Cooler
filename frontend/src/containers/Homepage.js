@@ -20,16 +20,12 @@ const Homepage = () => {
   return (
     <Content
       style={{
-        margin: "24px 16px",
         padding: 24,
         minHeight: 280,
-        background: colorBgContainer,
-      }}
-    >
+        overflow: "auto",
+      }}>
       {!syllabusLoading ? (
-        <HomepageContent
-          rawdata={syllabusData.syllabus}
-        ></HomepageContent>
+        <HomepageContent rawdata={syllabusData.syllabus}></HomepageContent>
       ) : (
         <p>loading</p>
       )}

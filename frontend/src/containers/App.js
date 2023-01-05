@@ -18,6 +18,8 @@ import { createBrowserRouter } from "react-router-dom";
 import Announcement from "./Announcement";
 import Page from "../components/Pages";
 import Chatbox from "../components/Chatbox/ChatboxContent";
+import { useEffect } from "react";
+
 const router = createBrowserRouter([
   {
     path: "/",
@@ -64,6 +66,7 @@ const router = createBrowserRouter([
 ]);
 const App = () => {
   const { user } = useAll();
+
   return <RouterProvider router={router} />;
 };
 
