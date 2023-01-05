@@ -3,6 +3,7 @@ import { createServer } from "node:http";
 import { useServer } from "graphql-ws/lib/use/ws";
 import { WebSocketServer } from "ws";
 import * as fs from "fs";
+import express from "express";
 // models
 import UserModel from "./models/user";
 import SyllabusModel from "./models/syllabus";
