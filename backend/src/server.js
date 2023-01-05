@@ -56,6 +56,20 @@ const wsServer = new WebSocketServer({
   server: httpServer,
   path: yoga.graphqlEndpoint,
 });
+const server = express();
+
+if (process.env.NODE_ENV === 'production') {
+  const __dirname = path.resolve();
+  console.log(express.static(path.join(__dirname, "../frontend", "build")));
+  server.use(express.static(path.join(__dirname, "../frontend", "build")));
+  app.get('*', (req, res) =>
+    res.sendFile(path.join(__dirname, '../../frontend/build/index.html')))
+}
+else {
+  server.use(cors());
+}
+
+server.use('/graphql', yoga);
 
 useServer(
   {
