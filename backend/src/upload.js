@@ -261,18 +261,6 @@ const dataInit = async () => {
   await SyllabusModel.insertMany(testSyllabus);
   await FileModel.deleteMany({});
   await FileModel.insertMany(testFile);
-
-  const files = await FileModel.find({});
-  const asyncRes = await Promise.all(
-    files.map(async (f) => {
-      if (f.type === "weekNum") {
-        const syllabus = await SyllabusModel.findOne({ weekNum: f.info });
-        syllabus.file.push(f._id);
-        await syllabus.save();
-      }
-    })
-  );
-
   const quitChat = await ChatBoxModel.findOne({ name: "quiz 1" });
   testQuiz[0][`chatbox`] = quitChat._id;
   await QuizModel.deleteMany({});
