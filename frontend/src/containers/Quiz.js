@@ -19,16 +19,12 @@ const Quiz = () => {
     messages,
     isQuiz,
     currentQuiz,
-    chatBoxes,
     chatBoxLoading,
     pinMsg,
     access,
-    queryChat,
     setPinMsg,
-    setChatBoxes,
     createQuiz,
     sendMessage,
-    queryChatBox,
     allQuiz,
     setAllQuiz,
     setCurrentQuiz,
@@ -195,7 +191,6 @@ const Quiz = () => {
           element.chat = chat;
         }
       });
-      setChatBoxes(newChatBoxes);
       setAllQuiz(newChatBoxes);
       setMsgSent(true);
     }
@@ -215,7 +210,6 @@ const Quiz = () => {
           element.chat = chat;
         }
       });
-      setChatBoxes(newChatBoxes);
       setAllQuiz(newChatBoxes);
     }
   };

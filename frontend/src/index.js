@@ -14,18 +14,18 @@ import { AllProvider } from "./containers/hooks/useAll";
 import App from "./containers/App";
 import reportWebVitals from "./reportWebVitals";
 import { ChatProvider } from "./containers/hooks/useChat";
-import { QuizProvider } from "./containers/hooks/useQuiz";
 const httpLink = new HttpLink({
-  uri:   process.env.NODE_ENV === "production"
-  ? "ntu-cooler-production-99b5.up.railway.app/graphql"
-  : "http://localhost:4000/graphql"
-,
+  uri:
+    process.env.NODE_ENV === "production"
+      ? "ntu-cooler-production-99b5.up.railway.app/graphql"
+      : "http://localhost:4000/graphql",
 });
 const wsLink = new GraphQLWsLink(
   createClient({
-    url:   process.env.NODE_ENV === "production"
-    ? "ntu-cooler-production-99b5.up.railway.app/graphql"
-    : "ws://localhost:4000/graphql",
+    url:
+      process.env.NODE_ENV === "production"
+        ? "ntu-cooler-production-99b5.up.railway.app/graphql"
+        : "ws://localhost:4000/graphql",
     options: {
       lazy: true,
     },
@@ -46,14 +46,12 @@ const client = new ApolloClient({
   link: splitLink,
   cache: new InMemoryCache(),
 });
-ReactDOM.createRoot(document.getElementById('root')).render(
+ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
     <ApolloProvider client={client}>
       <AllProvider>
         <ChatProvider>
-          <QuizProvider>
-            <App />
-          </QuizProvider>
+          <App />
         </ChatProvider>
       </AllProvider>
     </ApolloProvider>

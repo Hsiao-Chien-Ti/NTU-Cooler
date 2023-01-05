@@ -17,7 +17,6 @@ const ChatContext = createContext({
   currentChat: "",
   currentQuiz: "",
   messages: [],
-  chatBoxes: [],
   chatBoxLoading: false,
   pinMsg: 0,
   access: false,
@@ -25,7 +24,6 @@ const ChatContext = createContext({
   setPinMsg: () => {},
   setCurrentChat: () => {},
   setCurrentQuiz: () => {},
-  setChatBoxes: () => {},
   startChat: () => {},
   sendMessage: () => {},
   queryChat: () => {},
@@ -46,7 +44,6 @@ const ChatProvider = (props) => {
   const [allQuiz, setAllQuiz] = useState([]);
   const [messages, setMessages] = useState([]);
   const [allRooms, setAllRooms] = useState([]);
-  const [chatBoxes, setChatBoxes] = useState([]);
   const [pinMsg, setPinMsg] = useState(0);
   const [access, setAccess] = useState(false);
   const [isQuiz, setIsQuiz] = useState(false);
@@ -101,7 +98,7 @@ const ChatProvider = (props) => {
     }
   );
   useEffect(() => {
-    console.log("error sending msg: ", errorSendMsg);
+    if (errorSendMsg) console.log("error sending msg: ", errorSendMsg);
   }, [errorSendMsg]);
   // useEffect(() => {
   //   console.log(access);
@@ -127,10 +124,11 @@ const ChatProvider = (props) => {
         console.log("set pinmsg:", chatBoxData.chatbox.pinMsg);
       }
     }
-  }, [chatBoxData, chatBoxLoading, isQuiz]);
+  }, [chatBoxData, chatBoxLoading]);
 
   useEffect(() => {
     const current = isQuiz ? currentQuiz : currentChat;
+    console.log("subscribe", current);
     if (current && user.studentID) {
       if (!allRooms.includes(current)) {
         try {
@@ -168,7 +166,7 @@ const ChatProvider = (props) => {
         }
       }
     }
-  }, [subscribeNewMessage, currentChat, currentQuiz]);
+  }, [subscribeNewMessage, currentChat, currentQuiz, isQuiz]);
 
   useEffect(() => {
     if (user.studentID) {
@@ -267,30 +265,29 @@ const ChatProvider = (props) => {
     <ChatContext.Provider
       value={{
         //status,
-        chatBoxLoading,
-        currentChat,
-        currentQuiz,
-        messages,
+        allQuiz,
         setAllQuiz,
-        chatBoxLoading,
-        pinMsg,
-        access,
-        setPinMsg,
+        allBox,
+        setAllBox,
+        isQuiz,
+        setIsQuiz,
+        currentChat,
         setCurrentChat,
+        currentQuiz,
         setCurrentQuiz,
-        setChatBoxes,
-        startChat,
+        pinMsg,
+        setPinMsg,
+        messages,
+
+        chatBoxLoading,
+        access,
         sendMessage,
         queryChat,
+        startChat,
+
         queryChatBox,
         changePin,
-        setIsQuiz,
         createQuiz,
-        allBox,
-        allQuiz,
-        setAllBox,
-        setAllQuiz,
-        isQuiz,
       }}
       {...props}
     />
