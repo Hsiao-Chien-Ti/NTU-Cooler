@@ -158,4 +158,4 @@ type Subscription {
   message(to: String!, courseID: String!): Message!
   chatbox(courseID: String!): ChatBox!
   chatboxChange(name: String!, courseID: String!): ChatBox!
-}`
+}
