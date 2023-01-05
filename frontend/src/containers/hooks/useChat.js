@@ -94,16 +94,16 @@ const ChatProvider = (props) => {
     fetchPolicy: "network-only",
   });
 
-  const [queryQuiz, { data: quizData, loading: quizLoading }] = useLazyQuery(
-    QUIZ_QUERY,
-    {
-      variables: {
-        name: currentQuiz,
-        studentID: user.studentID,
-        courseID,
-      },
-    }
-  );
+  const [
+    queryQuiz,
+    { data: quizData, loading: quizLoading, subscribeToMore: subscribeQuiz },
+  ] = useLazyQuery(QUIZ_QUERY, {
+    variables: {
+      name: currentQuiz,
+      studentID: user.studentID,
+      courseID,
+    },
+  });
   useEffect(() => {
     console.log("error sending msg: ", errorSendMsg);
   }, [errorSendMsg]);

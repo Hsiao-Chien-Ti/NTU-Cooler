@@ -13,7 +13,6 @@ const ChatBoxSchema = new Schema({
         name: { type: String },
         groupNum: { type: Number },
       },
-      groupnum: { type: Number },
       body: { type: String },
       hidden: { type: Boolean },
     },

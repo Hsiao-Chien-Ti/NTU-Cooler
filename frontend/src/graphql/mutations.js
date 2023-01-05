@@ -160,7 +160,6 @@ const CREATE_CHATBOX_MUTATION = gql`
         }
         body
         hidden
-        groupNum
       }
       type
       courseID
@@ -191,6 +190,7 @@ const CREATE_MESSAGE_MUTATION = gql`
       sender {
         name
         studentID
+        groupNum
       }
       body
       hidden

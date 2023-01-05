@@ -332,9 +332,12 @@ const Mutation = {
   ) => {
     const chatBox = await ChatBoxModel.findOne({ name: to, courseID });
     const newMsg = {
-      sender: { studentID: senderID, name: senderName },
+      sender: {
+        studentID: senderID,
+        name: senderName,
+        groupNum: groupNum ? groupNum : -1,
+      },
       body,
-      groupNum: groupNum ? groupNum : -1,
       hidden: chatBox.type,
     };
     chatBox.messages.push(newMsg);
