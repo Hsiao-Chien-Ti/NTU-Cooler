@@ -4,6 +4,7 @@ import { useServer } from "graphql-ws/lib/use/ws";
 import { WebSocketServer } from "ws";
 import * as fs from "fs";
 import express from "express";
+import path from "node:path";
 // models
 import UserModel from "./models/user";
 import SyllabusModel from "./models/syllabus";
