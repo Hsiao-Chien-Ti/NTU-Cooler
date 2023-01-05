@@ -23,12 +23,9 @@ const ChatRoom = () => {
     chatBoxLoading,
     pinMsg,
     access,
-    queryChat,
     setPinMsg,
-    setChatBoxes,
     startChat,
     sendMessage,
-    queryChatBox,
     setCurrentChat,
     changePin,
     allBox,
@@ -189,7 +186,6 @@ const ChatRoom = () => {
           element.chat = chat;
         }
       });
-      setChatBoxes(newChatBoxes);
       setAllBox(newChatBoxes);
       setMsgSent(true);
     }
