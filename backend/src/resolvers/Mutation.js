@@ -415,6 +415,7 @@ const Mutation = {
       // },
       return quiz;
     }
+
   },
 };
 export default Mutation;

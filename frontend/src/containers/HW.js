@@ -7,10 +7,10 @@ import HWContent from "../components/HWContent";
 const { Header, Sider, Content } = Layout;
 const HW = () => {
   const { hwLoading,hwData, user,createFile } = useAll();
-  const handleSubmit=(title,name,s)=>{
+  const handleSubmit=(title,s)=>{
     console.log(s)
     s.map((ss,i)=>{
-        createFile({ variables: { type: "sHW", info: title, fileName: name+i.toString(), fileLink: ss, linkType:true,studentID:user.studentID, firstFlag:i===0 } })            
+        createFile({ variables: { type: "sHW", info: title, fileName: title+"_"+user.studentID+"_"+i.toString(), fileLink: ss, linkType:true,studentID:user.studentID, firstFlag:i===0 } })            
     }
 
     )

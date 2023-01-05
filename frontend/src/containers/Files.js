@@ -39,7 +39,7 @@ const Files = () => {
       }}
     >
       {!fileLoading ? (
-        <FileContent rawdata={fileData.file}></FileContent>
+        <FileContent rawdata={fileData.file} isTeacher={user.isTeacher}></FileContent>
       ) : (
         <p>loading</p>
       )}

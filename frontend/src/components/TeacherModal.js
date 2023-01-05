@@ -1,10 +1,10 @@
-import { Modal, Form, Input, Select, InputNumber, Upload, Button } from "antd";
+import { Modal, Form, Input, Select, InputNumber, Upload, Button, DatePicker } from "antd";
 import { UploadOutlined } from '@ant-design/icons';
 import { createRef, useState } from "react";
 import * as XLSX from 'xlsx'
 const TeacherModal = ({ open, onCreate, onCancel, users }) => {
   const [form] = Form.useForm();
-  const [addType, setAddType] = useState("Announcement");
+  const [addType, setAddType] = useState("");
   const [linkType, setLinkType] = useState(false); // false for link, true for file
   const [attendants, setAttendants] = useState([]);
   const uploadRef = createRef();
@@ -53,6 +53,10 @@ const TeacherModal = ({ open, onCreate, onCancel, users }) => {
               {
                 value: "Grade",
                 label: "Grade",
+              },
+              {
+                value: "HW",
+                label: "HW",
               },
               {
                 value: "Quiz",
@@ -119,11 +123,7 @@ const TeacherModal = ({ open, onCreate, onCancel, users }) => {
                   },
                   {
                     value: "tHW",
-                    label: "teacher's HW",
-                  },
-                  {
-                    value: "sHW",
-                    label: "student's HW",
+                    label: "HW reference",
                   },
                   {
                     value: "Quiz",
@@ -138,7 +138,7 @@ const TeacherModal = ({ open, onCreate, onCancel, users }) => {
             </Form.Item>
             <Form.Item
               name="info"
-              label="Info"
+              label="Info (week number/homework name/.etc)"
               rules={[
                 {
                   required: true,
@@ -193,7 +193,7 @@ const TeacherModal = ({ open, onCreate, onCancel, users }) => {
                     message: "Error: Please enter the link of the file!",
                   },
                 ]}
-                // onChange={(value)=>uploadRef.current.setFieldsValue({upload:s})}
+              // onChange={(value)=>uploadRef.current.setFieldsValue({upload:s})}
               >
                 <Input />
               </Form.Item>
@@ -266,6 +266,27 @@ const TeacherModal = ({ open, onCreate, onCancel, users }) => {
                 }}>
                 <Button icon={<UploadOutlined />}> Click to Upload</Button>
               </Upload>
+            </Form.Item>
+          </>
+        )}
+        {addType === "HW" && (
+          <>
+            <Form.Item
+              name="title"
+              label="Title"
+              rules={[
+                {
+                  required: true,
+                  message: "Error: Please enter the title of announcement!",
+                },
+              ]}>
+              <Input />
+            </Form.Item>
+            <Form.Item name="deadline" label="Deadline">
+              <DatePicker showTime/>
+            </Form.Item>
+            <Form.Item name="description" label="Description">
+              <Input />
             </Form.Item>
           </>
         )}

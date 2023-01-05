@@ -16,11 +16,16 @@ import reportWebVitals from "./reportWebVitals";
 import { ChatProvider } from "./containers/hooks/useChat";
 import { QuizProvider } from "./containers/hooks/useQuiz";
 const httpLink = new HttpLink({
-  uri: "http://localhost:4000/graphql",
+  uri:   process.env.NODE_ENV === "production"
+  ? "https://ntu-cooler.onrender.com/graphql"
+  : "http://localhost:4000/graphql"
+,
 });
 const wsLink = new GraphQLWsLink(
   createClient({
-    url: "ws://localhost:4000/graphql",
+    url:   process.env.NODE_ENV === "production"
+    ? `wss://ntu-cooler.onrender.com/graphql`
+    : "ws://localhost:4000/graphql",
     options: {
       lazy: true,
     },
