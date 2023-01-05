@@ -201,12 +201,10 @@ const ChatRoom = () => {
   return (
     <Content
       style={{
-        margin: "24px 16px",
-        padding: 24,
-        minHeight: 280,
-        background: colorBgContainer,
+        overflow: "auto",
+        minHeight: "40em",
       }}>
-      <Layout style={{ flexDirection: "row" }}>
+      <Layout style={{ disaply: "flex", flexDirection: "row", padding: 0 }}>
         <Menu
           onClick={(e) => {
             if (e.key === "_add_") {
@@ -214,7 +212,7 @@ const ChatRoom = () => {
               console.log(user.isTeacher);
             } else handleOnChange(e.key);
           }}
-          style={{ width: 128, justifyItems: "center" }}
+          style={{ width: "10em", background: "fbf3e6" }}
           defaultSelectedKeys={[currentChat]}
           selectedKeys={[currentChat]}
           // defaultOpenKeys={[isQuiz? currentQuiz: currentChat]}
@@ -224,14 +222,13 @@ const ChatRoom = () => {
         />
         {/* </Sider> */}
         {/* <Layout className="site-layout"> */}
-        <Content style={{ margin: "16px 16px" }}>
+        <Content style={{ margin: "0px 16px" }}>
           <div
             style={{
-              maxHeight: "420px",
               flexDirection: "column",
             }}>
             {!chatBoxLoading ? (
-              <div style={{ minHeight: "90%" }}>
+              <div>
                 <ChatboxHeader
                   isPin={pinMsg !== -1}
                   msg={
@@ -239,15 +236,16 @@ const ChatRoom = () => {
                   }
                   groupName={allBox.find((b) => b.key === currentChat)?.label}
                   color={colorBgContainer}
+                  style={{ height: "8em" }}
                   handlePinOnClick={handlePinOnClick}
                 />
 
                 <div style={{ height: "16px" }}></div>
                 <div
                   style={{
-                    padding: 12,
+                    padding: 20,
                     overflow: "auto",
-                    height: "300px",
+                    height: "28em",
                     background: colorBgContainer,
                   }}>
                   {allBox.find((b) => b.key === currentChat)
@@ -283,6 +281,7 @@ const ChatRoom = () => {
                     onChange={(e) => {
                       setBody(e.target.value);
                     }}
+                    disabled={currentChat ? false : true}
                     onSearch={(msg) => {
                       if (!msg) {
                         setStatus({

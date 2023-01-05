@@ -29,12 +29,11 @@ const Syllabus = () => {
   return (
     <Content
       style={{
-        margin: "24px 16px",
         padding: 24,
         minHeight: 280,
         background: colorBgContainer,
-      }}
-    >
+        overflow: "auto",
+      }}>
       {/* {!syllabusLoading ? syllabusData.syllabus.map(({weekNum,outline,file}) =>(<SyllabusContent weekNum={weekNum} outline={outline}></SyllabusContent> )
                     ) : <p>loading</p>} */}
       {!syllabusLoading ? (

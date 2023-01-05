@@ -23,17 +23,16 @@ const HW = () => {
   return (
     <Content
       style={{
-        margin: "24px 16px",
         padding: 24,
         minHeight: 280,
-        background: colorBgContainer,
-      }}
-    >
+        overflow: "auto",
+      }}>
       {!hwLoading ? (
-        hwData!==undefined&&<HWContent
-          rawdata={hwData.hw}
-          handleSubmit={handleSubmit}
-        ></HWContent>
+        hwData !== undefined && (
+          <HWContent
+            rawdata={hwData.hw}
+            handleSubmit={handleSubmit}></HWContent>
+        )
       ) : (
         <p>loading</p>
       )}

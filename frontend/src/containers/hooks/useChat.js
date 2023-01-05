@@ -35,6 +35,8 @@ const ChatContext = createContext({
   setAllBox: () => {},
   allQuiz: [],
   setAllQuiz: () => {},
+  groupShow: false,
+  setGroupShow: () => {},
 });
 const ChatProvider = (props) => {
   const { user, courseID } = useAll();
@@ -47,6 +49,8 @@ const ChatProvider = (props) => {
   const [pinMsg, setPinMsg] = useState(0);
   const [access, setAccess] = useState(false);
   const [isQuiz, setIsQuiz] = useState(false);
+  const [groupShow, setGroupShow] = useState(false);
+
   const [startChat] = useMutation(CREATE_CHATBOX_MUTATION);
   const [sendMessage, { error: errorSendMsg }] = useMutation(
     CREATE_MESSAGE_MUTATION
@@ -87,16 +91,16 @@ const ChatProvider = (props) => {
     fetchPolicy: "network-only",
   });
 
-  const [queryQuiz, { data: quizData, loading: quizLoading }] = useLazyQuery(
-    QUIZ_QUERY,
-    {
-      variables: {
-        name: currentQuiz,
-        studentID: user.studentID,
-        courseID,
-      },
-    }
-  );
+  const [
+    queryQuiz,
+    { data: quizData, loading: quizLoading, subscribeToMore: subscribeQuiz },
+  ] = useLazyQuery(QUIZ_QUERY, {
+    variables: {
+      name: currentQuiz,
+      studentID: user.studentID,
+      courseID,
+    },
+  });
   useEffect(() => {
     if (errorSendMsg) console.log("error sending msg: ", errorSendMsg);
   }, [errorSendMsg]);
@@ -183,6 +187,13 @@ const ChatProvider = (props) => {
               studentID: user.studentID,
               courseID,
             });
+            return {
+              userChatbox: {
+                studentID: user.studentID,
+                courseID,
+                type: isQuiz,
+              },
+            };
           },
         });
         console.log("New Chat!");
@@ -233,8 +244,15 @@ const ChatProvider = (props) => {
         if (currentQuiz === "") setCurrentQuiz(newQuiz);
       }
     }
-  }, [listOfChatboxes, user]);
+  }, [listOfChatboxes, listLoading, user]);
 
+  useEffect(() => {
+    if (!quizLoading) {
+      if (quizData) {
+        setGroupShow(quizData.quiz.groupShow);
+      }
+    }
+  }, [quizData, quizLoading]);
   useEffect(() => {
     const current = isQuiz ? currentQuiz : currentChat;
     if (current && user.studentID) {
@@ -246,6 +264,15 @@ const ChatProvider = (props) => {
           studentID: user.studentID,
         },
       });
+      if (isQuiz) {
+        queryQuiz({
+          variables: {
+            name: currentQuiz,
+            courseID,
+            studentID: user.studentID,
+          },
+        });
+      }
     } else {
       setPinMsg(-1);
     }

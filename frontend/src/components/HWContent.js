@@ -26,71 +26,101 @@ const HWContent = ({ rawdata, handleSubmit }) => {
                 fontSize: "1vw"
             };
             return (
-                <Card title={title} style={{ margin: '3%' }} key={i}>
-                    {<Card.Grid style={gridStyle}>{"Deadline: " + deadline}</Card.Grid>}
-                    {description !== null && <Card.Grid style={gridStyle}>{"Description: " + description}</Card.Grid>}
-                    {<Card.Grid style={gridStyle}>
-                        <div>HW reference files: </div>
-                        {tFile.map(({ fileName, fileLink, linkType }, j) => {
-                            const link = linkType ? dataURItoBlob(fileLink) : fileLink
-                            return (
-                                <div key={j}>
-                                    {linkType ? <PaperClipOutlined style={{ marginRight: '1%' }} /> : <LinkOutlined style={{ marginRight: '1%' }} />}
-                                    < a href={link} > {fileName}</a>
-                                </div>
-                            )
-                        })}
-                    </Card.Grid>}
+              <Card
+                title={title}
+                style={{ margin: "3%" }}
+                headStyle={{ background: "#ffe38e", color: "#3e3b44" }}
+                key={i}>
+                {
+                  <Card.Grid style={gridStyle}>
+                    {"Deadline: " + deadline}
+                  </Card.Grid>
+                }
+                {description !== null && (
+                  <Card.Grid style={gridStyle}>
+                    {"Description: " + description}
+                  </Card.Grid>
+                )}
+                {
+                  <Card.Grid style={gridStyle}>
+                    <div>HW reference files: </div>
+                    {tFile.map(({ fileName, fileLink, linkType }, j) => {
+                      const link = linkType
+                        ? dataURItoBlob(fileLink)
+                        : fileLink;
+                      return (
+                        <div key={j}>
+                          {linkType ? (
+                            <PaperClipOutlined style={{ marginRight: "1%" }} />
+                          ) : (
+                            <LinkOutlined style={{ marginRight: "1%" }} />
+                          )}
+                          <a href={link}> {fileName}</a>
+                        </div>
+                      );
+                    })}
+                  </Card.Grid>
+                }
 
-                    {<Card.Grid style={gridStyle}>
-                        <div>Your submissions: </div>
-                        {sFile !== undefined && sFile.map(({ studentID, file }, j) => {
-                            const link = file.linkType ? dataURItoBlob(file.fileLink) : file.fileLink
-                            return (
-                                <div key={j}>
-                                    {file.linkType ? <PaperClipOutlined style={{ marginRight: '1%' }} /> : <LinkOutlined style={{ marginRight: '1%' }} />}
-                                    <a href={link}>{file.fileName}</a>
-                                </div>
-                            )
-                        })}
-                    </Card.Grid>}
-                    <Upload
-                        beforeUpload={(file) => {
-                            const reader = new FileReader();
-                            reader.onload = e => {
-                                let s = e.target.result
-                                let tmp = [...sList]
-                                // console.log(tmp)
-                                tmp.push(s)
-                                setSList(tmp)
-                            };
-                            reader.readAsDataURL(file)
-                            return false;
-                        }}
-                        onRemove={(file) => {
-                            const reader = new FileReader();
-                            reader.onload = e => {
-                                let s = e.target.result
-                                // console.log(s)
-                                let tmp = [...sList]
-                                tmp = tmp.filter((f) => f !== s)
-                                // console.log(tmp)
-                                setSList(tmp)
-                            };
-                            reader.readAsDataURL(file.originFileObj)
-                            return true
-                        }
-                        
-                        }
-                        customRequest={submitUpload}
-                        fileList={defaultFileList}
-                        onChange={handleOnChange}
-                    >
-                        <Button icon={<UploadOutlined />}>{sFile.length === 0 ? "Click to Upload Your Homework" : "Click to re-Upload Your Homework"}
-                        </Button>
-                        
-                    </Upload>
-                    {/* <Form>
+                {
+                  <Card.Grid style={gridStyle}>
+                    <div>Your submissions: </div>
+                    {sFile !== undefined &&
+                      sFile.map(({ studentID, file }, j) => {
+                        const link = file.linkType
+                          ? dataURItoBlob(file.fileLink)
+                          : file.fileLink;
+                        return (
+                          <div key={j}>
+                            {file.linkType ? (
+                              <PaperClipOutlined
+                                style={{ marginRight: "1%" }}
+                              />
+                            ) : (
+                              <LinkOutlined style={{ marginRight: "1%" }} />
+                            )}
+                            <a href={link}>{file.fileName}</a>
+                          </div>
+                        );
+                      })}
+                  </Card.Grid>
+                }
+                <Upload
+                  beforeUpload={(file) => {
+                    const reader = new FileReader();
+                    reader.onload = (e) => {
+                      let s = e.target.result;
+                      let tmp = [...sList];
+                      // console.log(tmp)
+                      tmp.push(s);
+                      setSList(tmp);
+                    };
+                    reader.readAsDataURL(file);
+                    return false;
+                  }}
+                  onRemove={(file) => {
+                    const reader = new FileReader();
+                    reader.onload = (e) => {
+                      let s = e.target.result;
+                      // console.log(s)
+                      let tmp = [...sList];
+                      tmp = tmp.filter((f) => f !== s);
+                      // console.log(tmp)
+                      setSList(tmp);
+                    };
+                    reader.readAsDataURL(file.originFileObj);
+                    return true;
+                  }}
+                  customRequest={submitUpload}
+                  fileList={defaultFileList}
+                  onChange={handleOnChange}>
+                  <Button icon={<UploadOutlined />}>
+                    {sFile.length === 0
+                      ? "Click to Upload Your Homework"
+                      : "Click to re-Upload Your Homework"}
+                  </Button>
+                </Upload>
+                {/* <Form>
                         <Form.Item name="upload"
                             label="upload"
                             rules={[
@@ -103,9 +133,21 @@ const HWContent = ({ rawdata, handleSubmit }) => {
                         </Form.Item>
                     </Form> */}
 
-                    {sList.length!== 0 && <Button icon={<CloudUploadOutlined />} onClick={() => { handleSubmit(title, sList); setSList([]);setDefaultFileList([]);}}>{sFile.length === 0 ? "Click to Sumbit Your Homework" : "Click to re-Submit Your Homework"} </Button>}
-                </Card >
-            )
+                {sList.length !== 0 && (
+                  <Button
+                    icon={<CloudUploadOutlined />}
+                    onClick={() => {
+                      handleSubmit(title, sList);
+                      setSList([]);
+                      setDefaultFileList([]);
+                    }}>
+                    {sFile.length === 0
+                      ? "Click to Sumbit Your Homework"
+                      : "Click to re-Submit Your Homework"}{" "}
+                  </Button>
+                )}
+              </Card>
+            );
         }
         )
     )

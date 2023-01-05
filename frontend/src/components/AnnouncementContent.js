@@ -5,13 +5,15 @@ const AnnouncementContent = ({ rawdata }) => {
     sorted.sort(function (a, b) {
         return a.time > b.time ? -1 : 1
     })
-    return (
-        sorted.map(({ time, title, content }, i) => (
-            <Card title={title} style={{ margin: '3%' }} key={i}>
-                <p style={{ color: "gray" }}>{time}</p>
-                <p>{content}</p>
-            </Card>
-        )
-        ))
+    return sorted.map(({ time, title, content }, i) => (
+      <Card
+        title={title}
+        headStyle={{ background: "#ffe38e", color: "#3e3b44" }}
+        style={{ margin: "3%" }}
+        key={i}>
+        <p style={{ color: "gray" }}>{time}</p>
+        <p>{content}</p>
+      </Card>
+    ));
 }
 export default AnnouncementContent

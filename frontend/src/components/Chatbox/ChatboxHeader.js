@@ -7,14 +7,23 @@ const ChatboxHeader = ({ isPin, msg, groupName, color, handlePinOnClick }) => {
       style={{
         padding: 20,
         background: color,
+        display: "flex",
         flexDirection: "row",
-        alignContent: "space-between",
-      }}
-    >
-      <div>{groupName}</div>
+        justifyContent: "space-between",
+        alignItems: "center",
+        height: "8em",
+      }}>
+      <h2>{groupName}</h2>
       <div style={{ flexDirection: "row", alignItems: "flex-end" }}>
         {isPin ? (
-          <Button onClick={handlePinOnClick}>
+          <Button
+            onClick={handlePinOnClick}
+            style={{
+              background: "#ffe38e",
+              color: "#423c4a",
+              fontWeight: "bold",
+              border: 0,
+            }}>
             <SoundOutlined /> {msg}
           </Button>
         ) : (
