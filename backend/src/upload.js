@@ -21,14 +21,6 @@ const testUser = [
     isTeacher: true,
   },
   {
-    name: "Adi",
-    studentID: "b09901008",
-    chatbox: [],
-    passwd: bcrypt.hashSync("t", 14),
-    groupNum: 7,
-    isTeacher: false,
-  },
-  {
     name: "KKK",
     studentID: "KKK",
     chatbox: [
@@ -366,7 +358,31 @@ const testInfo = [
       { name: "q", studentID: "q", isTeacher: false },
       { name: "yzl", studentID: "b09901042", isTeacher: false },
       { name: "t", studentID: "t", isTeacher: true },
-      { name: "Adi", studentID: "b09901008", isTeacher: false },
+      {
+        name: "qian",
+        studentID: "pbwhere",
+        isTeacher: false,
+      },
+      {
+        name: "adi",
+        studentID: "aaaaadi",
+        isTeacher: false,
+      },
+      {
+        name: "angel",
+        studentID: "hsiaYuTien",
+        isTeacher: false,
+      },
+      {
+        name: "shootingStar",
+        studentID: "heartUniverse113",
+        isTeacher: false,
+      },
+      {
+        name: "frenchfries",
+        studentID: "potatolove23",
+        isTeacher: false,
+      }
     ],
     name: "ICN",
     courseID: "EE1234",
@@ -486,7 +502,7 @@ const testGrade = [
     weight: 0.2,
   },
   {
-    studentID: "b09901008",
+    studentID: "student",
     subject: "Introduction to Computer Network",
     itemName: "exam 1",
     score: 100,
